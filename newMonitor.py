@@ -1,7 +1,6 @@
 from tkinter import *
 from newPatient import infant
 import newSensors
-from Machine import incubator
 from pytz import timezone
 import glob, time, datetime
 from MonitorSettings import BG_COLOR,FONT_COLOR,TIMEZONE
@@ -41,17 +40,7 @@ class Monitor:
                                 self.root, self.patientSensors,
                                 self.normalColor, self.bgColor
                               )
-    """
-    
-    self.ambientStats = environment(
-                                     self.root, self.ambientSensors,
-                                     self.normalColor, self.bgColor
-                                   )
-    self.machineStats = incubator(
-                                    self.root, self.status,
-                                    self.normalColor, self.bgColor
-                                 )
-    """
+
   def init_clock(self):
     self.clock = Label(self.root, font=('fixed', 12))
     self.clock.place(x=616, y=8)              # Clock's Relative Position on Monitor

@@ -44,6 +44,11 @@ class Monitor:
   def init_clock(self):
     self.clock = Label(self.root, font=('fixed', 12))
     self.clock.place(x=616, y=8)              # Clock's Relative Position on Monitor
+    
+  def check_alarms(self):
+      self.patientStats.alarmcheck()
+      
+      
   def update(self):
     self.currentTime = datetime.datetime.now(timezone(self.tz))
     
@@ -55,6 +60,7 @@ class Monitor:
                          bg=self.bgColor
                        )
     self.patientStats.update()
+    self.check_alarms()
     self.clock.after(100, self.update)
 
 if __name__=='__main__':

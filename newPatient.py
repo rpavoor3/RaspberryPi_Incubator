@@ -1,5 +1,6 @@
 from tkinter import *
 from PIL import Image, ImageTk
+import time
 
 
 class infant:
@@ -9,12 +10,14 @@ class infant:
     stats = None
     bpm = None
     temp = None
+    setpoint = None
     o2sat = None
     weight = None
     heart_rate = None
     color = None
     tLabel = None
     o2Label = None
+    spLabel = None
     wLabel = None
     bg = None
     sensors = None
@@ -48,9 +51,11 @@ class infant:
 
         # init frame labels
         self.temp = Label(self.stats, font=('fixed', 24))
+        self.setpoint  = Label(self.stats, font=('fixed', 24))
 
         # pack and place on screen
         self.temp.pack()
+        self.setpoint.pack()
         self.tLabel = Label(self.root,
                             text='Temperature:',
                             fg=self.color,
@@ -58,8 +63,18 @@ class infant:
                             font=('fixed', 14),
                             padx=0, pady=0
                             )
+        # set point
+        self.spLabel = Label( self.root,
+                          text='Desired Temp:', 
+                          fg=self.color,
+                          bd=0, bg=self.bg,
+                          font=('fixed', 14),
+                          padx=0, pady=0
+                        )
         self.tLabel.pack()
         self.tLabel.place(x=20, y=0)
+        self.spLabel.pack()
+        self.spLabel.place(x=20, y=55)
         self.sensors = sensors
 
     def update(self):
@@ -67,4 +82,11 @@ class infant:
                          fg=self.color,
                          bg=self.bg
                          )
+        self.setpoint.config(text='{0:.01f} °C'.format(self.sensors.setpoint()),
+                         fg=self.color,
+                         bg=self.bg
+            )
+    def alarmcheck(self):
+        if self.sensors.alarmOn == False or (self.sensors.alarmOn == True and time.perf_counter() - self.sensors.time > 5):
+            self.sensors.temp_warning()
 

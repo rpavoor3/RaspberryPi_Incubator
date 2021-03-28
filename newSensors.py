@@ -1,7 +1,10 @@
 import random
 import pytz
 import time
+import vlc
+
 class Patient():
+  p=vlc.MediaPlayer('sound/alarm.mp3')  
   setpointtemp = random.randint(29,39)
   tempreading = random.randint(29,39)
   alarmOn = False
@@ -14,12 +17,14 @@ class Patient():
       return self.setpointtemp
       
   def temperature(self):
+      self.setpointtemp = random.randint(24,45)
+      self.tempreading = random.randint(24,45)
       # determine the set point value with PWM 
       # determine the temperatuer sensor reading through PWM
       #update the global vars
 
 
-    return self.tempreading
+      return self.tempreading
 
   def temp_warning(self):
     temp = self.tempreading
@@ -43,10 +48,91 @@ class Patient():
         
     
     '''
+    print(str(temp) + str(self.alarmOn))
+        
 
-    if temp < 36.0:
-      return True
-    elif temp > 37.5:
-      return True
+    if temp > 39 or temp < 29:
+        if(self.alarmOn):
+            self.timer = time.perf_counter()
+        else:
+            self.alarmOn = True
+            self.timer = time.perf_counter()
+            self.p.play()
+        return True
     else:
-      return False
+    
+        self.alarmOn = False
+        self.p.stop()
+        return False
+    
+class MachineStatus():
+  patient = None
+  ambient = None
+  Apnea   = None
+  textToDisplay = ""
+
+  def __init__(self, pSensors, aSensors):
+    self.patient = pSensors
+    #self.ambient = aSensors
+    #self.Apnea   = ApneaPad()
+
+  def AC_power_state(self):
+    connected = True
+    if connected:
+      return ''
+    else:
+      return ''
+    
+    
+
+  def alarm_state(self):
+    alarms = True # Button to mute alarms
+    
+    if alarms:
+      a = ''
+    else:
+      a = ''
+    return '{}'.format(a)
+    
+  def check_alarms(self):
+      
+    temp_warning = self.patient.temp_warning()
+                 
+    '''
+    rh_warning = (self.ambient.rh < 40) | (self.ambient.rh > 77)
+    apnea_warning = self.Apnea.check_apnea()
+    textToDisplay = "Apnea level warning"
+    hr_warning = (self.patient.hr < 120) | (self.patient.hr > 160)
+    o2_warning = (self.patient.o2 < 95) | (self.patient.o2 > 100)
+
+    warnings = [
+                  temp_warning,   # T
+                  rh_warning,     # RH
+                  apnea_warning,  # A
+                  hr_warning,     # HR
+                  o2_warning      # O2
+                  
+               ]
+    if (temp_warning) :
+        self.textToDisplay = "Check tempearture"
+    elif (hr_warning):
+        self.textToDisplay = "Check hear rate"
+    elif (o2_warning):
+        self.textToDisplay = "Check oxygen saturation"
+    elif(apnea_warning):
+        self.textToDisplay = "Check apnea levels"
+    
+        
+    
+    '''
+         
+    warnings = [ temp_warning]
+    colors = [ self.get_color(w) for w in warnings]
+    return colors
+
+  def get_color(self, alarm):
+    if alarm:
+        
+      return 'red'
+    else:
+      return 'dark slate grey'

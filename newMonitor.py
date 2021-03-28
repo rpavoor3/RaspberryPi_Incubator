@@ -1,6 +1,7 @@
 from tkinter import *
 from newPatient import infant
 import newSensors
+from newMachine import incubator
 from pytz import timezone
 import glob, time, datetime
 from MonitorSettings import BG_COLOR,FONT_COLOR,TIMEZONE
@@ -33,6 +34,7 @@ class Monitor:
 
   def init_sensors(self):
     self.patientSensors = newSensors.Patient()
+    self.status         = newSensors.MachineStatus(self.patientSensors, self.ambientSensors)
 
   def init_compartments(self):
     # if statments to block out stuff
@@ -40,13 +42,15 @@ class Monitor:
                                 self.root, self.patientSensors,
                                 self.normalColor, self.bgColor
                               )
+    self.machineStats = incubator(
+                                    self.root, self.status,
+                                    self.normalColor, self.bgColor
+                                 )
 
   def init_clock(self):
     self.clock = Label(self.root, font=('fixed', 12))
     self.clock.place(x=616, y=8)              # Clock's Relative Position on Monitor
     
-  def check_alarms(self):
-      self.patientStats.alarmcheck()
       
       
   def update(self):
@@ -60,8 +64,8 @@ class Monitor:
                          bg=self.bgColor
                        )
     self.patientStats.update()
-    self.check_alarms()
-    self.clock.after(100, self.update)
+    self.machineStats.update()
+    self.clock.after(500, self.update)
 
 if __name__=='__main__':
   vm = Monitor()

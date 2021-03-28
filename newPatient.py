@@ -76,6 +76,15 @@ class infant:
         self.spLabel.pack()
         self.spLabel.place(x=20, y=55)
         self.sensors = sensors
+    '''
+    def alarmcheck(self):
+        #returns an array of booleans, 1 boolean for each sesnor indicating if the alarm symbol needs to be set
+        # currently, only 1 sensor is there for tempeature so array size = 1, but more needs to be added
+        warnings = []
+        if self.sensors.alarmOn == False or (self.sensors.alarmOn == True and time.perf_counter() - self.sensors.timer > 5):
+            warnings.append(self.sensors.temp_warning())
+            return warnings
+            '''
 
     def update(self):
         self.temp.config(text='{0:.01f} °C'.format(self.sensors.temperature()),
@@ -86,7 +95,4 @@ class infant:
                          fg=self.color,
                          bg=self.bg
             )
-    def alarmcheck(self):
-        if self.sensors.alarmOn == False or (self.sensors.alarmOn == True and time.perf_counter() - self.sensors.time > 5):
-            self.sensors.temp_warning()
 

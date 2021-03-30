@@ -1,18 +1,21 @@
 import random
 import pytz
 import time
-import vlc
+import pigpio
 
 class Patient():
-  p=vlc.MediaPlayer('sound/alarm.mp3')  
+  pi1 = pigpio.pi()
   setpointtemp = random.randint(29,39)
   tempreading = random.randint(29,39)
   alarmOn = False
-  timer = time.perf_counter()
   tempSensor   = None
 
   def __init__(self):
     tempSensor = 0
+    self.pi1.set_mode(23, pigpio.OUTPUT)
+    self.pi1.write(23,False)
+    self.pi1.set_PWM_dutycycle(24,200)
+    self.pi1.set_PWM_frequency(24,5000)
   def setpoint(self):
       return self.setpointtemp
       
@@ -52,17 +55,13 @@ class Patient():
         
 
     if temp > 39 or temp < 29:
-        if(self.alarmOn):
-            self.timer = time.perf_counter()
-        else:
-            self.alarmOn = True
-            self.timer = time.perf_counter()
-            self.p.play()
+        self.alarmOn = True
+        self.pi1.write(23,self.alarmOn)
         return True
     else:
     
         self.alarmOn = False
-        self.p.stop()
+        self.pi1.write(23,self.alarmOn)
         return False
     
 class MachineStatus():
@@ -116,7 +115,7 @@ class MachineStatus():
     if (temp_warning) :
         self.textToDisplay = "Check tempearture"
     elif (hr_warning):
-        self.textToDisplay = "Check hear rate"
+        self.textToDisplay = "Check heart rate"
     elif (o2_warning):
         self.textToDisplay = "Check oxygen saturation"
     elif(apnea_warning):

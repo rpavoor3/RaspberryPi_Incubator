@@ -5,63 +5,64 @@ import pigpio
 
 class Patient():
   pi1 = pigpio.pi()
-  setpointtemp = random.randint(29,39)
-  tempreading = random.randint(29,39)
+  setpointtemp = 32.0
+  tempreading = 32.0
   alarmOn = False
   tempSensor   = None
 
   def __init__(self):
     tempSensor = 0
+    # 23 is shutdown
     self.pi1.set_mode(23, pigpio.OUTPUT)
     self.pi1.write(23,False)
+    
+    # speaker PWM
     self.pi1.set_PWM_dutycycle(24,200)
     self.pi1.set_PWM_frequency(24,5000)
   def setpoint(self):
       return self.setpointtemp
       
   def temperature(self):
-      self.setpointtemp = random.randint(24,45)
-      self.tempreading = random.randint(24,45)
-      # determine the set point value with PWM 
-      # determine the temperatuer sensor reading through PWM
-      #update the global vars
-
+      
+      val1 = False
+      val2 = False
+      x = 0
+      y = 0
+      for i in range(1000000, 1000000, 1000):
+          self.pi1.hardware_PWM(18, 1000, 1)
+          time.sleep(0.03)
+          x = self.pi1.read(6)
+          y = self.pi1.read(26)
+          if(x == 1):
+              self.tempreading = x
+              val1 = True
+          if(y == 1):
+              self.setpointemp = y
+              val2 = True
+          if(val2 and val1):
+              break
+        
+              
+      self.setpointtemp = 35.0
+      self.tempreading = 37.0
+      
 
       return self.tempreading
 
   def temp_warning(self):
     temp = self.tempreading
-    print("in alarm" + str(self.alarmOn))
     
-    '''
-    if the baby is too warm: orange light (red and green)
-    
-    if the baby is too cold : blue light
-    if the baby is perfect: green light
-    
-    if something other than temperature is wrong: light the Red LED (NOT IMPLEMENTED YET)
-    
-    if tempSensor > 39 or tempSensor < 29:
-        sound alarm
-        alarmOn = True
-        start timer
-        
-    else :
-        do nothing
-        
-    
-    '''
     print(str(temp) + str(self.alarmOn))
         
 
-    if temp > 39 or temp < 29:
+    if temp > 39 or temp < 20:
         self.alarmOn = True
-        self.pi1.write(23,self.alarmOn)
+        self.pi1.set_PWM_frequency(24,5000)
         return True
     else:
     
         self.alarmOn = False
-        self.pi1.write(23,self.alarmOn)
+        self.pi1.set_PWM_frequency(24,0000)
         return False
     
 class MachineStatus():

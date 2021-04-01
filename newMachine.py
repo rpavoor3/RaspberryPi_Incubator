@@ -1,5 +1,6 @@
 from tkinter import *
-
+import pigpio
+red = 5
 class incubator:
   root        = None
   ac_pwr      = None
@@ -7,6 +8,7 @@ class incubator:
   warnings    = None
   color       = None
   bg          = None
+  pi2         = pigpio.pi()
 
   def __init__(self, masterScreen, status, color='purple', bg='black'):
     self.color = color
@@ -53,9 +55,15 @@ class incubator:
     self.o2.pack(side=RIGHT)
 
     self.status = status
+    
+
+    # 5 - red
+    self.pi2.set_mode(red, pigpio.OUTPUT)
+    self.pi2.write(red, False)
 
   def update(self):                    # init all sensor readings at each clock tick
     warnings = self.status.check_alarms()
+    self.pi2.write(red, True)
 
     self.ac_pwr.config( text='Power: {}'.format(self.status.AC_power_state()),
                         fg=self.color,
@@ -72,8 +80,14 @@ class incubator:
                       bg=self.bg
                     )
     
-    # update the warnings in Sensors.py for these values and then ,odify this part
+    # update the warnings in newSensors.py for these values and then ,odify this part
     '''
+    if(warnings[1] or (warnings[2] or warnings[3] or warnings[4] ):
+        self.pi2.write(red, True)
+    else :
+        self.pi2.write(red, False)
+    
+    
     self.humidity.config( text='',
                           fg=warnings[1],
                           bg=self.bg

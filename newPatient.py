@@ -1,7 +1,11 @@
 from tkinter import *
 from PIL import Image, ImageTk
 import time
+import pigpio
 
+blue = 22
+orange = 17
+green = 27
 
 class infant:
     root = None
@@ -21,6 +25,7 @@ class infant:
     wLabel = None
     bg = None
     sensors = None
+    pi3     = pigpio.pi()
 
     def __init__(self, masterScreen, sensors, color='blue', bg='black', hdr_font=32,body_font=14):
         self.hdr_font = hdr_font
@@ -76,6 +81,16 @@ class infant:
         self.spLabel.pack()
         self.spLabel.place(x=20, y=55)
         self.sensors = sensors
+        
+           # 17 is Orange LED 22-blue, 5-r
+        self.pi3.set_mode(17, pigpio.OUTPUT)
+        self.pi3.write(17, False)
+        # 27 - green
+        self.pi3.set_mode(27, pigpio.OUTPUT)
+        self.pi3.write(27, False)
+        # 22 - blue
+        self.pi3.set_mode(22, pigpio.OUTPUT)
+        self.pi3.write(22, False) 
     '''
     def alarmcheck(self):
         #returns an array of booleans, 1 boolean for each sesnor indicating if the alarm symbol needs to be set
@@ -95,4 +110,20 @@ class infant:
                          fg=self.color,
                          bg=self.bg
             )
+        # temperature is just right - green
+        if self.sensors.temperature() == self.sensors.setpoint():
+           self.pi3.write(green, True)
+        else:
+           self.pi3.write(green, False)
+        # temperaure is too warm - orange
+        if self.sensors.temperature() > self.sensors.setpoint():
+           self.pi3.write(orange, True)
+        else:
+           self.pi3.write(orange, False)
+        # temperature is too cool - blue
+        if self.sensors.temperature() < self.sensors.setpoint():
+            self.pi3.write(blue, True)
+        else:
+           self.pi3.write(blue, False)
+           
 

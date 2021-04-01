@@ -2,19 +2,24 @@ import random
 import pytz
 import time
 import pigpio
+snoozebut = 16
 
 class Patient():
   pi1 = pigpio.pi()
   setpointtemp = 32.0
   tempreading = 32.0
   alarmOn = False
+  timer = time.perf_counter()
   tempSensor   = None
+  snooze   = False
 
   def __init__(self):
     tempSensor = 0
     # 23 is shutdown
     self.pi1.set_mode(23, pigpio.OUTPUT)
     self.pi1.write(23,False)
+    # snooze button is pin 16
+    self.pi1.set_mode(snoozebut, pigpio.INPUT)
     
     # speaker PWM
     self.pi1.set_PWM_dutycycle(24,200)
@@ -44,21 +49,29 @@ class Patient():
         
               
       self.setpointtemp = 35.0
-      self.tempreading = 37.0
+      self.tempreading = 32.0
       
 
       return self.tempreading
 
   def temp_warning(self):
+    if self.pi1.read(snoozebut):
+        snooze = True
+        self.alarmOn = False
+        self.pi1.set_PWM_frequency(24,0000)
+        self.timer = time.perf_counter()
+        
     temp = self.tempreading
     
     print(str(temp) + str(self.alarmOn))
         
 
     if temp > 39 or temp < 20:
-        self.alarmOn = True
-        self.pi1.set_PWM_frequency(24,5000)
-        return True
+        if((self.snooze and time.perf_counter() - self.timer >= 120 ) or not self.snooze):
+            self.snooze = False
+            self.alarmOn = True
+            self.pi1.set_PWM_frequency(24,5000)
+            return True
     else:
     
         self.alarmOn = False

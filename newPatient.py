@@ -83,14 +83,14 @@ class infant:
         self.sensors = sensors
         
            # 17 is Orange LED 22-blue, 5-r
-        self.pi3.set_mode(17, pigpio.OUTPUT)
-        self.pi3.write(17, False)
+        self.pi3.set_mode(orange, pigpio.OUTPUT)
+        self.pi3.write(orange, False)
         # 27 - green
-        self.pi3.set_mode(27, pigpio.OUTPUT)
-        self.pi3.write(27, False)
+        self.pi3.set_mode(green, pigpio.OUTPUT)
+        self.pi3.write(green, False)
         # 22 - blue
-        self.pi3.set_mode(22, pigpio.OUTPUT)
-        self.pi3.write(22, False) 
+        self.pi3.set_mode(blue, pigpio.OUTPUT)
+        self.pi3.write(blue, False) 
     '''
     def alarmcheck(self):
         #returns an array of booleans, 1 boolean for each sesnor indicating if the alarm symbol needs to be set

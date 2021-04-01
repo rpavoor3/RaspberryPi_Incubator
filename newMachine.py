@@ -63,7 +63,6 @@ class incubator:
 
   def update(self):                    # init all sensor readings at each clock tick
     warnings = self.status.check_alarms()
-    self.pi2.write(red, True)
 
     self.ac_pwr.config( text='Power: {}'.format(self.status.AC_power_state()),
                         fg=self.color,
@@ -75,7 +74,7 @@ class incubator:
                           bg=self.bg
                         )
     
-    self.temp.config( text=' ',
+    self.temp.config( text='',
                       fg=warnings[0],
                       bg=self.bg
                     )

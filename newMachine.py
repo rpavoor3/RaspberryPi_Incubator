@@ -74,7 +74,7 @@ class incubator:
                           bg=self.bg
                         )
     
-    self.temp.config( text='',
+    self.temp.config( text='\U0001F321',
                       fg=warnings[0],
                       bg=self.bg
                     )
@@ -87,7 +87,7 @@ class incubator:
         self.pi2.write(red, False)
     
     
-    self.humidity.config( text='',
+    self.humidity.config( text='\U0001F4A7',
                           fg=warnings[1],
                           bg=self.bg
                         )
@@ -97,12 +97,12 @@ class incubator:
                        bg=self.bg
                      )
 
-    self.hr.config( text='',
+    self.hr.config( text='\U00002665',
                     fg=warnings[3],
                     bg=self.bg
                   )
 
-    self.o2.config( text='O₂ ',
+    self.o2.config( text='O₂',
                     fg=warnings[4],
                     bg=self.bg
                   )

@@ -15,15 +15,12 @@ class Patient():
 
   def __init__(self):
     tempSensor = 0
-    # 23 is shutdown
-    self.pi1.set_mode(23, pigpio.OUTPUT)
-    self.pi1.write(23,False)
     # snooze button is pin 16
     self.pi1.set_mode(snoozebut, pigpio.INPUT)
     
     # speaker PWM
-    self.pi1.set_PWM_dutycycle(24,200)
-    self.pi1.set_PWM_frequency(24,5000)
+    self.pi1.set_PWM_dutycycle(24,128)
+    self.pi1.set_PWM_frequency(24,0000)
   def setpoint(self):
       return self.setpointtemp
       
@@ -91,8 +88,9 @@ class MachineStatus():
 
   def AC_power_state(self):
     connected = True
+    # can use \U000023FB and switch color to determine if disconencted or not
     if connected:
-      return ''
+      return '\U0001F50C'
     else:
       return ''
     
@@ -100,9 +98,9 @@ class MachineStatus():
 
   def alarm_state(self):
     alarms = True # Button to mute alarms
-    
+    # snooze:\U0001F4A4  on: \U0001F6A8
     if alarms:
-      a = ''
+      a = '\U0001F514'
     else:
       a = ''
     return '{}'.format(a)

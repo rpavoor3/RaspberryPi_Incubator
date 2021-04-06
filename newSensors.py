@@ -27,26 +27,26 @@ class Patient():
   def temperature(self):
       
       val1 = False
-      val2 = False
+      val2 = True
       x = 0
       y = 0
-      for i in range(1000000, 1000000, 1000):
+      for i in range(0, 1000000, 1000):
           self.pi1.hardware_PWM(18, 1000, 1)
           time.sleep(0.03)
           x = self.pi1.read(6)
           y = self.pi1.read(26)
           if(x == 1):
-              self.tempreading = x
+              self.tempreading = (3.3 * float(i) / 100000)
               val1 = True
-          if(y == 1):
-              self.setpointemp = y
-              val2 = True
+          #if(y == 1):
+          #    self.setpointemp = y
+          #    val2 = True
           if(val2 and val1):
               break
         
               
       self.setpointtemp = 35.0
-      self.tempreading = 32.0
+      #self.tempreading = 32.0
       
 
       return self.tempreading
@@ -90,17 +90,17 @@ class MachineStatus():
     connected = True
     # can use \U000023FB and switch color to determine if disconencted or not
     if connected:
-      return '\U0001F50C'
+      return ' '
     else:
       return ''
     
     
 
   def alarm_state(self):
-    alarms = True # Button to mute alarms
+    alarms = False # Button to mute alarms
     # snooze:\U0001F4A4  on: \U0001F6A8
     if alarms:
-      a = '\U0001F514'
+      a = ''
     else:
       a = ''
     return '{}'.format(a)

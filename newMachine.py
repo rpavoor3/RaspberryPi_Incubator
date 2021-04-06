@@ -3,7 +3,7 @@ import pigpio
 red = 5
 class incubator:
   root        = None
-  ac_pwr      = None
+  #ac_pwr      = None
   alarm_state = True
   warnings    = None
   color       = None
@@ -27,14 +27,14 @@ class incubator:
     self.root.place(x=408, y=252, height=212, width=376)
 
     # init frame labels
-    self.ac_pwr  = Label(self.root, font=('fixed', 24))
+    #self.ac_pwr  = Label(self.root, font=('fixed', 24))
     self.alarm_status = Label(self.root, font=('fixed', 24))
     self.warnings = LabelFrame( self.root, 
                                 padx=10, pady=10,
-                                bd=0, font=('fixed', 24)
+                                bd=0, font=('fixed', 20)
                               )
 
-    self.temp = Label(self.warnings, font=('fixed', 24))
+    self.temp = Label(self.warnings, font=('unifont', 24))
     self.humidity = Label(self.warnings, font=('fixed', 24))
     self.apnea = Label(self.warnings, font=('fixed', 24))
     self.hr = Label(self.warnings, font=('fixed', 26))
@@ -42,7 +42,7 @@ class incubator:
 
 
     # pack and place on screen
-    self.ac_pwr.pack()
+    #self.ac_pwr.pack()
     self.warnings.pack(fill='x')
 
     self.temp.pack(side=LEFT)
@@ -63,18 +63,18 @@ class incubator:
 
   def update(self):                    # init all sensor readings at each clock tick
     warnings = self.status.check_alarms()
-
+    '''
     self.ac_pwr.config( text='Power: {}'.format(self.status.AC_power_state()),
                         fg=self.color,
                         bg=self.bg
                       )
-
-    self.warnings.config( text='    Alarm Status: {}'.format(self.status.textToDisplay),
+    '''
+    self.warnings.config( text='Alarm Status: {}'.format(self.status.textToDisplay),
                           fg=self.color,
                           bg=self.bg
                         )
-    
-    self.temp.config( text='\U0001F321',
+
+    self.temp.config( text='\ud83d\ude4f',
                       fg=warnings[0],
                       bg=self.bg
                     )

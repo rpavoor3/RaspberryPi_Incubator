@@ -34,7 +34,7 @@ class Patient():
       x = 0
       y = 0
       for i in range(200000, 1000000, 1000):
-          self.pi1.hardware_PWM(18, 1000, i)
+          self.pi1.hardware_PWM(18, 100000, i)
           time.sleep(0.03)
           x = self.pi1.read(6)
           y = self.pi1.read(26)

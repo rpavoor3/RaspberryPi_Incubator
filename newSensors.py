@@ -7,7 +7,7 @@ snoozebut = 16
 class Patient():
   pi1 = pigpio.pi()
   setpointtemp = 32.0
-  tempreading = 32.0
+  tempreading = 0.0
   alarmOn = False
   timer = time.perf_counter()
   tempSensor   = None
@@ -17,6 +17,9 @@ class Patient():
     tempSensor = 0
     # snooze button is pin 16
     self.pi1.set_mode(snoozebut, pigpio.INPUT)
+    self.pi1.set_mode(6, pigpio.INPUT)
+    self.pi1.set_mode(26, pigpio.INPUT)
+    
     
     # speaker PWM
     self.pi1.set_PWM_dutycycle(24,128)
@@ -30,13 +33,15 @@ class Patient():
       val2 = True
       x = 0
       y = 0
-      for i in range(0, 1000000, 1000):
-          self.pi1.hardware_PWM(18, 1000, 1)
+      for i in range(200000, 1000000, 1000):
+          self.pi1.hardware_PWM(18, 1000, i)
           time.sleep(0.03)
           x = self.pi1.read(6)
           y = self.pi1.read(26)
-          if(x == 1):
-              self.tempreading = (3.3 * float(i) / 100000)
+          #print(i)
+          if(x == 1 and val1 == False):
+              self.tempreading = ((3.3 * float(i) / 1000000) - 0.5) * 100
+              print(self.tempreading)
               val1 = True
           #if(y == 1):
           #    self.setpointemp = y

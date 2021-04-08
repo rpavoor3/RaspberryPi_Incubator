@@ -65,7 +65,7 @@ class Monitor:
                        )
     self.patientStats.update()
     self.machineStats.update()
-    self.clock.after(500, self.update)
+    self.clock.after(50, self.update)
 
 if __name__=='__main__':
   vm = Monitor()

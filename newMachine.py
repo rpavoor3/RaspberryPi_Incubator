@@ -1,5 +1,6 @@
 from tkinter import *
 import pigpio
+
 red = 5
 class incubator:
   root        = None
@@ -34,7 +35,7 @@ class incubator:
                                 bd=0, font=('fixed', 20)
                               )
 
-    self.temp = Label(self.warnings, font=('unifont', 24))
+    self.temp = Label(self.warnings, font=('fixed', 24))
     self.humidity = Label(self.warnings, font=('fixed', 24))
     self.apnea = Label(self.warnings, font=('fixed', 24))
     self.hr = Label(self.warnings, font=('fixed', 26))
@@ -74,7 +75,8 @@ class incubator:
                           bg=self.bg
                         )
 
-    self.temp.config( text='\ud83d\ude4f',
+    pray = u'\u1F321'
+    self.temp.config( text=pray,
                       fg=warnings[0],
                       bg=self.bg
                     )

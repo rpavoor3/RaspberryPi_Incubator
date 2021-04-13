@@ -2,6 +2,7 @@ import random
 import pytz
 import time
 import pigpio
+from w1thermsensor import W1ThermSensor, Sensor
 snoozebut = 16
 
 class Patient():
@@ -75,11 +76,45 @@ class Patient():
             self.pi1.set_PWM_frequency(24,5000)
             return True
     else:
-    
         self.alarmOn = False
         self.pi1.set_PWM_frequency(24,0000)
         return False
     
+''' The "Environment" class refers to the sensor
+    readings inside the incubator. Only 'tempSensor' is incorporated.
+    More cn be added such as the humidity sensor. 
+'''
+class Environment():
+  tempSensor = 0 # can change this to NONE if you want tempSensor to point to an object vs a value
+  rhSensor   = None
+  rh         = 0
+
+  def __init__(self):
+    #self.tempSensor = OneWire.TempSensor()
+    #self.rhSensor   = DHT22(board.D16)
+    self.tempSensor = 35
+
+  def temperature(self):
+      '''
+      i = 0
+      for sensor in W1ThermSensor.get_available_sensors([Sensor.DS18B20]):
+          self.tempSensor += sensor.get_temperature()
+          i = i + 1
+          
+      if(not(i == 0) ):
+          self.tempSensor = (float)(self.tempSensor)/i
+      
+      return self.tempSensor
+      '''
+      return random.randint(30,40)
+  def temp_warning(self):
+    if(self.tempSensor < 30.5 or self.tempSensor > 40.5):
+        return True
+    else: 
+        return False  # depends on set point. To be added later
+
+ 
+
 class MachineStatus():
   patient = None
   ambient = None
@@ -88,7 +123,7 @@ class MachineStatus():
 
   def __init__(self, pSensors, aSensors):
     self.patient = pSensors
-    #self.ambient = aSensors
+    self.ambient = aSensors
     #self.Apnea   = ApneaPad()
 
   def AC_power_state(self):
@@ -100,19 +135,21 @@ class MachineStatus():
       return ''
     
     
-
+  '''
   def alarm_state(self):
-    alarms = False # Button to mute alarms
-    # snooze:\U0001F4A4  on: \U0001F6A8
+    alarms = True # Button to mute alarms
+    
     if alarms:
-      a = ''
+      a = ''
     else:
       a = ''
     return '{}'.format(a)
-    
+  ''' 
   def check_alarms(self):
       
-    temp_warning = self.patient.temp_warning()
+    temp_warning = self.patient.temp_warning() | self.ambient.temp_warning()
+    print("self_patient" + str(self.patient.temp_warning() ))
+    print("self_ambient" + str(self.ambient.temp_warning() ))
                  
     '''
     rh_warning = (self.ambient.rh < 40) | (self.ambient.rh > 77)
@@ -129,20 +166,30 @@ class MachineStatus():
                   o2_warning      # O2
                   
                ]
-    if (temp_warning) :
-        self.textToDisplay = "Check tempearture"
+    '''           
+    if (self.patient.temp_warning()) :
+        self.textToDisplay = "Check baby temp"
+    elif (self.ambient.temp_warning()):
+        self.textToDisplay = "Check incubator temp"    
+    else:
+        self.textToDisplay = "All clear!"
+    '''
     elif (hr_warning):
         self.textToDisplay = "Check heart rate"
     elif (o2_warning):
-        self.textToDisplay = "Check oxygen saturation"
+        self.textToDisplay = "Check oxygen sat"
     elif(apnea_warning):
         self.textToDisplay = "Check apnea levels"
+    '''
+
+        
+        
     
         
     
-    '''
-         
-    warnings = [ temp_warning]
+    
+    # falses are fill-in values for now     
+    warnings = [ temp_warning, 0, 0, 0, 0]
     colors = [ self.get_color(w) for w in warnings]
     return colors
 

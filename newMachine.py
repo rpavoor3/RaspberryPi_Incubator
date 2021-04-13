@@ -29,10 +29,10 @@ class incubator:
 
     # init frame labels
     #self.ac_pwr  = Label(self.root, font=('fixed', 24))
-    self.alarm_status = Label(self.root, font=('fixed', 24))
+    self.alarm_status = Label(self.root, font=('fixed', 14))
     self.warnings = LabelFrame( self.root, 
                                 padx=10, pady=10,
-                                bd=0, font=('fixed', 20)
+                                bd=0, font=('fixed', 14)
                               )
 
     self.temp = Label(self.warnings, font=('fixed', 24))
@@ -70,26 +70,31 @@ class incubator:
                         bg=self.bg
                       )
     '''
+    if(self.status.textToDisplay != 'All clear!'):
+        self.color = 'red'
+    else:
+        self.color = 'green'
+        
     self.warnings.config( text='Alarm Status: {}'.format(self.status.textToDisplay),
                           fg=self.color,
                           bg=self.bg
                         )
 
     pray = u'\u1F321'
-    self.temp.config( text=pray,
+    self.temp.config( text=' ',
                       fg=warnings[0],
                       bg=self.bg
                     )
     
     # update the warnings in newSensors.py for these values and then ,odify this part
-    '''
-    if(warnings[1] or (warnings[2] or warnings[3] or warnings[4] ):
+    
+    if(warnings[1] or (warnings[2] or warnings[3] or warnings[4] )):
         self.pi2.write(red, True)
     else :
         self.pi2.write(red, False)
     
-    
-    self.humidity.config( text='\U0001F4A7',
+
+    self.humidity.config( text='',
                           fg=warnings[1],
                           bg=self.bg
                         )
@@ -99,13 +104,13 @@ class incubator:
                        bg=self.bg
                      )
 
-    self.hr.config( text='\U00002665',
+    self.hr.config( text='',
                     fg=warnings[3],
                     bg=self.bg
                   )
 
-    self.o2.config( text='O₂',
+    self.o2.config( text='O₂ ',
                     fg=warnings[4],
                     bg=self.bg
                   )
-    '''
+    

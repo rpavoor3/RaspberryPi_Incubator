@@ -3,6 +3,7 @@ from newPatient import infant
 import newSensors
 from newMachine import incubator
 from pytz import timezone
+from newAmbient import environment
 import glob, time, datetime
 from MonitorSettings import BG_COLOR,FONT_COLOR,TIMEZONE
 class Monitor:
@@ -34,6 +35,7 @@ class Monitor:
 
   def init_sensors(self):
     self.patientSensors = newSensors.Patient()
+    self.ambientSensors = newSensors.Environment()
     self.status         = newSensors.MachineStatus(self.patientSensors, self.ambientSensors)
 
   def init_compartments(self):
@@ -46,6 +48,10 @@ class Monitor:
                                     self.root, self.status,
                                     self.normalColor, self.bgColor
                                  )
+    self.ambientStats = environment(
+                                     self.root, self.ambientSensors,
+                                     self.normalColor, self.bgColor
+                                   )
 
   def init_clock(self):
     self.clock = Label(self.root, font=('fixed', 12))
@@ -65,6 +71,8 @@ class Monitor:
                        )
     self.patientStats.update()
     self.machineStats.update()
+    self.ambientStats.update()
+    
     self.clock.after(50, self.update)
 
 if __name__=='__main__':

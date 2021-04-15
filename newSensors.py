@@ -31,7 +31,7 @@ class Patient():
   def temperature(self):
       
       val1 = False
-      val2 = True
+      val2 = False
       x = 0
       y = 0
       for i in range(200000, 1000000, 1000):
@@ -42,16 +42,17 @@ class Patient():
           #print(i)
           if(x == 1 and val1 == False):
               self.tempreading = ((3.3 * float(i) / 1000000) - 0.5) * 100
-              print(self.tempreading)
+              print("SkinTemp:",self.tempreading)
               val1 = True
-          #if(y == 1):
-          #    self.setpointemp = y
-          #    val2 = True
+          if(y == 1 and val2 == False):
+              self.setpointtemp = ((3.3 * float(i) / 1000000) - 0.5) * 100
+              print("SetPointTemp:",self.setpointtemp)
+              val2 = True
           if(val2 and val1):
               break
         
               
-      self.setpointtemp = 35.0
+      #self.setpointtemp = 35.0
       #self.tempreading = 32.0
       
 
@@ -95,18 +96,19 @@ class Environment():
     self.tempSensor = 35
 
   def temperature(self):
-      '''
+      
       i = 0
+      self.tempSensor = 0
       for sensor in W1ThermSensor.get_available_sensors([Sensor.DS18B20]):
           self.tempSensor += sensor.get_temperature()
+          print("AmbientTemp:",sensor.get_temperature())
           i = i + 1
           
       if(not(i == 0) ):
           self.tempSensor = (float)(self.tempSensor)/i
       
       return self.tempSensor
-      '''
-      return random.randint(30,40)
+      
   def temp_warning(self):
     if(self.tempSensor < 30.5 or self.tempSensor > 40.5):
         return True

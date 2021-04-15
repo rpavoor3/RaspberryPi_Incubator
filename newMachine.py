@@ -32,7 +32,7 @@ class incubator:
     self.alarm_status = Label(self.root, font=('fixed', 14))
     self.warnings = LabelFrame( self.root, 
                                 padx=10, pady=10,
-                                bd=0, font=('fixed', 14)
+                                bd=0, font=('fit', 16)
                               )
 
     self.temp = Label(self.warnings, font=('fixed', 24))

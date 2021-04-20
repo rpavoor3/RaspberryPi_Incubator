@@ -28,7 +28,7 @@ class incubator:
     self.root.place(x=408, y=252, height=212, width=376)
 
     # init frame labels
-    #self.ac_pwr  = Label(self.root, font=('fixed', 24))
+    #self.ac_pwr  = Label(self.root, font=('fixed', 20))
     self.alarm_status = Label(self.root, font=('fixed', 14))
     self.warnings = LabelFrame( self.root, 
                                 padx=10, pady=10,
@@ -66,16 +66,17 @@ class incubator:
     warnings = self.status.check_alarms()
     '''
     self.ac_pwr.config( text='Power: {}'.format(self.status.AC_power_state()),
-                        fg=self.color,
+                        fg='dark slate grey',
                         bg=self.bg
                       )
-    '''
+                      '''
+    
     if(self.status.textToDisplay != 'All clear!'):
         self.color = 'red'
     else:
         self.color = 'green'
         
-    self.warnings.config( text='Alarm Status: {}'.format(self.status.textToDisplay),
+    self.warnings.config( text='Alarm: {}'.format(self.status.textToDisplay),
                           fg=self.color,
                           bg=self.bg
                         )

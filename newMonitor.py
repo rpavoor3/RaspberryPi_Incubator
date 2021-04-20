@@ -55,9 +55,17 @@ class Monitor:
 
   def init_clock(self):
     self.clock = Label(self.root, font=('fixed', 12))
-    self.clock.place(x=616, y=8)              # Clock's Relative Position on Monitor
+    self.clock.place(x=431, y=8)              # Clock's Relative Position on Monitor
     
-      
+  def AC_power_state(self):
+    connected = False
+    # can use \U000023FB and switch color to determine if disconencted or not
+    if connected:
+      return ' '
+    else:
+      return ''
+    
+    
       
   def update(self):
     self.currentTime = datetime.datetime.now(timezone(self.tz))
@@ -65,7 +73,7 @@ class Monitor:
     if self.currentTime != self.prevTime:
       self.prevTime = self.currentTime
       
-      self.clock.config( text=self.currentTime.strftime('%d-%b-%Y %I:%M %p'),
+      self.clock.config( text= 'Date: ' + self.currentTime.strftime('%d-%b-%Y %I:%M %p') + str('        Power: {}'.format(self.AC_power_state())), 
                          fg='white',
                          bg=self.bgColor
                        )

@@ -3,7 +3,8 @@ import pytz
 import time
 import pigpio
 from w1thermsensor import W1ThermSensor, Sensor
-snoozebut = 16
+snoozebut = 21
+power = 15 # if a 1 is receives, using main power; if 0, using battery power
 
 class Patient():
   pi1 = pigpio.pi()
@@ -20,6 +21,7 @@ class Patient():
     self.pi1.set_mode(snoozebut, pigpio.INPUT)
     self.pi1.set_mode(6, pigpio.INPUT)
     self.pi1.set_mode(26, pigpio.INPUT)
+    self.pi1.set_mode(power, pigpio.INPUT)
     
     
     # speaker PWM
@@ -128,13 +130,6 @@ class MachineStatus():
     self.ambient = aSensors
     #self.Apnea   = ApneaPad()
 
-  def AC_power_state(self):
-    connected = True
-    # can use \U000023FB and switch color to determine if disconencted or not
-    if connected:
-      return ' '
-    else:
-      return ''
     
     
   '''

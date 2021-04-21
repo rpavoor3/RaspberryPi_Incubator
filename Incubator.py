@@ -7,6 +7,8 @@ from newAmbient import environment
 import glob, time, datetime
 from MonitorSettings import BG_COLOR,FONT_COLOR,TIMEZONE
 
+# TODO: ADD HEATING ELEMENT CODE AND OBJECT
+
 '''
 Monitor Class
 Description: Primary driver of incubator software. Initializes each component, updates timer, and calls routines. 
@@ -24,7 +26,6 @@ class Monitor:
   bgColor        = BG_COLOR
   tz             = TIMEZONE
   currentTime    = None   # Calculate time for updating
-  prevTime       = None
 
   def __init__(self):
     # Initializing TKinter Window
@@ -61,34 +62,46 @@ class Monitor:
                                      self.normalColor, self.bgColor
                                    )
 
+'''
+Display time and date
+'''
   def init_clock_graphic(self):
     self.clock_graphic = Label(self.root, font=('fixed', 12))
-    self.clock_graphic.place(x=431, y=8)              # Clock's Relative Position on Monitor
-    
+    self.clock_graphic.place(x=431, y=8)  # Clock's Relative Position on Monitor
+
+'''
+TODO: Update code to reflect whether we are connected to wall or battery
+'''    
   def AC_power_state(self):
     connected = False
-    # can use \U000023FB and switch color to determine if disconencted or not
     if connected:
       return ' '
     else:
       return ''
     
     
-      
+  '''
+  TODO: Rename clock graphic to banner. Add UUID/mac address/save a config to banner to reflect unique incubator.
+  '''
   def update(self):
+    # Get current time
     self.currentTime = datetime.datetime.now(timezone(self.tz))
     
-    if self.currentTime != self.prevTime:
-      self.prevTime = self.currentTime
-      
-      self.clock_graphic.config( text= 'Date: ' + self.currentTime.strftime('%d-%b-%Y %I:%M %p') + str('        Power: {}'.format(self.AC_power_state())), 
+    # Display clock graphic and power status (TODO along with UUID)
+    self.clock_graphic.config( text= 'Date: ' + self.currentTime.strftime('%d-%b-%Y %I:%M %p') \
+       + str('        Power: {}'.format(self.AC_power_state())), 
                          fg='white',
                          bg=self.bgColor
                        )
+
+    # Read sensors and update graphics each heartbeat
     self.patientStats.update()
     self.machineStats.update()
     self.ambientStats.update()
     
+    # TODO: Replace clock graphic here with root and test
+    # Bind update function to TK object, call every 50 ms
+    # TODO: Get heartbeat from config
     self.clock_graphic.after(50, self.update)
 
 if __name__=='__main__':

@@ -1,23 +1,31 @@
+'''
+Author:
+Last Updated:
+Description:
+  Contains logic for reading all sensors and generating warnings.
+'''
+
 import random
 import pytz
 import time
 import pigpio
 from w1thermsensor import W1ThermSensor, Sensor
+
+# TODO: Move to configuration and rename (pin_name)
 snoozebut = 21
 power = 15 # if a 1 is receives, using main power; if 0, using battery power
 
 class Patient():
   pi1 = pigpio.pi()
-  setpointtemp = 32.0
-  tempreading = 0.0
-  alarmOn = False
-  timer = time.perf_counter()
-  tempSensor   = None
-  snooze   = False
+  set_point_temp = 0.0
+  skin_temp_reading = 0.0
+
+  alarm_on = False
+  snooze_timer = time.perf_counter()
+  is_snooze   = False
 
   def __init__(self):
-    tempSensor = 0
-    # snooze button is pin 16
+    # is_snooze button is pin 16
     self.pi1.set_mode(snoozebut, pigpio.INPUT)
     self.pi1.set_mode(6, pigpio.INPUT)
     self.pi1.set_mode(26, pigpio.INPUT)
@@ -28,7 +36,7 @@ class Patient():
     self.pi1.set_PWM_dutycycle(24,128)
     self.pi1.set_PWM_frequency(24,0000)
   def setpoint(self):
-      return self.setpointtemp
+      return self.set_point_temp
       
   def temperature(self):
       
@@ -43,43 +51,43 @@ class Patient():
           y = self.pi1.read(26)
           #print(i)
           if(x == 1 and val1 == False):
-              self.tempreading = ((3.3 * float(i) / 1000000) - 0.5) * 100
-              print("SkinTemp:",self.tempreading)
+              self.skin_temp_reading = ((3.3 * float(i) / 1000000) - 0.5) * 100
+              print("SkinTemp:",self.skin_temp_reading)
               val1 = True
           if(y == 1 and val2 == False):
-              self.setpointtemp = ((3.3 * float(i) / 1000000) - 0.5) * 100
-              print("SetPointTemp:",self.setpointtemp)
+              self.set_point_temp = ((3.3 * float(i) / 1000000) - 0.5) * 100
+              print("Set_Point_Temp:",self.set_point_temp)
               val2 = True
           if(val2 and val1):
               break
         
               
-      #self.setpointtemp = 35.0
-      #self.tempreading = 32.0
+      #self.set_point_temp = 35.0
+      #self.skin_temp_reading = 32.0
       
 
-      return self.tempreading
+      return self.skin_temp_reading
 
   def temp_warning(self):
     if self.pi1.read(snoozebut):
-        snooze = True
-        self.alarmOn = False
+        is_snooze = True
+        self.alarm_on = False
         self.pi1.set_PWM_frequency(24,0000)
-        self.timer = time.perf_counter()
+        self.snooze_timer = time.perf_counter()
         
-    temp = self.tempreading
+    temp = self.skin_temp_reading
     
-    print(str(temp) + str(self.alarmOn))
+    print(str(temp) + str(self.alarm_on))
         
 
     if temp > 39 or temp < 20:
-        if((self.snooze and time.perf_counter() - self.timer >= 120 ) or not self.snooze):
-            self.snooze = False
-            self.alarmOn = True
+        if((self.is_snooze and time.perf_counter() - self.snooze_timer >= 120 ) or not self.is_snooze):
+            self.is_snooze = False
+            self.alarm_on = True
             self.pi1.set_PWM_frequency(24,5000)
             return True
     else:
-        self.alarmOn = False
+        self.alarm_on = False
         self.pi1.set_PWM_frequency(24,0000)
         return False
     

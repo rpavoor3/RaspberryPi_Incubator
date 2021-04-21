@@ -94,7 +94,6 @@ class infant:
 
 
     def update(self):
-
          temp = self.machine_state.skin_temp_reading
          spoint = self.machine_state.set_point_reading
 

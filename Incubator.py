@@ -1,9 +1,9 @@
 from tkinter import *
-from newPatient import infant
+from PatientGraphics import infant
 import Sensors
-from newMachine import incubator
+from MachineGraphics import incubator
 from pytz import timezone
-from newAmbient import environment
+from AmbientGraphics import environment
 import glob, time, datetime
 from MonitorSettings import BG_COLOR,FONT_COLOR,TIMEZONE
 
@@ -99,6 +99,7 @@ TODO: Update code to reflect whether we are connected to wall or battery
                        )
 
     # Read sensors and update graphics each heartbeat
+    self.machine_state.update()
     self.patientStats.update()
     self.machineStats.update()
     self.ambientStats.update()

@@ -209,7 +209,7 @@ class MachineStatus():
         self.pi1.set_PWM_frequency(24,0) # mute    
 
 
-  def update_state(self):
+  def update(self):
     # read each sensor and update global variables
     analog_setpoint = self.patient.read_analog_temp_and_setpoint()
     self.skin_temp_reading = analog_setpoint[0]

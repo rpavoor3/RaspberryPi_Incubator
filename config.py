@@ -24,18 +24,23 @@ pin_LED3 = 1                # Green
 pin_LED4 = 7                # Blue
 
 """
-Skin Temperature Settings in Sensor.py
+Sensor Settings
 """
 # PWM Settings
 ADC_start_voltage = 200000  # starting range for skin temperature
 ADC_end_voltage = 1000000   # Ending range for skin temperature
 ADC_step = 1000             # Number of steps
 # Warning Settings
-skin_temp_thres_max = 39    # Minimum Skin Temperature Threshold Value
-skin_temp_thres_min = 20    # Maximum Skin Temperature Threshold Value
+skin_temp_thres_max = 39    # Maximum Skin Temperature Threshold Value
+skin_temp_thres_min = 20    # Minimum Skin Temperature Threshold Value
+
+amb_temp_thres_max = 40.5   # Maximum Ambient Temperature Threshold Value
+amb_temp_thres_min = 30.5   # Minimum Ambient Temperature Threshold Value
+
 
 """
-Speaker Settings
+Interface Settings
 """
 
 spkr_freq = 2000            # Frequency of the speaker sound
+snooze_length = 120          # Snooze Alarm time (in seconds)

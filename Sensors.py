@@ -10,8 +10,7 @@ import pytz
 import time
 import pigpio
 from w1thermsensor import W1ThermSensor, Sensor
-from config import pin_MUTE, pin_BATT_OFF, pin_ADC1_OUT,pin_ADC2_OUT,pin_ALARM_PWM,pin_LED1,pin_LED2,pin_LED3,pin_LED4
-spkr_freq,ADC_end_voltage,ADC_start_voltage,ADC_step, 
+from config import *
 
 class Patient_Sensors():
   pi1 = pigpio.pi()
@@ -21,7 +20,7 @@ class Patient_Sensors():
   alarm_on = False
   snooze_timer = time.perf_counter()
   snooze_on   = False
-
+  config.pin
   '''
   Initialize pin modes
   '''
@@ -59,7 +58,7 @@ class Patient_Sensors():
 
       for i in range(ADC_start_voltage, ADC_end_voltage, ADC_step):
           
-          self.pi1.hardware_PWM(18, 100000, i) # Loop through PWM 
+          self.pi1.hardware_PWM(pin_PWM_PI, 100000, i) # Loop through PWM 
           time.sleep(0.03) # Wait to settle
 
           temp_comparator = self.pi1.read(pin_ADC1_OUT) 

@@ -24,7 +24,11 @@ class Patient():
   snooze_timer = time.perf_counter()
   is_snooze   = False
 
+'''
+Initialize pin modes
+'''
   def __init__(self):
+    # TODO: Change hardcoded pins to config references
     # is_snooze button is pin 16
     self.pi1.set_mode(snoozebut, pigpio.INPUT)
     self.pi1.set_mode(6, pigpio.INPUT)
@@ -32,33 +36,40 @@ class Patient():
     self.pi1.set_mode(power, pigpio.INPUT)
     
     
-    # speaker PWM
+    # Initialize speaker PWM
+    #TODO change pins
     self.pi1.set_PWM_dutycycle(24,128)
-    self.pi1.set_PWM_frequency(24,0000)
+    self.pi1.set_PWM_frequency(24,0)
+  
+  # TODO: Change to get_setpoint (used in patient)
   def setpoint(self):
       return self.set_point_temp
       
-  def temperature(self):
+  def read_analog_temp_and_setpoint(self):
       
-      val1 = False
-      val2 = False
-      x = 0
-      y = 0
-      for i in range(200000, 1000000, 1000):
-          self.pi1.hardware_PWM(18, 100000, i)
-          time.sleep(0.03)
-          x = self.pi1.read(6)
-          y = self.pi1.read(26)
-          #print(i)
-          if(x == 1 and val1 == False):
+      temp_found = False
+      setpoint_found = False
+      temp_comparator = 0
+      setpoint_comparator = 0
+      for i in range(200000, 1000000, 1000): # TODO Config: starting, ending, interation
+          
+          self.pi1.hardware_PWM(18, 100000, i) # Loop through PWM 
+          time.sleep(0.03) # Wait to settle
+
+          temp_comparator = self.pi1.read(6) #TODO Pin numbers
+          setpoint_comparator = self.pi1.read(26)
+          
+          if(temp_comparator == 1 and temp_found == False):
               self.skin_temp_reading = ((3.3 * float(i) / 1000000) - 0.5) * 100
-              print("SkinTemp:",self.skin_temp_reading)
-              val1 = True
-          if(y == 1 and val2 == False):
+             # print("SkinTemp:",self.skin_temp_reading)
+              temp_found = True
+
+          if(setpoint_comparator == 1 and setpoint_found == False):
               self.set_point_temp = ((3.3 * float(i) / 1000000) - 0.5) * 100
-              print("Set_Point_Temp:",self.set_point_temp)
-              val2 = True
-          if(val2 and val1):
+             # print("Set_Point_Temp:",self.set_point_temp)
+              setpoint_found = True
+              
+          if(setpoint_found and temp_found):
               break
         
               
@@ -105,7 +116,7 @@ class Environment():
     #self.rhSensor   = DHT22(board.D16)
     self.tempSensor = 35
 
-  def temperature(self):
+  def read_analog_temp_and_setpoint(self):
       
       i = 0
       self.tempSensor = 0

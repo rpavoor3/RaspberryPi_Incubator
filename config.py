@@ -2,9 +2,9 @@
 Monitor Details
 """
 
-BG_COLOR = 'black'          # Background Color
-FONT_COLOR = 'white'        # changes color of all text
-TIMEZONE = 'US/Eastern'     # set timezone Replace with 'Africa/Accra'
+bg_color = 'black'          # Background Color
+font_color = 'white'        # changes color of all text
+timezone = 'US/Eastern'     # set timezone Replace with 'Africa/Accra'
 
 """
 Pin Assignments

@@ -1,6 +1,6 @@
 from tkinter import *
 from newPatient import infant
-import newSensors
+import Sensors
 from newMachine import incubator
 from pytz import timezone
 from newAmbient import environment
@@ -42,14 +42,17 @@ class Monitor:
     self.init_clock_graphic()
   
   def init_sensors(self):
-    self.patientSensors = newSensors.Patient()
-    self.ambientSensors = newSensors.Environment()
+    Sensors.MachineStatus()
+    '''
+    self.patientSensors = Sensors.Patient_Sensors()
+    self.ambientSensors = Sensors.Ambient_Sensors()
 
     # Pass in references to Patient and Ambient Sensors to alarm
-    self.alarm_status   = newSensors.MachineStatus(self.patientSensors, self.ambientSensors)
+    self.alarm_status   = Sensors.MachineStatus(self.patientSensors, self.ambientSensors)
+    '''
 
   def init_compartments(self):
-    # if statments to block out stuff
+    # For each stats object, intialize their graphics and attach their hardware components
     self.patientStats = infant(
                                 self.root, self.patientSensors,
                                 self.normalColor, self.bgColor

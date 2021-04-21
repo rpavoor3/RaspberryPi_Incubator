@@ -67,7 +67,8 @@ class environment:
     self.sensors = sensors
 
   def update(self):
-    self.temp.config( text='{0:.01f} °C'.format(self.sensors.temperature()),
+    self.sensors.read_digital_ambient_sensors()
+    self.temp.config( text='{0:.01f} °C'.format(self.sensors.get_average_temperature()),
                       fg=self.color,
                       bg=self.bg
                     )

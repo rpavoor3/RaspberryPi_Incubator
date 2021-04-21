@@ -8,7 +8,7 @@ class environment:
   rhLabel = None
   color   = None
   bg      = None
-  sensors = None
+  machine_state = None
   
   '''
     NOTE: The humidity readings are all commmented out; once that gets
@@ -16,7 +16,7 @@ class environment:
     uncommented to display the humidity
   '''
 
-  def __init__(self, masterScreen, sensors, color='green', bg='black'):
+  def __init__(self, masterScreen, machine_state, color='green', bg='black'):
     self.color = color
     self.bg    = bg
 
@@ -64,11 +64,10 @@ class environment:
     #self.rhLabel.pack()
     #self.rhLabel.place(x=24,y=45)
 
-    self.sensors = sensors
+    self.machine_state = machine_state
 
   def update(self):
-    self.sensors.read_digital_ambient_sensors()
-    self.temp.config( text='{0:.01f} °C'.format(self.sensors.get_average_temperature()),
+    self.temp.config( text='{0:.01f} °C'.format(self.machine_state.ambient_temp_avg),
                       fg=self.color,
                       bg=self.bg
                     )

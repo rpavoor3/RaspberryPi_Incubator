@@ -11,7 +11,7 @@ class incubator:
   bg          = None
   pi2         = pigpio.pi()
 
-  def __init__(self, masterScreen, status, color='purple', bg='black'):
+  def __init__(self, masterScreen, machine_state, color='purple', bg='black'):
     self.color = color
     self.bg    = bg
 
@@ -55,7 +55,7 @@ class incubator:
     self.hr.place(relx=0.65, rely=0.025)
     self.o2.pack(side=RIGHT)
 
-    self.status = status
+    self.machine_state = machine_state
     
 
     # 5 - red
@@ -63,7 +63,7 @@ class incubator:
     self.pi2.write(red, False)
 
   def update(self):                    # init all sensor readings at each clock tick
-    warnings = self.status.check_alarms()
+    warnings = self.machine_state.check_alarms()
     '''
     self.ac_pwr.config( text='Power: {}'.format(self.status.AC_power_state()),
                         fg='dark slate grey',
@@ -76,7 +76,7 @@ class incubator:
     else:
         self.color = 'green'
         
-    self.warnings.config( text='Alarm: {}'.format(self.status.textToDisplay),
+    self.warnings.config( text='Alarm: {}'.format(self.machine_state.textToDisplay),
                           fg=self.color,
                           bg=self.bg
                         )

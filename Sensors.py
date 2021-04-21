@@ -142,6 +142,8 @@ class Ambient_Sensors():
   '''
   def get_average_temperature():
 
+      self.read_digital_ambient_sensors()
+
       if (len(temp_reading_dict.values()) == 0):
         return -1
 
@@ -161,6 +163,10 @@ class Ambient_Sensors():
 Summarizes and reads all sensors
 '''
 class MachineStatus():
+
+  pi1 = pigpio.pi()
+  snooze_on = False
+  snooze_timer = time.perf_counter()
   
   patient = None
   ambient = None
@@ -170,7 +176,7 @@ class MachineStatus():
 
   set_point_reading = -1
   
-  ambient_temp_reading = -1
+  ambient_temp_avg = -1
   ambient_alarm_on = False
 
   textToDisplay = ""
@@ -178,6 +184,30 @@ class MachineStatus():
   def __init__(self):
     self.patient = Patient_Sensors()
     self.ambient = Ambient_Sensors()
+    self.pi1.set_mode(snoozebut, pigpio.INPUT)
+
+
+  def update_warning(self):
+
+    ambient_alarm_on = ambient_sensor_temp < 30.5 or ambient_sensor_temp > 40.5
+
+        # Is snooze button pressed? If so mute alarm and start timer
+    if self.pi1.read(snoozebut) and self.analog_alarm_on and not snooze_on:
+        self.snooze_on = True
+        self.analog_alarm_on = False
+        self.pi1.set_PWM_frequency(24,0) # Mute the alarm TODO: pin number
+        self.snooze_timer = time.perf_counter()
+    
+    if self.skin_temp_reading > 39 or self.skin_temp_reading < 20: # TODO: Config the temp ranges
+        # IF the alarm is not already on AND (IF the snooze button has been pressed and we are out of time, OR if the snooze is off), THEN turn alarm on if out of temp range
+        if(((self.snooze_on and time.perf_counter() - self.snooze_timer >= 120) or not self.snooze_on) and not analog_alarm_on):
+            self.snooze_on = False
+            self.analog_alarm_on = True
+            self.pi1.set_PWM_frequency(24,5000)  # turn alarm on # TODO: Config
+    else:
+        self.analog_alarm_on = False
+        self.pi1.set_PWM_frequency(24,0) # mute    
+
 
   def update_state(self):
     # read each sensor and update global variables
@@ -186,24 +216,26 @@ class MachineStatus():
     self.set_point_reading = analog_setpoint[1]
 
     # read ambient sensor
-    ambient_temp_reading = self.ambeint.
+    self.ambient_temp_avg = self.ambient.get_average_temperature()
+
+    self.update_warning()
+
+
   def check_alarms(self):
-                  
-    if (self.patient.alarm_hardware_control()) :
+    if (self.analog_alarm_on) :
         self.textToDisplay = "Check baby temp"
-    elif (self.ambient.alarm_hardware_control()):
+    elif (self.ambient_alarm_on):
         self.textToDisplay = "Check incubator temp"    
     else:
         self.textToDisplay = "All clear!"
     
     # falses are fill-in values for now     
-    warnings = [ alarm_hardware_control, 0, 0, 0, 0]
+    warnings = [self.analog_alarm_on or self.ambient_alarm_on, 0, 0, 0, 0]
     colors = [ self.get_color(w) for w in warnings]
     return colors
 
   def get_color(self, alarm):
     if alarm:
-        
       return 'red'
     else:
       return 'dark slate grey'

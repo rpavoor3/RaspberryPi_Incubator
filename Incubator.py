@@ -26,6 +26,7 @@ class Monitor:
   bgColor        = BG_COLOR
   tz             = TIMEZONE
   currentTime    = None   # Calculate time for updating
+  machineState   = None
 
   def __init__(self):
     # Initializing TKinter Window
@@ -42,7 +43,7 @@ class Monitor:
     self.init_clock_graphic()
   
   def init_sensors(self):
-    Sensors.MachineStatus()
+    self.machine_state = Sensors.MachineStatus()
     '''
     self.patientSensors = Sensors.Patient_Sensors()
     self.ambientSensors = Sensors.Ambient_Sensors()
@@ -54,14 +55,14 @@ class Monitor:
   def init_compartments(self):
     # For each stats object, intialize their graphics and attach their hardware components
     self.patientStats = infant(
-                                self.root, self.patientSensors,
+                                self.root, self.machine_state,
                                 self.normalColor, self.bgColor
                               )
     self.machineStats = incubator(
-                                    self.root, self.alarm_status, self.normalColor, self.bgColor
+                                    self.root, self.machine_state, self.normalColor, self.bgColor
                                  )
     self.ambientStats = environment(
-                                     self.root, self.ambientSensors,
+                                     self.root, self.machine_state,
                                      self.normalColor, self.bgColor
                                    )
 

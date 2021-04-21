@@ -25,7 +25,6 @@ class Patient_Sensors():
   Initialize pin modes
   '''
   def __init__(self):
-    # TODO: Change hardcoded pins to config references
     # snooze_on button is pin 16
     self.pi1.set_mode(pin_MUTE, pigpio.INPUT)
     self.pi1.set_mode(pin_ADC1_OUT, pigpio.INPUT)
@@ -34,11 +33,9 @@ class Patient_Sensors():
     
     
     # Initialize speaker PWM
-    #TODO change pins
     self.pi1.set_PWM_dutycycle(pin_ALARM_PWM,128)
     self.pi1.set_PWM_frequency(pin_ALARM_PWM,0)
   
-  # TODO: Change to get_setpoint (used in patient)
   def setpoint(self):
       return self.set_point_temp
   
@@ -107,7 +104,6 @@ class Ambient_Sensors():
 
       return self.temp_reading_dict
 
-      # readings.values().sum() / reading.values().len()
 
   '''
   Description: Averages reading dictionary for display.

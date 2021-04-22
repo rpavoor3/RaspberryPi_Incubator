@@ -20,7 +20,6 @@ class Patient_Sensors():
   alarm_on = False
   snooze_timer = time.perf_counter()
   snooze_on   = False
-  config.pin
   '''
   Initialize pin modes
   '''
@@ -52,7 +51,7 @@ class Patient_Sensors():
 
       self.skin_temp_reading = 0
       self.set_point_temp = 0
-
+      
       for i in range(ADC_start_voltage, ADC_end_voltage, ADC_step):
           
           self.pi1.hardware_PWM(pin_PWM_PI, 100000, i) # Loop through PWM 
@@ -98,25 +97,26 @@ class Ambient_Sensors():
   def read_digital_ambient_sensors(self):
       
       self.temp_reading_dict = {}
-
-      for sensor in W1ThermSensor.get_available_sensors([Sensor.DS18B20]):
-        readings[sensor.id] = sensor.get_temperature()
-
-      return self.temp_reading_dict
+      try:
+          
+          for sensor in W1ThermSensor.get_available_sensors([Sensor.DS18B20]):
+            self.temp_reading_dict[sensor.id] = sensor.get_temperature()
+      except :
+          return 
 
 
   '''
   Description: Averages reading dictionary for display.
   Returns: Average reading, -1 if no sensors
   '''
-  def get_average_temperature():
+  def get_average_temperature(self):
 
       self.read_digital_ambient_sensors()
 
-      if (len(temp_reading_dict.values()) == 0):
+      if (len(self.temp_reading_dict.values()) == 0):
         return -1
 
-      return sum(temp_reading_dict.values()) / len(temp_reading_dict.values())
+      return sum(self.temp_reading_dict.values()) / len(self.temp_reading_dict.values())
       
   '''
   Description: Is ambient sensor average in range? THIS CODE IS UNUSED
@@ -157,19 +157,21 @@ class MachineStatus():
 
 
   def update_warning(self):
+    print(self.skin_temp_reading)
+    print(self.skin_temp_reading > skin_temp_thres_min or self.skin_temp_reading < skin_temp_thres_max)
 
-    ambient_alarm_on = ambient_sensor_temp < amb_temp_thres_min or ambient_sensor_temp > amb_temp_thres_max
+self.ambient_alarm_on = self.ambient_temp_avg < amb_temp_thres_min or self.ambient_temp_avg > amb_temp_thres_max
 
         # Is snooze button pressed? If so mute alarm and start timer
-    if self.pi1.read(pin_MUTE) and self.analog_alarm_on and not snooze_on:
+    if self.pi1.read(pin_MUTE) and self.analog_alarm_on and not self.snooze_on:
         self.snooze_on = True
         self.analog_alarm_on = False
         self.pi1.set_PWM_frequency(pin_ALARM_PWM,0) # Mute the alarm
         self.snooze_timer = time.perf_counter()
     
-    if self.skin_temp_reading > skin_temp_thres_min or self.skin_temp_reading < skin_temp_thres_max: # TODO: Config the temp ranges
+    if self.skin_temp_reading < skin_temp_thres_min or self.skin_temp_reading > skin_temp_thres_max: # TODO: Config the temp ranges
         # IF the alarm is not already on AND (IF the snooze button has been pressed and we are out of time, OR if the snooze is off), THEN turn alarm on if out of temp range
-        if(((self.snooze_on and time.perf_counter() - self.snooze_timer >= snooze_length) or not self.snooze_on) and not analog_alarm_on):
+        if(((self.snooze_on and time.perf_counter() - self.snooze_timer >= snooze_length) or not self.snooze_on) and not self.analog_alarm_on):
             self.snooze_on = False
             self.analog_alarm_on = True
             self.pi1.set_PWM_frequency(pin_ALARM_PWM,spkr_freq)  # turn alarm on
@@ -181,8 +183,8 @@ class MachineStatus():
   def update(self):
     # read each sensor and update global variables
     analog_setpoint = self.patient.read_analog_temp_and_setpoint()
-    self.skin_temp_reading = analog_setpoint[0]
-    self.set_point_reading = analog_setpoint[1]
+    self.skin_temp_reading = analog_setpoint["Temperature"]
+    self.set_point_reading = analog_setpoint["Setpoint"]
 
     # read ambient sensor
     self.ambient_temp_avg = self.ambient.get_average_temperature()
@@ -196,7 +198,7 @@ class MachineStatus():
     elif (self.ambient_alarm_on):
         self.textToDisplay = "Check incubator temp"    
     else:
-        self.textToDisplay = "All clear!"
+        self.textToDisplay = "   All clear!"
     
     # falses are fill-in values for now     
     warnings = [self.analog_alarm_on or self.ambient_alarm_on, 0, 0, 0, 0]

@@ -44,6 +44,7 @@ class Monitor:
   
   def init_sensors(self):
     self.machine_state = Sensors.MachineStatus()
+    
     '''
     self.patientSensors = Sensors.Patient_Sensors()
     self.ambientSensors = Sensors.Ambient_Sensors()
@@ -51,7 +52,6 @@ class Monitor:
     # Pass in references to Patient and Ambient Sensors to alarm
     self.alarm_status   = Sensors.MachineStatus(self.patientSensors, self.ambientSensors)
     '''
-
   def init_compartments(self):
     # For each stats object, intialize their graphics and attach their hardware components
     self.patientStats = infant(
@@ -66,16 +66,16 @@ class Monitor:
                                      self.normalColor, self.bgColor
                                    )
 
-'''
-Display time and date
-'''
+    '''
+    Display time and date
+    '''
   def init_clock_graphic(self):
     self.clock_graphic = Label(self.root, font=('fixed', 12))
     self.clock_graphic.place(x=431, y=8)  # Clock's Relative Position on Monitor
 
-'''
-TODO: Update code to reflect whether we are connected to wall or battery
-'''    
+    '''
+    TODO: Update code to reflect whether we are connected to wall or battery
+    '''    
   def AC_power_state(self):
     connected = False
     if connected:

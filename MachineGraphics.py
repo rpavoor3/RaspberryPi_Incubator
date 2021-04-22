@@ -71,17 +71,16 @@ class incubator:
                       )
                       '''
     
-    if(self.status.textToDisplay != 'All clear!'):
+    if(self.machine_state.textToDisplay != '   All clear!'):
         self.color = 'red'
     else:
         self.color = 'green'
         
-    self.warnings.config( text='Alarm: {}'.format(self.machine_state.textToDisplay),
+    self.warnings.config( text='  Alarm: {}'.format(self.machine_state.textToDisplay),
                           fg=self.color,
                           bg=self.bg
                         )
 
-    pray = u'\u1F321'
     self.temp.config( text=' ',
                       fg=warnings[0],
                       bg=self.bg

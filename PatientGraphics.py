@@ -94,8 +94,8 @@ class infant:
 
 
     def update(self):
-         temp = self.machine_state.skin_temp_reading
-         spoint = self.machine_state.set_point_reading
+        temp = self.machine_state.skin_temp_reading
+        spoint = self.machine_state.set_point_reading
 
         self.temp.config(text='{0:.01f} °C'.format(temp),
                          fg=self.color,

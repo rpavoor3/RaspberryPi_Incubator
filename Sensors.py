@@ -25,15 +25,15 @@ class Patient_Sensors():
   '''
   def __init__(self):
     # snooze_on button is pin 16
-    self.pi1.set_mode(pin_MUTE, pigpio.INPUT)
-    self.pi1.set_mode(pin_ADC1_OUT, pigpio.INPUT)
-    self.pi1.set_mode(pin_ADC2_OUT, pigpio.INPUT)
-    self.pi1.set_mode(pin_BATT_OFF, pigpio.INPUT) # if a 1 is receives, using main power; if 0, using battery power
+    self.pi1.set_mode(PIN_MUTE, pigpio.INPUT)
+    self.pi1.set_mode(PIN_ADC1_OUT, pigpio.INPUT)
+    self.pi1.set_mode(PIN_ADC2_OUT, pigpio.INPUT)
+    self.pi1.set_mode(PIN_BATT_OFF, pigpio.INPUT) # if a 1 is receives, using main power; if 0, using battery power
     
     
     # Initialize speaker PWM
-    self.pi1.set_PWM_dutycycle(pin_ALARM_PWM,128)
-    self.pi1.set_PWM_frequency(pin_ALARM_PWM,0)
+    self.pi1.set_PWM_dutycycle(PIN_ALARM_PWM,128)
+    self.pi1.set_PWM_frequency(PIN_ALARM_PWM,0)
   
   def setpoint(self):
       return self.set_point_temp
@@ -52,13 +52,13 @@ class Patient_Sensors():
       self.skin_temp_reading = 0
       self.set_point_temp = 0
       
-      for i in range(ADC_start_voltage, ADC_end_voltage, ADC_step):
+      for i in range(ADC_START_VOLTAGE, ADC_END_VOLTAGE, ADC_STEP):
           
-          self.pi1.hardware_PWM(pin_PWM_PI, 100000, i) # Loop through PWM 
+          self.pi1.hardware_PWM(PIN_PWM_PI, 100000, i) # Loop through PWM 
           time.sleep(0.03) # Wait to settle
 
-          temp_comparator = self.pi1.read(pin_ADC1_OUT) 
-          setpoint_comparator = self.pi1.read(pin_ADC2_OUT)
+          temp_comparator = self.pi1.read(PIN_ADC1_OUT) 
+          setpoint_comparator = self.pi1.read(PIN_ADC2_OUT)
           
           # Read for analog temp sensor
           if(temp_comparator == 1 and temp_found == False):
@@ -153,31 +153,31 @@ class MachineStatus():
   def __init__(self):
     self.patient = Patient_Sensors()
     self.ambient = Ambient_Sensors()
-    self.pi1.set_mode(pin_MUTE, pigpio.INPUT)
+    self.pi1.set_mode(PIN_MUTE, pigpio.INPUT)
 
 
   def update_warning(self):
     print(self.skin_temp_reading)
-    print(self.skin_temp_reading > skin_temp_thres_min or self.skin_temp_reading < skin_temp_thres_max)
+    print(self.skin_temp_reading > SKIN_TEMP_THRES_MIN or self.skin_temp_reading < SKIN_TEMP_THRES_MAX)
 
 self.ambient_alarm_on = self.ambient_temp_avg < amb_temp_thres_min or self.ambient_temp_avg > amb_temp_thres_max
 
         # Is snooze button pressed? If so mute alarm and start timer
-    if self.pi1.read(pin_MUTE) and self.analog_alarm_on and not self.snooze_on:
+    if self.pi1.read(PIN_MUTE) and self.analog_alarm_on and not self.snooze_on:
         self.snooze_on = True
         self.analog_alarm_on = False
-        self.pi1.set_PWM_frequency(pin_ALARM_PWM,0) # Mute the alarm
+        self.pi1.set_PWM_frequency(PIN_ALARM_PWM,0) # Mute the alarm
         self.snooze_timer = time.perf_counter()
     
-    if self.skin_temp_reading < skin_temp_thres_min or self.skin_temp_reading > skin_temp_thres_max: # TODO: Config the temp ranges
+    if self.skin_temp_reading < SKIN_TEMP_THRES_MIN or self.skin_temp_reading > SKIN_TEMP_THRES_MAX: # TODO: Config the temp ranges
         # IF the alarm is not already on AND (IF the snooze button has been pressed and we are out of time, OR if the snooze is off), THEN turn alarm on if out of temp range
         if(((self.snooze_on and time.perf_counter() - self.snooze_timer >= snooze_length) or not self.snooze_on) and not self.analog_alarm_on):
             self.snooze_on = False
             self.analog_alarm_on = True
-            self.pi1.set_PWM_frequency(pin_ALARM_PWM,spkr_freq)  # turn alarm on
+            self.pi1.set_PWM_frequency(PIN_ALARM_PWM,SPKR_FREQ)  # turn alarm on
     else:
         self.analog_alarm_on = False
-        self.pi1.set_PWM_frequency(pin_ALARM_PWM,0) # mute    
+        self.pi1.set_PWM_frequency(PIN_ALARM_PWM,0) # mute    
 
 
   def update(self):

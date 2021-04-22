@@ -2,10 +2,10 @@ from tkinter import *
 from PIL import Image, ImageTk
 import time
 import pigpio
-
-blue = 22
-orange = 17
-green = 27
+from config import PIN_LED1,PIN_LED2,PIN_LED3
+blue = PIN_LED1
+orange = PIN_LED2
+green = PIN_LED3
 
 class infant:
     root = None

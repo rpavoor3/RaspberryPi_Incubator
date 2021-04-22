@@ -2,45 +2,40 @@
 Monitor Details
 """
 
-bg_color = 'black'          # Background Color
-font_color = 'white'        # changes color of all text
-timezone = 'US/Eastern'     # set timezone Replace with 'Africa/Accra'
+BG_COLOR = 'black'          # Background Color
+FONT_COLOR = 'white'        # changes color of all text
+TIMEZONE = 'US/Eastern'     # set timezone Replace with 'Africa/Accra'
 
 """
 Pin Assignments
 """
 
 # ambient temp not explicitly written DTMP_PI = 21
-pin_MUTE = 21               # Snooze Button
-pin_PWM_PI = 13             # Comparator PWM
-pin_ALARM_PWM = 10          # Speaker
-pin_BATT_OFF = 22           # Power Source
-pin_ADC1_OUT = 6            # Setpoint (User Reading)
-pin_ADC2_OUT = 19           # Temperature
-pin_PI_HEAT = 26            # Digital Temperature Control
-pin_LED1 = 16               # Red
-pin_LED2 = 12               # Orange/Yellow
-pin_LED3 = 1                # Green
-pin_LED4 = 7                # Blue
+PIN_MUTE = 21               # Snooze Button
+PIN_PWM_PI = 13             # Comparator PWM
+PIN_ALARM_PWM = 10          # Speaker
+PIN_BATT_OFF = 22           # Power Source
+PIN_ADC1_OUT = 6            # Setpoint (User Reading)
+PIN_ADC2_OUT = 19           # Temperature
+PIN_PI_HEAT = 26            # Digital Temperature Control TODO
+PIN_LED1 = 16               # Red
+PIN_LED2 = 12               # Orange/Yellow
+PIN_LED3 = 1                # Green
+PIN_LED4 = 7                # Blue
 
 """
-Sensor Settings
+Skin Temperature Settings in Sensor.py
 """
 # PWM Settings
-ADC_start_voltage = 200000  # starting range for skin temperature
-ADC_end_voltage = 1000000   # Ending range for skin temperature
-ADC_step = 1000             # Number of steps
+ADC_START_VOLTAGE = 200000  # starting range for skin temperature
+ADC_END_VOLTAGE = 1000000   # Ending range for skin temperature
+ADC_STEP = 1000             # Number of steps
 # Warning Settings
-skin_temp_thres_max = 39.5    # Maximum Skin Temperature Threshold Value
-skin_temp_thres_min = 19.5    # Minimum Skin Temperature Threshold Value
-
-amb_temp_thres_max = 30.5   # Maximum Ambient Temperature Threshold Value
-amb_temp_thres_min = 19.5   # Minimum Ambient Temperature Threshold Value
-
+SKIN_TEMP_THRES_MAX = 39    # Minimum Skin Temperature Threshold Value
+SKIN_TEMP_THRES_MIN = 20    # Maximum Skin Temperature Threshold Value
 
 """
-Interface Settings
+Speaker Settings
 """
 
-spkr_freq = 2000            # Frequency of the speaker sound
-snooze_length = 120          # Snooze Alarm time (in seconds)
+SPKR_FREQ = 2000            # Frequency of the speaker sound

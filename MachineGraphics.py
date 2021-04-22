@@ -1,7 +1,7 @@
 from tkinter import *
 import pigpio
-
-red = 5
+from config import PIN_LED4
+red = PIN_LED4
 class incubator:
   root        = None
   #ac_pwr      = None

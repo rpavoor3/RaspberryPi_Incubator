@@ -35,8 +35,6 @@ class Patient_Sensors():
     self.pi1.set_PWM_dutycycle(PIN_ALARM_PWM,128)
     self.pi1.set_PWM_frequency(PIN_ALARM_PWM,0)
   
-  def setpoint(self):
-      return self.set_point_temp
   
   '''
   Function to use the PWM ADC Comparator Circuit to read the analog temperature sensor and the set point potentiometer
@@ -117,16 +115,6 @@ class Ambient_Sensors():
         return -1
 
       return sum(self.temp_reading_dict.values()) / len(self.temp_reading_dict.values())
-      
-  '''
-  Description: Is ambient sensor average in range? THIS CODE IS UNUSED
-  '''    
-  def ambient_temp_alarm(self):
-    ambient_sensor_temp = self.get_average_temperature()
-    if(ambient_sensor_temp < amb_temp_thres_min or ambient_sensor_temp > amb_temp_thres_max):
-        return True
-    else: 
-        return False
 
 '''
 Summarizes and reads all sensors

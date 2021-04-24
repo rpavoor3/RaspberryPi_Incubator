@@ -5,7 +5,7 @@ from MachineGraphics import incubator
 from pytz import timezone
 from AmbientGraphics import environment
 import glob, time, datetime
-from MonitorSettings import BG_COLOR,FONT_COLOR,TIMEZONE
+from config import BG_COLOR,FONT_COLOR,TIMEZONE
 
 # TODO: ADD HEATING ELEMENT CODE AND OBJECT
 

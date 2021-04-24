@@ -1,10 +1,9 @@
 from tkinter import *
 import pigpio
 from config import PIN_LED4
-red = PIN_LED4
+red_led = PIN_LED4
 class incubator:
   root        = None
-  #ac_pwr      = None
   alarm_state = True
   warnings    = None
   color       = None
@@ -28,7 +27,6 @@ class incubator:
     self.root.place(x=408, y=252, height=212, width=376)
 
     # init frame labels
-    #self.ac_pwr  = Label(self.root, font=('fixed', 20))
     self.alarm_status = Label(self.root, font=('fixed', 14))
     self.warnings = LabelFrame( self.root, 
                                 padx=10, pady=10,
@@ -43,7 +41,6 @@ class incubator:
 
 
     # pack and place on screen
-    #self.ac_pwr.pack()
     self.warnings.pack(fill='x')
 
     self.temp.pack(side=LEFT)
@@ -58,9 +55,9 @@ class incubator:
     self.machine_state = machine_state
     
 
-    # 5 - red
-    self.pi2.set_mode(red, pigpio.OUTPUT)
-    self.pi2.write(red, False)
+    # 5 - red_led
+    self.pi2.set_mode(red_led, pigpio.OUTPUT)
+    self.pi2.write(red_led, False)
 
   def update(self):                    # init all sensor readings at each clock tick
     warnings = self.machine_state.check_alarms()
@@ -89,9 +86,9 @@ class incubator:
     # update the warnings in newSensors.py for these values and then ,odify this part
     
     if(warnings[1] or (warnings[2] or warnings[3] or warnings[4] )):
-        self.pi2.write(red, True)
+        self.pi2.write(red_led, True)
     else :
-        self.pi2.write(red, False)
+        self.pi2.write(red_led, False)
     
 
     self.humidity.config( text='',

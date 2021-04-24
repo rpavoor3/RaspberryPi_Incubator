@@ -3,26 +3,20 @@ from PIL import Image, ImageTk
 import time
 import pigpio
 from config import PIN_LED1,PIN_LED2,PIN_LED3
-blue = PIN_LED1
-orange = PIN_LED2
-green = PIN_LED3
+blue_led = PIN_LED1
+orange_led = PIN_LED2
+green_led = PIN_LED3
 
 class infant:
     root = None
     hdr_font = None
     body_font = None
     stats = None
-    bpm = None
     temp = None
     setpoint = None
-    o2sat = None
-    weight = None
-    heart_rate = None
     color = None
     tLabel = None
-    o2Label = None
     spLabel = None
-    wLabel = None
     bg = None
     machine_state = None
     pi3     = pigpio.pi()
@@ -82,15 +76,15 @@ class infant:
         self.spLabel.place(x=20, y=55)
         self.machine_state = machine_state
         
-           # 17 is Orange LED 22-blue, 5-r
-        self.pi3.set_mode(orange, pigpio.OUTPUT)
-        self.pi3.write(orange, False)
-        # 27 - green
-        self.pi3.set_mode(green, pigpio.OUTPUT)
-        self.pi3.write(green, False)
-        # 22 - blue
-        self.pi3.set_mode(blue, pigpio.OUTPUT)
-        self.pi3.write(blue, False) 
+
+        self.pi3.set_mode(orange_led, pigpio.OUTPUT)
+        self.pi3.write(orange_led, False)
+
+        self.pi3.set_mode(green_led, pigpio.OUTPUT)
+        self.pi3.write(green_led, False)
+
+        self.pi3.set_mode(blue_led, pigpio.OUTPUT)
+        self.pi3.write(blue_led, False) 
 
 
     def update(self):
@@ -105,20 +99,20 @@ class infant:
                          fg=self.color,
                          bg=self.bg
             )
-        # temperature is just right - green
+        # temperature is just right - green_led
         if temp == spoint:
-           self.pi3.write(green, True)
+           self.pi3.write(green_led, True)
         else:
-           self.pi3.write(green, False)
-        # temperaure is too warm - orange
+           self.pi3.write(green_led, False)
+        # temperaure is too warm - orange_led
         if temp > spoint:
-           self.pi3.write(orange, True)
+           self.pi3.write(orange_led, True)
         else:
-           self.pi3.write(orange, False)
-        # temperature is too cool - blue
+           self.pi3.write(orange_led, False)
+        # temperature is too cool - blue_led
         if temp < spoint:
-            self.pi3.write(blue, True)
+            self.pi3.write(blue_led, True)
         else:
-           self.pi3.write(blue, False)
+           self.pi3.write(blue_led, False)
            
 

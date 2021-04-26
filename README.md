@@ -10,4 +10,4 @@
 * pip modules:
   * PIL
   * pytz
-  * w1thermoeter
+  * w1thermsensor

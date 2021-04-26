@@ -47,9 +47,9 @@ class Patient_Sensors():
       temp_comparator = 0
       setpoint_comparator = 0
 
-      self.skin_temp_reading = 0
-      self.set_point_temp = 0
-      
+      self.skin_temp_reading = random.randint(20, 40) # test replaced 0  
+      self.set_point_temp = random.randint(30, 40) #test replaced 0 
+      """
       for i in range(ADC_START_VOLTAGE, ADC_END_VOLTAGE, ADC_STEP):
           
           self.pi1.hardware_PWM(PIN_PWM_PI, 100000, i) # Loop through PWM 
@@ -75,7 +75,7 @@ class Patient_Sensors():
 
       if (not(setpoint_found) or not(temp_found)):
         print("Unable to read")
-
+      """
       return {"Temperature" : self.skin_temp_reading, "Setpoint" : self.set_point_temp}
 
     
@@ -95,12 +95,15 @@ class Ambient_Sensors():
   def read_digital_ambient_sensors(self):
       
       self.temp_reading_dict = {}
+      """
       try:
           
           for sensor in W1ThermSensor.get_available_sensors([Sensor.DS18B20]):
             self.temp_reading_dict[sensor.id] = sensor.get_temperature()
       except :
           return 
+      """
+      self.temp_reading_dict['Test'] = random.randint(25,40) # test remove line
 
 
   '''

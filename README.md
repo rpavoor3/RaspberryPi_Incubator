@@ -11,3 +11,6 @@
   * PIL
   * pytz
   * w1thermsensor
+
+
+onewire, script to auto run code, restart pi if more than one ambient temp sensor is added 

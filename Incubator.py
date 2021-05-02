@@ -5,7 +5,8 @@ from MachineGraphics import incubator
 from pytz import timezone
 from AmbientGraphics import environment
 import glob, time, datetime
-from config import BG_COLOR,FONT_COLOR,TIMEZONE
+import pigpio
+from config import BG_COLOR,FONT_COLOR,TIMEZONE, PIN_POWER
 
 # TODO: ADD HEATING ELEMENT CODE AND OBJECT
 
@@ -27,6 +28,7 @@ class Monitor:
   tz             = TIMEZONE
   currentTime    = None   # Calculate time for updating
   machineState   = None
+  pi4            = pigpio.pi()
 
   def __init__(self):
     # Initializing TKinter Window
@@ -41,6 +43,10 @@ class Monitor:
     # Inititalize remaining graphics
     self.init_compartments()
     self.init_clock_graphic()
+    
+    self.pi4.set_mode(PIN_POWER, pigpio.INPUT)
+    
+    
   
   def init_sensors(self):
     self.machine_state = Sensors.MachineStatus()
@@ -77,7 +83,7 @@ class Monitor:
     TODO: Update code to reflect whether we are connected to wall or battery
     '''    
   def AC_power_state(self):
-    connected = False
+    connected = self.pi4.read(PIN_POWER)
     if connected:
       return ' '
     else:

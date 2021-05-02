@@ -25,7 +25,6 @@ class Patient_Sensors():
   '''
   def __init__(self):
     # snooze_on button is pin 16
-    self.pi1.set_mode(PIN_MUTE, pigpio.INPUT)
     self.pi1.set_mode(PIN_ADC1_OUT, pigpio.INPUT)
     self.pi1.set_mode(PIN_ADC2_OUT, pigpio.INPUT)
     self.pi1.set_mode(PIN_BATT_OFF, pigpio.INPUT) # if a 1 is receives, using main power; if 0, using battery power
@@ -146,10 +145,8 @@ class MachineStatus():
 
 
   def update_warning(self):
-    print(self.skin_temp_reading)
-    print(self.skin_temp_reading > SKIN_TEMP_THRES_MIN or self.skin_temp_reading < SKIN_TEMP_THRES_MAX)
 
-self.ambient_alarm_on = self.ambient_temp_avg < amb_temp_thres_min or self.ambient_temp_avg > amb_temp_thres_max
+    self.ambient_alarm_on = self.ambient_temp_avg < AMB_TEMP_THRES_MIN or self.ambient_temp_avg > AMB_TEMP_THRES_MAX
 
         # Is snooze button pressed? If so mute alarm and start timer
     if self.pi1.read(PIN_MUTE) and self.analog_alarm_on and not self.snooze_on:
@@ -160,7 +157,7 @@ self.ambient_alarm_on = self.ambient_temp_avg < amb_temp_thres_min or self.ambie
     
     if self.skin_temp_reading < SKIN_TEMP_THRES_MIN or self.skin_temp_reading > SKIN_TEMP_THRES_MAX: # TODO: Config the temp ranges
         # IF the alarm is not already on AND (IF the snooze button has been pressed and we are out of time, OR if the snooze is off), THEN turn alarm on if out of temp range
-        if(((self.snooze_on and time.perf_counter() - self.snooze_timer >= snooze_length) or not self.snooze_on) and not self.analog_alarm_on):
+        if(((self.snooze_on and time.perf_counter() - self.snooze_timer >= SNOOZE_LENGTH) or not self.snooze_on) and not self.analog_alarm_on):
             self.snooze_on = False
             self.analog_alarm_on = True
             self.pi1.set_PWM_frequency(PIN_ALARM_PWM,SPKR_FREQ)  # turn alarm on

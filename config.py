@@ -20,8 +20,12 @@ PIN_ADC2_OUT = 19           # Temperature
 PIN_PI_HEAT = 26            # Digital Temperature Control TODO
 PIN_LED1 = 16               # Red
 PIN_LED2 = 12               # Orange/Yellow
-PIN_LED3 = 1                # Green
+# TODO: PIN_LED3 is actually pointing to pin 1 on the PCB but this needs to be changed
+PIN_LED3 = 5                # Green
 PIN_LED4 = 7                # Blue
+
+PIN_POWER = 22              # Indicates whether or not the power is connected to main power or backup power
+
 
 """
 Skin Temperature Settings in Sensor.py
@@ -33,9 +37,15 @@ ADC_STEP = 1000             # Number of steps
 # Warning Settings
 SKIN_TEMP_THRES_MAX = 39    # Minimum Skin Temperature Threshold Value
 SKIN_TEMP_THRES_MIN = 20    # Maximum Skin Temperature Threshold Value
+#TODO: these values need to be double checked
+AMB_TEMP_THRES_MIN = 30     # Minimum Ambient(Incubator) Temperture Threshold Value
+AMB_TEMP_THRES_MAX = 40     # Maximum Ambient(Incubator) Temperture Threshold Value
+
 
 """
 Speaker Settings
 """
 
 SPKR_FREQ = 2000            # Frequency of the speaker sound
+SNOOZE_LENGTH = 120         # Indicates how long the snooze button should last (in seconds)
+

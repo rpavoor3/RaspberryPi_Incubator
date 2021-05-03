@@ -16,9 +16,10 @@
 
 
 ## Configuring Pi
+
 - In the raspberry pi configurations, 
 on the interfaces tab, "serial port" and "1-wire" should both be enabled. 
-
+# Ambient Temp
 - The w1thermsensor is the python module for the ambient temperature sensor.
 By default the pin is set to GPIO 4,however this differs from the pin on the PCB.
 To change the gpio pin for the ambient temperature sensor do the following in terminal:
@@ -27,7 +28,7 @@ To change the gpio pin for the ambient temperature sensor do the following in te
 3. Change "gpiopin=4" to "gpiopin=20" **NOTE: GPIO pin and Pi Pin on PCB are completely different**
 4. Save changes and close file 
 5. Reboot Pi.
-## Start-Up
+# Start-Up
 To help with auto-running the GUI do the follwing once terminal is open on the pi:
 1. Type "sudo nano /etc/rc.local" to edit the local file.
 2. Scroll all the way to the bottom of the file. Right before the "exit 0" and after "fi" type "sudo pigpiod". Save changes and close file.
@@ -39,3 +40,5 @@ Exec=/usr/bin/python3 /home/pi/RaspPi_VitalsMonitor/Incubator.py
 5. Save changes and close file
 6. Reboot your Pi and the Incubator GUI display will pop up.
 **NOTE:** The GUI starts off waiting for input from the skin temp sensor. If not set up it will never turn on.
+
+## Future Works

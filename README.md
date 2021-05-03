@@ -14,12 +14,27 @@
 
 
 onewire, script to auto run code, restart pi if more than one ambient temp sensor is added 
+## Configuring Pi
+- In the raspberry pi configurations, 
+on the interfaces tab, "serial port" and "1-wire" should both be enabled. 
 
+- The w1thermsensor is the python module for the ambient temperature sensor.
+By default the pin is set to GPIO 4,however this differs from the pin on the PCB.
+To change the gpio pin for the ambient temperature sensor do the following in terminal:
+1. Type "sudo nano /boot/config.txt"
+2. Scroll until "dtoverlay=w1-gpio,gpiopin=4" is shown.
+3. Change "gpiopin=4" to "gpiopin=20"
+4. Save changes and close file 
+5. Reboot Pi.
 ## Start-Up
-To help with auto-running the GUI do the following on the command terminal of the pi:
+To help with auto-running the GUI do the follwing once terminal is open on the pi:
 1. Type "sudo nano /etc/rc.local" to edit the local file.
-2. Scroll all the way to the bottom of the file. Right before the "exit 0" type "sudo pigpiod". Close file and save changes.
-3. Type "sudo crontab -e"
-4. Once again scroll all the way to the bottom of the file. 
-Type "@reboot python3 /home/{path-to-Raspi_VitalsMonitor}/Incubator.py &." Close file and save changes.
-5. Reboot your Pi and the Incubator GUI display will pop up.
+2. Scroll all the way to the bottom of the file. Right before the "exit 0" and after "fi" type "sudo pigpiod". Save changes and close file.
+3. Back on the terminal type "sudo nano /etc/xdg/autostart/display.desktop"
+4. In the file edit,then copy and paste the following:
+[Desktop Entry]
+Name=RaspPi_VitalsMonitor
+Exec=/usr/bin/python3 /home/pi/RaspPi_VitalsMonitor/Incubator.py 
+5. Save changes and close file
+6. Reboot your Pi and the Incubator GUI display will pop up.
+**NOTE:** The GUI starts off waiting for input from the skin temp sensor. If not set up it will never turn on.

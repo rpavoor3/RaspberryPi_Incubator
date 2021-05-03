@@ -24,7 +24,7 @@ By default the pin is set to GPIO 4,however this differs from the pin on the PCB
 To change the gpio pin for the ambient temperature sensor do the following in terminal:
 1. Type "sudo nano /boot/config.txt"
 2. Scroll until "dtoverlay=w1-gpio,gpiopin=4" is shown.
-3. Change "gpiopin=4" to "gpiopin=20"
+3. Change "gpiopin=4" to "gpiopin=20" **NOTE: GPIO pin and Pi Pin on PCB are completely different**
 4. Save changes and close file 
 5. Reboot Pi.
 ## Start-Up

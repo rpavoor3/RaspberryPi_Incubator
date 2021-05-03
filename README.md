@@ -11,6 +11,7 @@
   * PIL
   * pytz
   * w1thermsensor
+
 *Also included is a requirements.txt which will install all modules as well as the specifc version used to run this GUI*
 
 

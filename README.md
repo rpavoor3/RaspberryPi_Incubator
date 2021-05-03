@@ -11,9 +11,9 @@
   * PIL
   * pytz
   * w1thermsensor
+*Also included is a requirements.txt which will install all modules as well as the specifc version used to run this GUI*
 
 
-onewire, script to auto run code, restart pi if more than one ambient temp sensor is added 
 ## Configuring Pi
 - In the raspberry pi configurations, 
 on the interfaces tab, "serial port" and "1-wire" should both be enabled. 

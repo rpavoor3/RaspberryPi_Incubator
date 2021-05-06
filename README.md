@@ -1,6 +1,7 @@
 # RasPi VitalsMonitor
-Please go to the link below and follow the instructions to flash the Raspberry Pi with the latest version of the Raspberry Pi OS with Desktop. 
+Please go to the link below and follow the instructions to flash a SD card with the latest version of the Raspberry Pi OS with Desktop. 
 Its best to use an SD card with storage > 8GB
+
 https://projects.raspberrypi.org/en/projects/raspberry-pi-setting-up
 ## Current packages and pip modules needed on pi
 * apt packages ("sudo apt-get install ..."):

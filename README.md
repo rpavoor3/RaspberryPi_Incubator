@@ -45,3 +45,6 @@ Exec=/usr/bin/python3 /home/pi/RaspPi_VitalsMonitor/Incubator.py
 **NOTE:** The GUI starts off waiting for input from the skin temp sensor. If not set up it will never turn on.
 
 # Future Works
+* Implement more sensors to incubator
+* Create method to collect data from multiple incubators
+* Find better method for symbols other than using unicode characters 

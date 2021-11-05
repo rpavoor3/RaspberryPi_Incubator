@@ -72,8 +72,11 @@ class Patient_Sensors():
           if(setpoint_found and temp_found):
               break
 
-      if (not(setpoint_found) or not(temp_found)):
-        print("Unable to read")
+      if not(temp_found):
+        print("Unable to read skin sensor")
+      if not (setpoint_found):
+        print("Unable to read ambient temperature")
+          
   
       return {"Temperature" : self.skin_temp_reading, "Setpoint" : self.set_point_temp}
 
@@ -104,7 +107,7 @@ class Ambient_Sensors():
       
 
   '''
-  Description: Averages reading dictionary for display.
+  Description: Gets the average of the ambient temperature sensors
   Returns: Average reading, -1 if no sensors
   '''
   def get_average_temperature(self):

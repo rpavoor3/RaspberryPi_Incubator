@@ -5,8 +5,6 @@ from fillervals import TEMP,SPOINT
 
 class infant:
     root = None
-    hdr_font = None
-    body_font = None
     stats = None
     temp = None
     setpoint = None
@@ -16,9 +14,7 @@ class infant:
     bg = None
     machine_state = None
 
-    def __init__(self, masterScreen, machine_state, color='green', bg='black', hdr_font=32,body_font=14):
-        self.hdr_font = hdr_font
-        self.body_font = body_font
+    def __init__(self, masterScreen, machine_state, color='green', bg='black'):
         self.color = color
         self.bg = bg
 
@@ -29,19 +25,18 @@ class infant:
                                highlightbackground='dark slate grey',
                                highlightcolor='dark slate grey',
                                highlightthickness=8,
-                               padx=0, pady=0
+                               padx=10, pady=0
                                )
 
         self.root.pack()  # pack and place on screen
-        self.root.place(x=16, y=20, height=220, width=376)
-
+        self.root.place(x=16, y=20, height=220, width=375)
         self.stats = LabelFrame(self.root,  # init stats frame
                                 bd=0, bg=self.bg,
                                 padx=10, pady=0
                                 )
 
         self.stats.pack()  # pack and place on screen
-        self.stats.place(x=64, y=0, height=150, width=325)
+        self.stats.place(x=140, y=0, height=150, width=150)
 
         # init frame labels
         self.temp = Label(self.stats, font=('fixed', 24))

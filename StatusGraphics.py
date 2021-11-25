@@ -1,6 +1,7 @@
 from tkinter import *
-from fillervals import STATUS, STATE, HEATING, SNOOZE
-class incubator:
+import time
+from fillervals import STATUS, STATE, HEATING, SNOOZE, SNOOZE_TIMER
+class status:
   root        = None
   alarm_state = True
   status      = None
@@ -30,12 +31,13 @@ class incubator:
                                 bd=0, font=('fit', 16)
                               )
     self.status.pack()
-    self.state = Label(self.root, font=('fixed', 16))
+    self.state = Label(self.root,
+                          font=('fixed', 16))
     self.stateL = Label(self.root,
                             text='Status:',
                             fg=self.color,
                             bd=0, bg=self.bg,
-                            font=('fixed', 16),
+                            font=('fixed', 18, 'bold'),
                             padx=0, pady=0
                             )
     self.heating = Label(self.root,
@@ -61,16 +63,19 @@ class incubator:
 
 
     # pack and place on screen
+    self.state.pack()
+    self.state.place(x=20, y=10)
     self.stateL.pack()
-    self.stateL.place(x=20, y=10)
+    self.stateL.place(x=135, y=10)
     self.heating.pack()
-    self.heating.place(x=20, y=75)
+    self.heating.place(x=20, y=85)
     self.alarm.pack()
-    self.alarm.place(x=20, y=150 )
+    self.alarm.place(x=20, y=160 )
     self.alarmL.pack()
-    self.alarmL.place(x=135, y = 137)
+    self.alarmL.place(x=135, y = 148)
     self.snooze.pack()
-    self.snooze.place(x=35, y= 173)
+    self.snooze.place(x=34, y= 183)
+
 
     
 
@@ -83,7 +88,7 @@ class incubator:
     
     atext = ""
     for a in STATUS:
-        atext = atext + a +'\n'
+        atext = atext + a + '\n'
     if len(STATUS) == 1:
         color = 'green'
     else:
@@ -94,13 +99,17 @@ class incubator:
         bg=self.bg
         )
     
+    self.state.config(text='Status:',
+        fg=self.color,
+        bg=self.bg
+        )
         
     self.alarmL.config( text=atext,
         fg=color,
         bg=self.bg
         )
 
-    self.stateL.config(text='Status:         {}'.format(STATE),
+    self.stateL.config(text=STATE,
                         fg=self.color,
                         bg=self.bg
                     )
@@ -109,12 +118,18 @@ class incubator:
                         fg=self.color,
                         bg=self.bg
                     )
-
+    
     if SNOOZE:
         symbol = '🔔'
+        time_remain = SNOOZE_TIMER
+
+            
+            
     else:
         symbol = ' '
-    self.snooze.config(text=symbol,
+        self.snooze_timer = None
+        time_remain = ' '
+    self.snooze.config(text=symbol + '\n' + str(time_remain),
                         fg='yellow',
                         bg=self.bg
                     )

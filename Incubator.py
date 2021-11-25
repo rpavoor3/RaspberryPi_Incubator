@@ -3,7 +3,7 @@ from ControlGraphics import infant
 import Sensors
 from EnvironmentGraphics import environment
 from pytz import timezone
-from StatusGraphics import incubator
+from StatusGraphics import status
 import datetime
 from config import BG_COLOR,FONT_COLOR,TIMEZONE
 from fillervals import UUID
@@ -14,15 +14,15 @@ Monitor Class
 Description: Primary driver of incubator software. Initializes each component, updates timer, and calls routines. 
 '''
 class Monitor:
-  root           = None   # Tkinter Main Window
-  banner  = None   # banner on top right
+  root               = None   # Tkinter Main Window
+  banner             = None   # banner on top right
   environmentStats   = None   # Graphics for Probe and Ambient temperature
-  controlStats   = None   # Graphic for Control compartment on the top
-  statusStats   = None   # Graphic for the Status compartment
-  normalColor    = FONT_COLOR
-  bgColor        = BG_COLOR
-  tz             = TIMEZONE
-  currentTime    = None   # Calculate time for updating
+  controlStats       = None   # Graphic for Control compartment on the top
+  statusStats        = None   # Graphic for the Status compartment
+  normalColor        = FONT_COLOR
+  bgColor            = BG_COLOR
+  tz                 = TIMEZONE
+  currentTime        = None   # Calculate time for updating
 
   def __init__(self):
     # Initializing TKinter Window
@@ -36,7 +36,7 @@ class Monitor:
 
     # Inititalize remaining graphics
     self.init_compartments()
-    self.init_clock_graphic()
+    self.init_banner()
     
     
     
@@ -52,7 +52,7 @@ class Monitor:
                                 self.root, self.machine_state,
                                 self.normalColor, self.bgColor
                               )
-    self.statusStats = incubator(
+    self.statusStats = status(
                                     self.root, self.machine_state, self.normalColor, self.bgColor
                                  )
     self.environmentStats = environment(
@@ -63,7 +63,7 @@ class Monitor:
     '''
     Display time and date
     '''
-  def init_clock_graphic(self):
+  def init_banner(self):
     self.banner= Label(self.root, font=('fixed', 12))
     self.banner.place(x=570, y=8)  # Clock's Relative Position on Monitor
 

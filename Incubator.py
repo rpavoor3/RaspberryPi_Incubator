@@ -4,7 +4,7 @@ import Sensors
 from EnvironmentGraphics import environment
 from pytz import timezone
 from StatusGraphics import incubator
-import glob, time, datetime
+import datetime
 from config import BG_COLOR,FONT_COLOR,TIMEZONE
 from fillervals import UUID
 
@@ -15,7 +15,7 @@ Description: Primary driver of incubator software. Initializes each component, u
 '''
 class Monitor:
   root           = None   # Tkinter Main Window
-  clock_graphic  = None   # Clock graphic on main
+  banner  = None   # banner on top right
   environmentStats   = None   # Graphics for Probe and Ambient temperature
   controlStats   = None   # Graphic for Control compartment on the top
   statusStats   = None   # Graphic for the Status compartment
@@ -64,8 +64,8 @@ class Monitor:
     Display time and date
     '''
   def init_clock_graphic(self):
-    self.clock_graphic = Label(self.root, font=('fixed', 12))
-    self.clock_graphic.place(x=570, y=8)  # Clock's Relative Position on Monitor
+    self.banner= Label(self.root, font=('fixed', 12))
+    self.banner.place(x=570, y=8)  # Clock's Relative Position on Monitor
 
   '''
   TODO: Rename clock graphic to banner. Add UUID/mac address/save a config to banner to reflect unique incubator.
@@ -75,7 +75,7 @@ class Monitor:
     self.currentTime = datetime.datetime.now(timezone(self.tz))
     
     # Display clock graphic and power status (TODO along with UUID)
-    self.clock_graphic.config( text= 'UUID:' + str(UUID) + '\nDate: ' + self.currentTime.strftime('%d-%b-%Y %I:%M %p' ),
+    self.banner.config( text= '\tUUID:' + str(UUID) + '\nDate: ' + self.currentTime.strftime('%d-%b-%Y %I:%M %p' ),
                          fg='white',
                          bg=self.bgColor
                        )
@@ -89,7 +89,7 @@ class Monitor:
     # TODO: Replace clock graphic here with root and test
     # Bind update function to TK object, call every 50 ms
     # TODO: Get heartbeat from config
-    self.clock_graphic.after(50, self.update)
+    self.banner.after(50, self.update)
 
 if __name__=='__main__':
   vm = Monitor()

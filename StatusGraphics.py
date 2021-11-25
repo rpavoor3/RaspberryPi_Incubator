@@ -46,7 +46,7 @@ class incubator:
                             padx=0, pady=0
                             )
     self.alarm =    Label(self.root,
-                          font=('fixed', 14))
+                          font=('fixed', 16))
 
     self.alarmL = Label(self.root,
                             text='Alarm:',

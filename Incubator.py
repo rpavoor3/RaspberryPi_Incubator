@@ -1,15 +1,14 @@
 from tkinter import *
-from PatientGraphics import infant
+from ControlGraphics import infant
 import Sensors
-from MachineGraphics import incubator
+from EnvironmentGraphics import environment
 from pytz import timezone
-from AmbientGraphics import environment
+from StatusGraphics import incubator
 import glob, time, datetime
-import pigpio
-from config import BG_COLOR,FONT_COLOR,TIMEZONE, PIN_POWER
+from config import BG_COLOR,FONT_COLOR,TIMEZONE
+from fillervals import UUID
 
 # TODO: ADD HEATING ELEMENT CODE AND OBJECT
-
 '''
 Monitor Class
 Description: Primary driver of incubator software. Initializes each component, updates timer, and calls routines. 
@@ -17,18 +16,13 @@ Description: Primary driver of incubator software. Initializes each component, u
 class Monitor:
   root           = None   # Tkinter Main Window
   clock_graphic  = None   # Clock graphic on main
-  patientSensors = None   # Patient sensors (HR, Skin Temp)
-  ambientSensors = None   # Incubator sensors (Temp of incubator, humidity)
-  alarm_status   = None   # Determine and set alarm status
-  patientStats   = None   # Graphics for patient
-  ambientStats   = None   # Graphic for ambient
-  machineStats   = None   # Graphic for machine stats
+  environmentStats   = None   # Graphics for Probe and Ambient temperature
+  controlStats   = None   # Graphic for Control compartment on the top
+  statusStats   = None   # Graphic for the Status compartment
   normalColor    = FONT_COLOR
   bgColor        = BG_COLOR
   tz             = TIMEZONE
   currentTime    = None   # Calculate time for updating
-  machineState   = None
-  pi4            = pigpio.pi()
 
   def __init__(self):
     # Initializing TKinter Window
@@ -44,30 +38,24 @@ class Monitor:
     self.init_compartments()
     self.init_clock_graphic()
     
-    self.pi4.set_mode(PIN_POWER, pigpio.INPUT)
     
     
   
   def init_sensors(self):
+    #TODO: Init whateveer class will be reading the class and sending feedback (the class should update itself)    
     self.machine_state = Sensors.MachineStatus()
     
-    '''
-    self.patientSensors = Sensors.Patient_Sensors()
-    self.ambientSensors = Sensors.Ambient_Sensors()
 
-    # Pass in references to Patient and Ambient Sensors to alarm
-    self.alarm_status   = Sensors.MachineStatus(self.patientSensors, self.ambientSensors)
-    '''
   def init_compartments(self):
     # For each stats object, intialize their graphics and attach their hardware components
-    self.patientStats = infant(
+    self.controlStats = infant(
                                 self.root, self.machine_state,
                                 self.normalColor, self.bgColor
                               )
-    self.machineStats = incubator(
+    self.statusStats = incubator(
                                     self.root, self.machine_state, self.normalColor, self.bgColor
                                  )
-    self.ambientStats = environment(
+    self.environmentStats = environment(
                                      self.root, self.machine_state,
                                      self.normalColor, self.bgColor
                                    )
@@ -77,19 +65,8 @@ class Monitor:
     '''
   def init_clock_graphic(self):
     self.clock_graphic = Label(self.root, font=('fixed', 12))
-    self.clock_graphic.place(x=431, y=8)  # Clock's Relative Position on Monitor
+    self.clock_graphic.place(x=570, y=8)  # Clock's Relative Position on Monitor
 
-    '''
-    TODO: Update code to reflect whether we are connected to wall or battery
-    '''    
-  def AC_power_state(self):
-    connected = self.pi4.read(PIN_POWER)
-    if connected:
-      return ' '
-    else:
-      return ''
-    
-    
   '''
   TODO: Rename clock graphic to banner. Add UUID/mac address/save a config to banner to reflect unique incubator.
   '''
@@ -98,17 +75,16 @@ class Monitor:
     self.currentTime = datetime.datetime.now(timezone(self.tz))
     
     # Display clock graphic and power status (TODO along with UUID)
-    self.clock_graphic.config( text= 'Date: ' + self.currentTime.strftime('%d-%b-%Y %I:%M %p') \
-       + str('        Power: {}'.format(self.AC_power_state())), 
+    self.clock_graphic.config( text= 'UUID:' + str(UUID) + '\nDate: ' + self.currentTime.strftime('%d-%b-%Y %I:%M %p' ),
                          fg='white',
                          bg=self.bgColor
                        )
 
     # Read sensors and update graphics each heartbeat
-    self.machine_state.update()
-    self.patientStats.update()
-    self.machineStats.update()
-    self.ambientStats.update()
+    self.machine_state.update() #This updates the sensor readings (do we want this here?)
+    self.environmentStats.update()
+    self.controlStats.update()
+    self.statusStats.update()
     
     # TODO: Replace clock graphic here with root and test
     # Bind update function to TK object, call every 50 ms

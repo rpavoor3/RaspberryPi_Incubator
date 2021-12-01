@@ -27,6 +27,9 @@ class PeripheralBus:
 
     self.alarmDevice = AlarmDevice(stateFile)
 
+    # pi therm switch, for WAY too hot
+    # -> you can use one of them for analog system
+
     self.setPointIDevice = DigitalInputDevice(PIN_ADC1_CMPR)
     self.ctrlTempIDevice = DigitalInputDevice(PIN_ADC2_CMPR)
 
@@ -160,36 +163,43 @@ class AlarmDevice:
     self.alarmODevice = PWMOutputDevice(PIN_ALARM_PWM, frequency=2000)
     self.alarmODevice.off()
     self.startTime = None
+    self.twoToneTime = 0
+    self.twoToneFlip = False
 
   def update(self):
-    if self.machineState.is_snooze_requested:
 
+    if (self.machineState.sound_alarm):
+       curr = time.time()
+       if (curr - self.twoToneTime > 1):
+         self.twoToneFlip = not self.twoToneFilp
+         self.twoToneTime = curr
+
+
+    if self.machineState.is_snooze_requested:
       self.machineState.is_snooze_requested = False
       self.machineState.is_snoozed = True
       self.startTime = time.time()
 
     # see if snooze over
+    # TODO: Change to update state file
     if (self.machineState.is_snoozed and time.time() - self.startTime > SNOOZE_LENGTH):
       self.machineState.is_snoozed = False
+    else:
+      self.machineState.snooze_countdown = round(time.time() - self.startTime)
 
     # sound alarm
     if (self.machineState.sound_alarm and
        not self.machineState.is_snoozed and
        not self.machineState.is_preheating):
+
+       if (self.twoToneFlip):
+        self.alarmODevice.frequency(2000)
+       else:
+        self.alarmODevice.frequency(4000)
+
        self.alarmODevice.on()
     else:
       self.alarmODevice.off()
-
-      
-
-
-
-  
-
-  # manage timer
-  # sound alarm based on machine state
-  # be able to be "poked"
-  # be able to be "terminated"
 
     
 

@@ -14,8 +14,15 @@ class MachineState:
     
     # Control Outputs
     alarmStatus = False
-    alarmCodes = []
+    alarmCodes  = {
+    "Too Hot": False,
+    "Too Cold": False,
+    "Heater Malfunction": False,
+    "Digital Sensor Disconnect" : False,
+    "Control Sensor Malfunction" : False
+    }
     heaterOn = False
+
 
 
 

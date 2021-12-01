@@ -46,6 +46,8 @@ SKIN_TEMP_THRES_MIN = 20    # Maximum Skin Temperature Threshold Value
 #TODO: these values need to be double checked
 AMB_TEMP_THRES_MIN = 30     # Minimum Ambient(Incubator) Temperture Threshold Value
 AMB_TEMP_THRES_MAX = 40     # Maximum Ambient(Incubator) Temperture Threshold Value
+CONTROL_THRESHOLD = 2
+ALARM_THRESHOLD = 4
 
 
 """

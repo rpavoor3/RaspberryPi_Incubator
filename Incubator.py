@@ -1,4 +1,6 @@
 from tkinter import *
+
+from gpiozero.output_devices import OutputDevice
 from ControlGraphics import PatientGraphics
 from MachineState import MachineState
 from Peripherals import PeripheralBus
@@ -6,8 +8,9 @@ from EnvironmentGraphics import AmbientGraphics
 from pytz import timezone
 from StatusGraphics import StatusGraphics
 import datetime
-from config import BG_COLOR,FONT_COLOR,TIMEZONE
+from config import *
 from fillervals import UUID
+from gpiozero import DigitalOutputDevice
 
 # TODO: ADD HEATING ELEMENT CODE AND OBJECT
 '''
@@ -15,6 +18,8 @@ Monitor Class
 Description: Primary driver of incubator software. Initializes each component, updates timer, and calls routines. 
 '''
 class Incubator:
+  
+  # Graphics
   rootWindow               = None   # Tkinter Main Window
   bannerGraphics             = None   # banner on top right
   ambientGraphics   = None   # Graphics for Probe and Ambient temperature
@@ -24,8 +29,12 @@ class Incubator:
   bgColor            = BG_COLOR
   tz                 = TIMEZONE
   currentTime        = None   # Calculate time for updating
+  # State Management
   machineState       = None
+  # Peripheral Subsystem
   peripheralBus      = None
+  # Heating Control
+  heaterDevice       = None
 
   def __init__(self):
     # Initializing TKinter Window
@@ -39,6 +48,9 @@ class Incubator:
 
     # Initialize peripheral bus 
     self.peripheralBus = PeripheralBus(self.machineState)
+
+    # Initialize heating system control device
+    self.heaterDevice = DigitalOutputDevice(9)
 
     # Inititalize remaining graphics
     self.init_compartments()
@@ -59,9 +71,42 @@ class Incubator:
                                      self.normalColor, self.bgColor
                                    )
 
-    '''
-    Display time and date
-    '''
+  def updateSystem(self):
+
+    # Heating System Control
+    if (self.machineState.heaterOn and
+        self.machineState.analogTempReading > self.machineState.setPointReading + CONTROL_THRESHOLD):
+        # Turn Heater Off
+        self.machineState.heaterOn = False
+        self.heaterDevice.off()
+
+    elif (not self.machineState.heaterOn and
+          self.machineState.analogTempReading < self.machineState.setPointReading - CONTROL_THRESHOLD):
+          # Turn Heater on
+          self.machineState.heaterOn = True
+          self.heaterDevice.on()
+
+    # Check for temperature out of alarm range
+    if (self.machineState.analogTempReading > self.machineState.setPointReading + ALARM_THRESHOLD):
+      self.machineState.alarmCodes["Too Hot"] = True
+    else:
+      self.machineState.alarmCodes["Too Hot"] = False
+
+    if (self.machineState.analogTempReading < self.machineState.setPointReading - ALARM_THRESHOLD):
+      self.machineState.alarmCodes["Too Cold"] = True
+    else:
+      self.machineState.alarmCodes["Too Cold"] = False
+
+    # Check for heater malfunction
+    self.machineState.alarmCodes["Heater Malfunction"] = (not all(self.machineState.heaterHealth))
+
+    # Check for alarm
+    self.machineState.soundAlarm = self.machineState.alarmCodes["Too Cold"] or self.machineState.alarmCodes["Too Hot"] 
+    
+    # Check for preheat state transition
+    if self.machineState.is_preheat and self.machineState.analogTempReading >= self.machineState.setPointReading:
+      self.machineState.is_preheat = False
+ 
   def init_banner(self):
     self.bannerGraphics= Label(self.rootWindow, font=('fixed', 12))
     self.bannerGraphics.place(x=570, y=8)  # Clock's Relative Position on Monitor
@@ -83,7 +128,7 @@ class Incubator:
     self.peripheralBus.update()
 
     # Do control system post proccessing here
-    # Manage state, manage alarm, snooze, etc
+    self.updateSystem()
 
     # Update graphics
     self.ambientGraphics.update()

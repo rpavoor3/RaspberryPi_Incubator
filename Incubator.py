@@ -100,12 +100,12 @@ class Incubator:
     # Check for heater malfunction
     self.machineState.alarmCodes["Heater Malfunction"] = (not all(self.machineState.heaterHealth))
 
-    # Check for alarm
+    # Check if alarm needs to sound
     self.machineState.soundAlarm = self.machineState.alarmCodes["Too Cold"] or self.machineState.alarmCodes["Too Hot"] 
     
     # Check for preheat state transition
-    if self.machineState.is_preheat and self.machineState.analogTempReading >= self.machineState.setPointReading:
-      self.machineState.is_preheat = False
+    if self.machineState.is_preheating and self.machineState.analogTempReading >= self.machineState.setPointReading:
+      self.machineState.is_preheating = False
  
   def init_banner(self):
     self.bannerGraphics= Label(self.rootWindow, font=('fixed', 12))
@@ -129,6 +129,9 @@ class Incubator:
 
     # Do control system post proccessing here
     self.updateSystem()
+
+    # Update Alarm (this could just go in peripheral bus update...)
+    self.peripheralBus.alarmDevice.update()
 
     # Update graphics
     self.ambientGraphics.update()

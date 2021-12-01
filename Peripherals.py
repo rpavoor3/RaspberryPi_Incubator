@@ -25,6 +25,8 @@ class PeripheralBus:
 
     self.machineState = stateFile
 
+    self.alarmDevice = AlarmDevice(stateFile)
+
     self.setPointIDevice = DigitalInputDevice(PIN_ADC1_CMPR)
     self.ctrlTempIDevice = DigitalInputDevice(PIN_ADC2_CMPR)
 
@@ -35,8 +37,6 @@ class PeripheralBus:
     self.heaterIDevice3 = DigitalInputDevice(20)
     self.heaterIDevice4 = DigitalInputDevice(21)
 
-    # need to make own wrapped object
-    self.alarmODevice = DigitalOutputDevice(10)
     self.adcPwmODevice = PWMOutputDevice(18)
 
     self.snoozeButton = gpiozero.Button(11)
@@ -46,11 +46,10 @@ class PeripheralBus:
     self.preheatButton.when_pressed = self.preheatHandler
     
   def preheatHandler(self):
-    self.machineState.is_preheat = True
-    print("HERE!")
+    self.machineState.is_preheating = not self.machineState.is_preheating
 
   def snoozeHandler(self):
-    self.machineState.is_snoozed = True
+    self.machineState.is_snooze_requested = True
     
   def read_digital_temp_raw(self, device_file):
     f = open(device_file, 'r')
@@ -136,7 +135,6 @@ class PeripheralBus:
     return {"Temperature" : temp_reading, "Setpoint" : set_point_temp}
 
   def update(self):
-    
     ## Grab readings from peripherals
     # Digital Temperature Sensors (Ambient + Probe)
     digital_temp_reading = self.read_digital_sensors()
@@ -155,6 +153,43 @@ class PeripheralBus:
     self.machineState.analogTempReading = adc_dict["Temperature"]
 
 
+class AlarmDevice:
+
+  def __init__(self, stateFile):
+    self.machineState = stateFile
+    self.alarmODevice = PWMOutputDevice(PIN_ALARM_PWM, frequency=2000)
+    self.alarmODevice.off()
+    self.startTime = None
+
+  def update(self):
+    if self.machineState.is_snooze_requested:
+
+      self.machineState.is_snooze_requested = False
+      self.machineState.is_snoozed = True
+      self.startTime = time.time()
+
+    # see if snooze over
+    if (self.machineState.is_snoozed and time.time() - self.startTime > SNOOZE_LENGTH):
+      self.machineState.is_snoozed = False
+
+    # sound alarm
+    if (self.machineState.sound_alarm and
+       not self.machineState.is_snoozed and
+       not self.machineState.is_preheating):
+       self.alarmODevice.on()
+    else:
+      self.alarmODevice.off()
+
+      
+
+
+
+  
+
+  # manage timer
+  # sound alarm based on machine state
+  # be able to be "poked"
+  # be able to be "terminated"
 
     
 

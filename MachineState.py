@@ -2,7 +2,8 @@ class MachineState:
 
     # Push button managed states
     is_snoozed = False
-    is_preheat = False
+    is_snooze_requested = False
+    is_preheating = False
 
     # Sensor Readings
     setPointReading = 0
@@ -10,10 +11,10 @@ class MachineState:
     ambientSensorReadings = []
     probeReading = 0
     batteryStatus = False
-    heaterHealth = None
+    heaterHealth = []
     
     # Control Outputs
-    alarmStatus = False
+    soundAlarm = False
     alarmCodes  = {
     "Too Hot": False,
     "Too Cold": False,
@@ -22,6 +23,7 @@ class MachineState:
     "Control Sensor Malfunction" : False
     }
     heaterOn = False
+    
 
 
 

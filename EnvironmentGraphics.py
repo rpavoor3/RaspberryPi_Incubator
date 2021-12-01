@@ -1,7 +1,7 @@
 from tkinter import *
 from fillervals import AMB_TEMP, PROBE_TEMP
 
-class environment:
+class AmbientGraphics:
   root    = None
   temp    = None
   tLabel  = None

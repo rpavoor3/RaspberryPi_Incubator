@@ -1,3 +1,9 @@
+
+from tkinter.constants import TRUE
+
+
+PC_DEV = True
+
 """
 Monitor Details
 """
@@ -12,11 +18,11 @@ Pin Assignments
 
 # ambient temp not explicitly written DTMP_PI = 21
 PIN_MUTE = 21               # Snooze Button
-PIN_PWM_PI = 13             # Comparator PWM
-PIN_ALARM_PWM = 10          # Speaker
+PIN_ADC_PWM = 18             # Comparator PWM
+PIN_ALARM_PWM = 24          # Speaker
 PIN_BATT_OFF = 22           # Power Source
-PIN_ADC1_OUT = 6            # Setpoint (User Reading)
-PIN_ADC2_OUT = 19           # Temperature
+PIN_ADC1_CMPR = 6            # Setpoint (User Reading)
+PIN_ADC2_CMPR = 19           # Temperature
 PIN_PI_HEAT = 26            # Digital Temperature Control TODO
 PIN_LED1 = 16               # Red
 PIN_LED2 = 12               # Orange/Yellow

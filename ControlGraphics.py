@@ -3,7 +3,7 @@ from PIL import Image, ImageTk
 import time
 from fillervals import TEMP,SPOINT
 
-class infant:
+class PatientGraphics:
     root = None
     stats = None
     temp = None

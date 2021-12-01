@@ -1,7 +1,8 @@
 from tkinter import *
 import time
 from fillervals import STATUS, STATE, HEATING, SNOOZE, SNOOZE_TIMER
-class status:
+
+class StatusGraphics:
   root        = None
   alarm_state = True
   status      = None
@@ -61,7 +62,6 @@ class status:
     
     
 
-
     # pack and place on screen
     self.state.pack()
     self.state.place(x=20, y=10)
@@ -75,10 +75,6 @@ class status:
     self.alarmL.place(x=135, y = 148)
     self.snooze.pack()
     self.snooze.place(x=34, y= 183)
-
-
-    
-
 
     self.machine_state = machine_state
     
@@ -122,9 +118,7 @@ class status:
     if SNOOZE:
         symbol = '🔔'
         time_remain = SNOOZE_TIMER
-
-            
-            
+     
     else:
         symbol = ' '
         self.snooze_timer = None
@@ -134,13 +128,6 @@ class status:
                         bg=self.bg
                     )
     #TODO: Add time left for snooze
-
-
-    
-    # update the warnings in newSensors.py for these values and then ,odify this part
-    
-
-    
 
 
 

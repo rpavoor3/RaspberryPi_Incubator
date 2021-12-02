@@ -4,19 +4,21 @@ class MachineState:
     is_snoozed = False
     is_snooze_requested = False
     is_preheating = False
+    is_errored = False
 
     # Alarm timer 
     snooze_countdown = 0
-    
+
     # Sensor Readings
     setPointReading = 0
     analogTempReading = 0
     ambientSensorReadings = []
     probeReading = 0
-    batteryStatus = False # TODO: Delete
-    heaterHealth = [] # Need to talk to ben about logic, needs to match all 5
+    
+    heaterStates = []
 
-
+    physicalControlLine = False
+    physicalHeaterCommand = False
     
     # Control Outputs
     soundAlarm = False
@@ -25,7 +27,8 @@ class MachineState:
     "Too Cold": False,
     "Heater Malfunction": False,
     "Digital Sensor Disconnect" : False,
-    "Control Sensor Malfunction" : False
+    "Control Sensor Malfunction" : False,
+    "Temperature Shutdown" : False
     }
     heaterOn = False
     

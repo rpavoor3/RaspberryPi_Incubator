@@ -56,6 +56,9 @@ class Incubator:
     self.init_compartments()
     self.init_banner()
     
+  def init_banner(self):
+    self.bannerGraphics= Label(self.rootWindow, font=('fixed', 12))
+    self.bannerGraphics.place(x=570, y=8)  # Clock's Relative Position on Monitor
 
   def init_compartments(self):
     # For each stats object, intialize their graphics and attach their hardware components
@@ -71,7 +74,7 @@ class Incubator:
                                      self.normalColor, self.bgColor
                                    )
 
-  def updateSystem(self):
+  def process(self):
 
     # Heating System Control
     if (self.machineState.heaterOn and
@@ -98,7 +101,19 @@ class Incubator:
       self.machineState.alarmCodes["Too Cold"] = False
 
     # Check for heater malfunction
-    self.machineState.alarmCodes["Heater Malfunction"] = (not all(self.machineState.heaterHealth))
+    if (self.machineState.physicalControlLine):
+      self.machineState.alarmCodes["Heater Malfunction"] = (not all(self.machineState.heaterStates))
+    else:
+      self.machineState.alarmCodes["Heater Malfunction"] = any(self.machineState.heaterStates)
+
+    # Check for major system errors
+    if (self.machineState.alarmCodes["Control Sensor Malfunction"]):
+      self.machineState.is_errored = True
+    else:
+      self.machineState.is_errored = False
+
+    # Check if temperature shutdown (thermostat failsafe activated)
+    self.machineState.alarmCodes["Temperature Shutdown"] = (self.machineState.physicalControlLine and not self.machineState.physicalHeaterCommand)
 
     # Check if alarm needs to sound
     self.machineState.soundAlarm = self.machineState.alarmCodes["Too Cold"] or self.machineState.alarmCodes["Too Hot"] 
@@ -107,9 +122,6 @@ class Incubator:
     if self.machineState.is_preheating and self.machineState.analogTempReading >= self.machineState.setPointReading:
       self.machineState.is_preheating = False
  
-  def init_banner(self):
-    self.bannerGraphics= Label(self.rootWindow, font=('fixed', 12))
-    self.bannerGraphics.place(x=570, y=8)  # Clock's Relative Position on Monitor
 
   '''
   TODO: Rename clock graphic to banner. Add UUID/mac address/save a config to banner to reflect unique incubator.
@@ -128,10 +140,10 @@ class Incubator:
     self.peripheralBus.update()
 
     # Do control system post proccessing here
-    self.updateSystem()
+    self.process()
 
-    # Update Alarm (this could just go in peripheral bus update...)
-    self.peripheralBus.alarmDevice.update()
+    # Update outputs
+    self.peripheralBus.writeOutput()
 
     # Update graphics
     self.ambientGraphics.update()

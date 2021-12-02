@@ -30,10 +30,10 @@ class PeripheralBus:
     # pi therm switch, for WAY too hot
     # -> you can use one of them for analog system
 
+    self.heaterCtrlReqIDevice = DigitalInputDevice()
+    self.heaterCommandIDevice = DigitalInputDevice()
+    
     self.setPointIDevice = DigitalInputDevice(PIN_ADC1_CMPR)
-    self.ctrlTempIDevice = DigitalInputDevice(PIN_ADC2_CMPR)
-
-    self.batteryIDevice = DigitalInputDevice(PIN_BATT_OFF)
 
     self.heaterIDevice1 = DigitalInputDevice(12)
     self.heaterIDevice2 = DigitalInputDevice(16)
@@ -41,6 +41,8 @@ class PeripheralBus:
     self.heaterIDevice4 = DigitalInputDevice(21)
 
     self.adcPwmODevice = PWMOutputDevice(18)
+    self.alarmLedODevice = DigitalOutputDevice()
+    self.preheatLedODevice = DigitalOutputDevice()
 
     self.snoozeButton = gpiozero.Button(11)
     self.snoozeButton.when_pressed = self.snoozeHandler
@@ -72,6 +74,7 @@ class PeripheralBus:
 
     for d_f in device_folders:
         device_file = d_f + file_suffix
+        serial_id = d_f.split('/')[-1]
         lines = self.read_digital_temp_raw(device_file)
         while lines[0].strip()[-3:] != 'YES':
             time.sleep(0.2)
@@ -81,7 +84,7 @@ class PeripheralBus:
             temp_string = lines[1][equals_pos+2:]
             temp_c = float(temp_string) / 1000.0
             temp_f = temp_c * 9.0 / 5.0 + 32.0
-            result_dict[d_f] = temp_c
+            result_dict[serial_id] = temp_c
 
     return result_dict 
 
@@ -137,6 +140,19 @@ class PeripheralBus:
         
     return {"Temperature" : temp_reading, "Setpoint" : set_point_temp}
 
+  def writeOutput(self):
+    self.alarmDevice.update()
+    
+    if self.machineState.soundAlarm:
+      self.alarmLedODevice.on()
+    else:
+      self.alarmLedODevice.off()
+
+    if self.machineState.is_preheating:
+      self.preheatLedODevice.on()
+    else:
+      self.preheatLedODevice.off()
+
   def update(self):
     ## Grab readings from peripherals
     # Digital Temperature Sensors (Ambient + Probe)
@@ -144,17 +160,17 @@ class PeripheralBus:
     self.machineState.ambientSensorReadings = digital_temp_reading.values()
     self.machineState.probeReading = digital_temp_reading['A']
 
-    # Battery Signal
-    self.machineState.batteryStaus = self.batteryIDevice.value
-
     # Heater Statuses
-    self.machineState.heaterHealth = self.read_heater_health
+    self.machineState.heaterHealth = self.read_heater_health()
 
     # ADC Readings
     adc_dict = self.read_ADC_sensors()
     self.machineState.setPointReading = adc_dict["Setpoint"]
     self.machineState.analogTempReading = adc_dict["Temperature"]
 
+    # Temperature Fuse + Heater States
+    self.machineState.physicalControlLine = self.heaterCtrlReqIDevice.value
+    self.machineState.physicalHeaterCommand = self.heaterCommandIDevice.value
 
 class AlarmDevice:
 

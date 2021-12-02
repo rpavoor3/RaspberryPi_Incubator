@@ -27,27 +27,25 @@ class PeripheralBus:
 
     self.alarmDevice = AlarmDevice(stateFile)
 
-    # pi therm switch, for WAY too hot
-    # -> you can use one of them for analog system
-
-    self.heaterCtrlReqIDevice = DigitalInputDevice()
-    self.heaterCommandIDevice = DigitalInputDevice()
+    self.heaterCtrlReqIDevice = DigitalInputDevice(PIN_THERM_IN)
+    self.heaterCommandIDevice = DigitalInputDevice(PIN_THERM_OUT)
     
-    self.setPointIDevice = DigitalInputDevice(PIN_ADC1_CMPR)
+    self.setPointIDevice = DigitalInputDevice(PIN_SET_POINT_CMPR)
+    self.ctrlTempIDevice = DigitalInputDevice(PIN_CTRL_SNSR_CMPR)
 
-    self.heaterIDevice1 = DigitalInputDevice(12)
-    self.heaterIDevice2 = DigitalInputDevice(16)
-    self.heaterIDevice3 = DigitalInputDevice(20)
-    self.heaterIDevice4 = DigitalInputDevice(21)
+    self.heaterIDevice1 = DigitalInputDevice(PIN_HEATER_CHECK_1)
+    self.heaterIDevice2 = DigitalInputDevice(PIN_HEATER_CHECK_2)
+    self.heaterIDevice3 = DigitalInputDevice(PIN_HEATER_CHECK_3)
+    self.heaterIDevice4 = DigitalInputDevice(PIN_HEATER_CHECK_4)
 
-    self.adcPwmODevice = PWMOutputDevice(18)
-    self.alarmLedODevice = DigitalOutputDevice()
-    self.preheatLedODevice = DigitalOutputDevice()
+    self.adcPwmODevice = PWMOutputDevice(PIN_ADC_PWM)
+    self.alarmLedODevice = DigitalOutputDevice(PIN_ALARM_LED)
+    self.preheatLedODevice = DigitalOutputDevice(PIN_PREHEAT_LED)
 
-    self.snoozeButton = gpiozero.Button(11)
+    self.snoozeButton = gpiozero.Button(PIN_SNOOZE_BTN)
     self.snoozeButton.when_pressed = self.snoozeHandler
 
-    self.preheatButton = gpiozero.Button(9)
+    self.preheatButton = gpiozero.Button(PIN_PREHEAT_BTN)
     self.preheatButton.when_pressed = self.preheatHandler
     
   def preheatHandler(self):
@@ -117,7 +115,7 @@ class PeripheralBus:
         self.adcPwmODevice.value = i
         time.sleep(0.03) # Wait to settle
 
-        temp_comparator = self.ctrlTempIDevice
+        temp_comparator = self.ctrlTempIDevice.value
         setpoint_comparator = self.setPointIDevice.value
         
         # Read for analog temp sensor

@@ -17,21 +17,20 @@ Pin Assignments
 """
 
 # ambient temp not explicitly written DTMP_PI = 21
-PIN_MUTE = 21               # Snooze Button
-PIN_ADC_PWM = 18             # Comparator PWM
-PIN_ALARM_PWM = 24          # Speaker
-PIN_BATT_OFF = 22           # Power Source
-PIN_ADC1_CMPR = 6            # Setpoint (User Reading)
-PIN_ADC2_CMPR = 19           # Temperature
-PIN_PI_HEAT = 26            # Digital Temperature Control TODO
-PIN_LED1 = 16               # Red
-PIN_LED2 = 12               # Orange/Yellow
-# TODO: PIN_LED3 is actually pointing to pin 1 on the PCB but this needs to be changed
-PIN_LED3 = 5                # Green
-PIN_LED4 = 7                # Blue
-
-PIN_POWER = 22              # Indicates whether or not the power is connected to main power or backup power
-
+PIN_SNOOZE_BTN = 40               # Snooze Button
+PIN_ALARM_LED = 32
+PIN_PREHEAT_BTN = 29
+PIN_PREHEAT_LED = 36
+PIN_HEATER_CHECK_1 = 18
+PIN_HEATER_CHECK_2 = 22
+PIN_HEATER_CHECK_3 = 24
+PIN_HEATER_CHECK_4 = 26
+PIN_THERM_IN = 11
+PIN_THERM_OUT = 16
+PIN_SET_POINT_CMPR = 35
+PIN_CTRL_SNSR_CMPR = 31
+PIN_ALARM_PWM = 19
+PIN_ADC_PWM = 33
 
 """
 Skin Temperature Settings in Sensor.py

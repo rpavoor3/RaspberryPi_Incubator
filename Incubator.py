@@ -4,10 +4,9 @@ from gpiozero.output_devices import OutputDevice
 from ControlGraphics import PatientGraphics
 from MachineState import MachineState
 from Peripherals import PeripheralBus
-from EnvironmentGraphics import AmbientGraphics
 from pytz import timezone
 from StatusGraphics import StatusGraphics
-import datetime
+import time
 from config import *
 from fillervals import UUID
 from gpiozero import DigitalOutputDevice
@@ -20,28 +19,35 @@ Description: Primary driver of incubator software. Initializes each component, u
 class Incubator:
   
   # Graphics
-  rootWindow               = None   # Tkinter Main Window
-  bannerGraphics             = None   # banner on top right
-  ambientGraphics   = None   # Graphics for Probe and Ambient temperature
-  patientGraphics       = None   # Graphic for Control compartment on the top
-  statusGraphics        = None   # Graphic for the Status compartment
-  normalColor        = FONT_COLOR
-  bgColor            = BG_COLOR
-  tz                 = TIMEZONE
-  currentTime        = None   # Calculate time for updating
+  rootWindow          = None   # Tkinter Main Window
+  bannerGraphics      = None   # Banner on the top
+  patientGraphics     = None   # Graphic for Control compartment on the top
+  statusGraphics      = None   # Graphic for the Status compartment
+  normalColor         = FONT_COLOR
+  bgColor             = BG_COLOR
+  tz                  = TIMEZONE
+  startTime           = None   # Calculate time for updating
   # State Management
   machineState       = None
   # Peripheral Subsystem
   peripheralBus      = None
   # Heating Control
   heaterDevice       = None
+  screen_width       = None
+  screen_height      = None
+  margin             = None  #window margins
 
   def __init__(self):
     # Initializing TKinter Window
     self.rootWindow = Tk()
+    self.rootWindow.attributes('-fullscreen', True) 
     self.rootWindow.title('Incubator')
     self.rootWindow.configure(bg='black')
-    self.rootWindow.geometry('800x480')
+    self.screen_width = self.rootWindow.winfo_screenwidth()
+    self.screen_height = self.rootWindow.winfo_screenheight()
+    self.rootWindow.geometry(f'{self.screen_width}x{self.screen_height}+0+0')
+    self.rootWindow.bind("<Escape>", self.end_fullscreen)
+    self.margin = 0.05
 
     # Initialize state bus
     self.machineState = MachineState()
@@ -57,22 +63,25 @@ class Incubator:
     self.init_banner()
     
   def init_banner(self):
-    self.bannerGraphics= Label(self.rootWindow, font=('fixed', 12))
-    self.bannerGraphics.place(x=570, y=8)  # Clock's Relative Position on Monitor
+    self.startTime = round(time.time())
+    self.bannerGraphics= Label(self.rootWindow, bg= 'dark blue',font=('fixed', 14), anchor = 'e')
+    self.bannerGraphics.place(x=self.margin * self.screen_width, y=0, width = self.screen_width - 2*self.margin * self.screen_width)  # Clock's Relative Position on Monitor
 
   def init_compartments(self):
     # For each stats object, intialize their graphics and attach their hardware components
     self.patientGraphics = PatientGraphics(
-                                self.rootWindow, self.machineState,
-                                self.normalColor, self.bgColor
+                                self.rootWindow,self.screen_width, self.screen_height, 
+                                self.margin, self.machineState, self.normalColor, self.bgColor
                               )
     self.statusGraphics = StatusGraphics(
-                                    self.rootWindow, self.machineState, self.normalColor, self.bgColor
+                                    self.rootWindow, self.screen_width, self.screen_height, 
+                                    self.margin, self.machineState, self.normalColor, self.bgColor
                                  )
-    self.ambientGraphics = AmbientGraphics(
-                                     self.rootWindow, self.machineState,
-                                     self.normalColor, self.bgColor
-                                   )
+                                 
+  def end_fullscreen(self, event=None):
+    self.state = False
+    self.rootWindow.attributes("-fullscreen", False)
+    return
 
   def process(self):
 
@@ -128,12 +137,15 @@ class Incubator:
   '''
   def update(self):
     # Get current time
-    self.currentTime = datetime.datetime.now(timezone(self.tz))
+    currentTime = round(time.time()- self.startTime)
+    hours = int(currentTime / 3600)
+    mins = int((currentTime - (hours * 3600)) / 60)
+    secs = int(currentTime % 60)
     
     # Display clock graphic and power status (TODO along with UUID)
-    self.bannerGraphics.config( text= '\tUUID:' + str(UUID) + '\nDate: ' + self.currentTime.strftime('%d-%b-%Y %I:%M %p' ),
-                         fg='white',
-                         bg=self.bgColor
+    self.bannerGraphics.config( text= f'UUID:{str(UUID)}\tTime Elapsed: {hours}:{str(mins).zfill(2)}:{str(secs).zfill(2)}' ,
+                           fg='white',
+                           bg='dark slate blue'
                        )
 
     # Read sensors and update state
@@ -146,7 +158,6 @@ class Incubator:
     self.peripheralBus.writeOutput()
 
     # Update graphics
-    self.ambientGraphics.update()
     self.patientGraphics.update()
     self.statusGraphics.update()
  

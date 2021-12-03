@@ -1,55 +1,82 @@
 from tkinter import *
 from PIL import Image, ImageTk
-import time
-from fillervals import TEMP,SPOINT
+from fillervals import TEMP,SPOINT, AMB_TEMP, PROBE_TEMP
 
 class PatientGraphics:
-    root = None
-    stats = None
-    temp = None
+    root     = None
+    width    = None
+    height   = None
+    stats    = None
+    temp     = None
     setpoint = None
-    color = None
-    tLabel = None
-    spLabel = None
-    bg = None
+    color    = None
+    tLabel   = None
+    spLabel  = None
+    atemp    = None
+    probe    = None
+    atempL   = None
+    probeL   = None
+    initialx = None
+    initialy = None
+    height_diff = None
+    width_diff  = None
+    bg       = None
     machine_state = None
+    margin   = None
 
-    def __init__(self, masterScreen, machine_state, color='green', bg='black'):
+    def __init__(self, masterScreen, screenwidth, screenheight, margin, machine_state,color, bg='black'):
+        self.width = screenwidth
+        self.height = screenheight
+        self.margin = margin
+
         self.color = color
         self.bg = bg
+        self.machine_state = machine_state
+        
 
         self.root = LabelFrame(masterScreen,  # init master frame
                                text='  Patient',
                                bd=0, font=('fixed', 32),
                                bg=self.bg, fg=self.color,
-                               highlightbackground='dark slate grey',
+                               labelanchor = 'n',
+                               highlightbackground='dark cyan',
                                highlightcolor='dark slate grey',
-                               highlightthickness=8,
+                               highlightthickness=14,
                                padx=10, pady=0
                                )
-
+        
         self.root.pack()  # pack and place on screen
-        self.root.place(x=16, y=20, height=220, width=375)
+        margin = self.margin  # distance from edge of screen (margin * screen width or screen height)
+        self.initialx = margin*self.width
+        self.initialy = margin*self.height
+        self.height_diff = self.height - margin * self.height - self.initialy
+        self.width_diff = self.width/2 - self.initialx - 35
+        self.root.place(x=self.initialx, y=self.initialy, height=(self.height - self.initialy) - margin * self.height, width=self.width/2 - self.initialx - 35)
         self.stats = LabelFrame(self.root,  # init stats frame
-                                bd=0, bg=self.bg,
-                                padx=10, pady=0
+                                bd=0, bg=self.bg, fg=self.color,
+                               highlightbackground='cyan',
+                               highlightthickness=6,
+                               padx=10, pady=0
                                 )
 
         self.stats.pack()  # pack and place on screen
-        self.stats.place(x=140, y=0, height=150, width=150)
+        self.stats.place(x=0.07*self.width_diff, y=0.05*self.height_diff, height=0.40*self.height_diff, width=0.75*self.width_diff)
 
         # init frame labels
-        self.temp = Label(self.stats, font=('fixed', 24))
-        self.setpoint  = Label(self.stats, font=('fixed', 24))
+        self.temp = Label(self.root, font=('fixed', 80))
+        self.setpoint  = Label(self.root, font=('fixed', 20))
+        self.atemp = Label(self.root, font=('fixed', 24))
+        self.probe   = Label(self.root, font=('fixed', 24))
 
         # pack and place on screen
         self.temp.pack()
         self.setpoint.pack()
+
         self.tLabel = Label(self.root,
-                            text='Temperature:',
+                            text='Control Temp:',
                             fg=self.color,
                             bd=0, bg=self.bg,
-                            font=('fixed', 14),
+                            font=('fixed', 20),
                             padx=0, pady=0
                             )
         # set point
@@ -57,29 +84,64 @@ class PatientGraphics:
                           text='Desired Temp:', 
                           fg=self.color,
                           bd=0, bg=self.bg,
-                          font=('fixed', 14),
+                          font=('fixed', 16),
                           padx=0, pady=0
                         )
+        self.atempL = Label( self.root,
+                         text='Ambient Temp:', 
+                         fg=self.color,
+                         bd=0, bg=self.bg,
+                         font=('fixed', 20),
+                         padx=0, pady=0
+                       )
+    
+        self.probeL = Label( self.root,
+                          text='Monitoring Temp:', 
+                          fg=self.color,
+                          bd=0, bg=self.bg,
+                          font=('fixed', 20),
+                          padx=0, pady=0
+                        )
+        
+        self.temp.place(x=0.1*self.width_diff, y = 0.13*self.height_diff)
+        self.setpoint.place(x=0.62*self.width_diff, y = 0.36*self.height_diff)
         self.tLabel.pack()
-        self.tLabel.place(x=20, y=0)
+        self.tLabel.place(x=0.1*self.width_diff, y=0.07*self.height_diff)
         self.spLabel.pack()
-        self.spLabel.place(x=20, y=55)
-        self.machine_state = machine_state
+        self.spLabel.place(x=0.35*self.width_diff, y=0.37*self.height_diff)
+
+        self.atemp.pack()
+        self.atemp.place(x=0.50*self.width_diff, y=0.55 *self.height_diff)
+        self.probe.pack()
+        self.probe.place(x=0.50*self.width_diff, y=0.70 *self.height_diff)
+
+        self.atempL.pack()
+        self.atempL.place(x=0.1*self.width_diff,y=0.55 *self.height_diff)
+        self.probeL.pack()
+        self.probeL.place(x=0.1*self.width_diff,y=0.70 *self.height_diff)
         
 
 
     def update(self):
         #temp = self.machine_state.skin_temp_reading
         #spoint = self.machine_state.set_point_reading
-        temp = TEMP
-        spoint = SPOINT
 
-        self.temp.config(text='{0:.01f} °C'.format(float(temp)),
-                         fg=self.color,
+        self.temp.config(text='{0:.01f} °C'.format(float (self.machine_state.analogTempReading)),
+                         fg='cyan',
                          bg=self.bg
                          )
-        self.setpoint.config(text='{0:.01f} °C'.format(float(spoint)),
+        self.setpoint.config(text='{0:.01f} °C'.format(float (self.machine_state.setPointReading)),
                          fg=self.color,
                          bg=self.bg
             )
+        self.atemp.config( text='{0:.01f} °C'.format(float(sum(self.machine_state.ambientSensorReadings)/len(self.machine_state.ambientSensorReadings))),
+                      fg=self.color,
+                      bg=self.bg
+                    )
+    
+                    
+        self.probe.config( text='{0:.01f} °C'.format(float(self.machine_state.probeReading)),
+                    fg=self.color,
+                    bg=self.bg
+                  )
 

@@ -39,6 +39,7 @@ class PeripheralBus:
     self.heaterIDevice4 = DigitalInputDevice(PIN_HEATER_CHECK_4)
 
     self.adcPwmODevice = PWMOutputDevice(PIN_ADC_PWM)
+    self.adcPwmODevice.value = 0.5
     self.alarmLedODevice = DigitalOutputDevice(PIN_ALARM_LED)
     self.preheatLedODevice = DigitalOutputDevice(PIN_PREHEAT_LED)
 
@@ -98,8 +99,8 @@ class PeripheralBus:
     return health_dict
 
   def read_ADC_sensors(self):
-    #if PC_DEV:
-     # return {"Temperature" : 36, "Setpoint" : 37}
+    if PC_DEV:
+      return {"Temperature" : 36, "Setpoint" : 37}
 
     temp_found = False
     setpoint_found = False

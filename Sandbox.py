@@ -12,7 +12,13 @@ factory = PiGPIOFactory()
 
 test = DigitalInputDevice(8, pin_factory=factory)
 
-def read_digital_sensors(self):
+def read_digital_temp_raw(device_file):
+    f = open(device_file, 'r')
+    lines = f.readlines()
+    f.close()
+    return lines
+
+def read_digital_sensors():
 
     file_suffix = '/w1_slave'
     base_dir = '/sys/bus/w1/devices/'
@@ -23,10 +29,10 @@ def read_digital_sensors(self):
     for d_f in device_folders:
         device_file = d_f + file_suffix
         serial_id = d_f.split('/')[-1]
-        lines = self.read_digital_temp_raw(device_file)
+        lines = read_digital_temp_raw(device_file)
         while lines[0].strip()[-3:] != 'YES':
             time.sleep(0.2)
-            lines = self.read_digital_temp_raw(device_file)
+            lines = read_digital_temp_raw(device_file)
         equals_pos = lines[1].find('t=')
         if equals_pos != -1:
             temp_string = lines[1][equals_pos+2:]

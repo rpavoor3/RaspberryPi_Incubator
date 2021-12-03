@@ -182,7 +182,7 @@ class AlarmDevice:
 
   def update(self):
 
-    if (self.machineState.sound_alarm):
+    if (self.machineState.soundAlarm):
        curr = time.time()
        if (curr - self.twoToneTime > 1):
          self.twoToneFlip = not self.twoToneFilp
@@ -202,7 +202,7 @@ class AlarmDevice:
       self.machineState.snooze_countdown = round(time.time() - self.startTime)
 
     # sound alarm
-    if (self.machineState.sound_alarm and
+    if (self.machineState.soundAlarm and
        not self.machineState.is_snoozed and
        not self.machineState.is_preheating):
 

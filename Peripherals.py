@@ -98,8 +98,8 @@ class PeripheralBus:
     return health_dict
 
   def read_ADC_sensors(self):
-    if PC_DEV:
-      return {"Temperature" : 36, "Setpoint" : 37}
+    #if PC_DEV:
+     # return {"Temperature" : 36, "Setpoint" : 37}
 
     temp_found = False
     setpoint_found = False

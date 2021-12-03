@@ -39,7 +39,7 @@ class PeripheralBus:
     self.heaterIDevice4 = DigitalInputDevice(PIN_HEATER_CHECK_4)
 
     self.adcPwmODevice = PWMOutputDevice(PIN_ADC_PWM)
-    self.adcPwmODevice.value = 0.5
+    self.adcPwmODevice.value = 1
     self.alarmLedODevice = DigitalOutputDevice(PIN_ALARM_LED)
     self.preheatLedODevice = DigitalOutputDevice(PIN_PREHEAT_LED)
 

@@ -176,7 +176,7 @@ class AlarmDevice:
     self.machineState = stateFile
     self.alarmODevice = PWMOutputDevice(PIN_ALARM_PWM, frequency=2000)
     self.alarmODevice.off()
-    self.startTime = None
+    self.startTime = 0
     self.twoToneTime = 0
     self.twoToneFlip = False
 

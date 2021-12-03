@@ -18,7 +18,7 @@ Pin Assignments
 
 # ambient temp not explicitly written DTMP_PI = 21
 PIN_SNOOZE_BTN = 21 #40               # Snooze Button
-PIN_ALARM_LED = 21 #32
+PIN_ALARM_LED = 12 #32
 PIN_PREHEAT_BTN = 5 #29
 PIN_PREHEAT_LED = 16 #36
 PIN_HEATER_CHECK_1 = 24 #18

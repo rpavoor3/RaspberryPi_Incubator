@@ -12,13 +12,13 @@ import time
 import gpiozero
 from gpiozero import DigitalInputDevice
 from gpiozero import Device
-#from gpiozero.pins.mock import MockFactory, MockPWMPin
+from gpiozero.pins.mock import MockFactory, MockPWMPin
 from config import *
 import glob
 import time
 
-#if PC_DEV:
-  #Device.pin_factory = MockFactory(pin_class=MockPWMPin)
+if PC_DEV:
+  Device.pin_factory = MockFactory(pin_class=MockPWMPin)
 
 class PeripheralBus:
 

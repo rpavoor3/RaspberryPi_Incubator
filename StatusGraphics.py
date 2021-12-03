@@ -1,134 +1,165 @@
 from tkinter import *
-import time
-from fillervals import STATUS, STATE, HEATING, SNOOZE, SNOOZE_TIMER
-
 class StatusGraphics:
   root        = None
   alarm_state = True
   status      = None
   color       = None
+  width       = None
+  initialx    = None
+  initialy    = None
+  height_diff = None
+  width_diff  = None
+  height      = None
   bg          = None
+  margin      = None
 
-  def __init__(self, masterScreen, machine_state, color='purple', bg='black'):
+  def __init__(self, masterScreen, screen_width, screen_height, margin, machine_state, color='purple', bg='black'):
     self.color = color
     self.bg    = bg
+    self.width = screen_width
+    self.height = screen_height
+    self.machine_state = machine_state
+    self.margin = margin
 
     self.root = LabelFrame( masterScreen,                        # init master frame
                             text=' Status',
                             bd=0, font=('fixed', 32),
                             bg='black', fg=self.color,
-                            highlightbackground='dark slate grey',
+                            labelanchor = 'n',
+                            highlightbackground='dark cyan',
                             highlightcolor='dark slate grey',
-                            highlightthickness=8,
+                            highlightthickness=14,
                             padx=0, pady=0
                           )
     self.root.pack()                                      # pack and place on screen
-    self.root.place(x=408, y=65, height=397, width=376)
+    margin = self.margin
+    self.initialx = self.width/2 + 1
+    self.initialy = margin*self.height
+    self.height_diff = self.height - self.initialy - margin*self.height
+    self.width_diff = self.width/2 - margin*self.width
+
+
+    self.root.place(x=self.initialx, y=self.initialy, height=self.height - self.initialy - margin*self.height, width= self.width/2 - margin*self.width)
 
 
     # init frame labels
     self.status = LabelFrame( self.root, 
-                                padx=0, pady=0,
-                                bd=0, font=('fit', 16)
+                                padx=0, pady=0,bd=0
                               )
     self.status.pack()
-    self.state = Label(self.root,
-                          font=('fixed', 16))
     self.stateL = Label(self.root,
                             text='Status:',
                             fg=self.color,
                             bd=0, bg=self.bg,
-                            font=('fixed', 18, 'bold'),
+                            anchor = 'center',
+                            font=('fixed', 28, 'bold'),
                             padx=0, pady=0
                             )
-    self.heating = Label(self.root,
+    self.heating =    Label(self.root,
+                          font=('fixed', 20))
+    self.heatingL = Label(self.root,
                             text='Heating:',
                             fg=self.color,
                             bd=0, bg=self.bg,
-                            font=('fixed', 16),
+                            font=('fixed', 28, 'bold'),
                             padx=0, pady=0
                             )
     self.alarm =    Label(self.root,
-                          font=('fixed', 16))
+                          font=('fixed', 20))
 
     self.alarmL = Label(self.root,
                             text='Alarm:',
                             fg=self.color,
                             bd=0, bg=self.bg,
-                            font=('fixed', 18),
+                            font=('fixed', 28, 'bold'),
                             padx=0, pady=20
                             )
-    self.snooze =  Label(self.root, font=('fixed', 16))
+    self.snooze =  Label(self.root, font=('fixed', 25))
     
     
 
+
     # pack and place on screen
-    self.state.pack()
-    self.state.place(x=20, y=10)
     self.stateL.pack()
-    self.stateL.place(x=135, y=10)
+    self.stateL.place(x=0.35*self.width_diff, y=0.08*self.height_diff)
     self.heating.pack()
-    self.heating.place(x=20, y=85)
+    self.heating.place(x=0.05*self.width_diff, y=0.28*self.height_diff)
+    self.heatingL.pack()
+    self.heatingL.place(x=0.35*self.width_diff, y=0.28*self.height_diff)
     self.alarm.pack()
-    self.alarm.place(x=20, y=160 )
+    self.alarm.place(x=0.05*self.width_diff, y=0.48*self.height_diff)
     self.alarmL.pack()
-    self.alarmL.place(x=135, y = 148)
+    self.alarmL.place(x=0.35*self.width_diff, y =0.45*self.height_diff)
     self.snooze.pack()
-    self.snooze.place(x=34, y= 183)
+    self.snooze.place(x=0.06*self.width_diff, y=0.53*self.height_diff)
+
+
+    
+
 
     self.machine_state = machine_state
     
 
 
   def update(self):                    # init all sensor readings at each clock tick
-    
-    atext = ""
-    for a in STATUS:
-        atext = atext + a + '\n'
-    if len(STATUS) == 1:
-        color = 'green'
-    else:
+    if any(self.machine_state.alarmCodes.values()):
+        atext = ""
         color = 'red'
+        for k,v in self.machine_state.alarmCodes.items():
+            if v:
+                atext = atext + str(k) +  '\n'
+    else:
+        color = 'green'
+        atext = "ALL OKAY!"
+
     
     self.alarm.config( text='Alarm:',
         fg=self.color,
         bg=self.bg
         )
     
-    self.state.config(text='Status:',
-        fg=self.color,
-        bg=self.bg
-        )
         
     self.alarmL.config( text=atext,
         fg=color,
         bg=self.bg
         )
 
-    self.stateL.config(text=STATE,
+    #Determining the state:
+
+    self.stateL.config(text='PREHEAT' if self.machine_state.is_preheating else 'ERROR' if self.machine_state.is_errored else 'RUNNING',
                         fg=self.color,
                         bg=self.bg
                     )
 
-    self.heating.config(text='Heating:        {}'.format(HEATING),
+    self.heating.config(text='Heating:',
                         fg=self.color,
                         bg=self.bg
                     )
+    self.heatingL.config( text='ON' if self.machine_state.heaterOn else 'OFF',
+        fg=self.color,
+        bg=self.bg
+        )
     
-    if SNOOZE:
+    if self.machine_state.is_snoozed:
         symbol = '🔔'
-        time_remain = SNOOZE_TIMER
-     
+        time_remain = int(self.machine_state.snooze_countdown)  
+        self.snooze.config(text=f'{symbol}\n{ str(int(time_remain/60))}:{ str(time_remain%60).zfill(2) }',
+                        fg='yellow',
+                        bg=self.bg
+                    )     
     else:
-        symbol = ' '
-        self.snooze_timer = None
-        time_remain = ' '
-    self.snooze.config(text=symbol + '\n' + str(time_remain),
+        self.snooze.config(text='',
                         fg='yellow',
                         bg=self.bg
                     )
+
+
     #TODO: Add time left for snooze
 
+
+    
+    # update the warnings in newSensors.py for these values and then ,odify this part
+    
 
 
     

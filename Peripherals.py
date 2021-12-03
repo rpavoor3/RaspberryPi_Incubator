@@ -110,8 +110,10 @@ class PeripheralBus:
     set_point_temp = 0 
 
     # TODO: ADC Start and End Voltages need to translate to value between 0 and 1
-    for i in range(ADC_START_VOLTAGE, ADC_START_VOLTAGE, ADC_STEP):
+    for v in range(int(ADC_START_VOLTAGE), int(ADC_START_VOLTAGE), int(ADC_STEP)):
         
+        i = float(v) / ADC_MAG_ADJ
+
         self.adcPwmODevice.value = i
         time.sleep(0.03) # Wait to settle
 

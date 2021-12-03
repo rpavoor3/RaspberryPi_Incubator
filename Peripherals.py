@@ -12,6 +12,7 @@ import time
 import gpiozero
 from gpiozero import DigitalInputDevice
 from gpiozero import Device
+from gpiozero.pins.pigpio import PiGPIOFactory
 #from gpiozero.pins.mock import MockFactory, MockPWMPin
 from config import *
 import glob
@@ -23,6 +24,8 @@ import time
 class PeripheralBus:
 
   def __init__(self, stateFile):
+
+    factory = PiGPIOFactory()
 
     self.machineState = stateFile
 
@@ -36,8 +39,8 @@ class PeripheralBus:
 
     self.heaterIDevice1 = DigitalInputDevice(PIN_HEATER_CHECK_1)
     self.heaterIDevice2 = DigitalInputDevice(PIN_HEATER_CHECK_2)
-    self.heaterIDevice3 = DigitalInputDevice(PIN_HEATER_CHECK_3)
-    self.heaterIDevice4 = DigitalInputDevice(PIN_HEATER_CHECK_4)
+    self.heaterIDevice3 = DigitalInputDevice(PIN_HEATER_CHECK_3, pin_factory=factory)
+    self.heaterIDevice4 = DigitalInputDevice(PIN_HEATER_CHECK_4, pin_factory=factory)
 
     self.adcPwmODevice = PWMOutputDevice(PIN_ADC_PWM)
     self.adcPwmODevice.value = 1

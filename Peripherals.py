@@ -158,7 +158,7 @@ class PeripheralBus:
             break
 
     if not(temp_found):
-      self.machineState.alarmCodes["Control Sensor Malfunction"] = True
+      self.machineState.alarmCodes["Control Sensor Malfunction"] = False
       print("Unable to read skin sensor")
     if not (setpoint_found):
       print("Unable to read ambient temperature")

@@ -86,10 +86,8 @@ class PeripheralBus:
                   raise TimeoutError
             equals_pos = lines[1].find('t=')
         except IndexError:
-          print("Index Error")
           continue
         except TimeoutError:
-          print("Timeout Error")
           continue
         if equals_pos != -1:
             temp_string = lines[1][equals_pos+2:]
@@ -99,8 +97,10 @@ class PeripheralBus:
 
     if len(result_dict.values()) == 0:
       print("Nothing found")
-      return {'0' : -1}
-
+      self.machineState.alarmCodes["Digital Sensor Disconnect"] = True
+      return {'0' : 0}
+      
+    self.machineState.alarmCodes["Digital Sensor Disconnect"] = True
     return result_dict 
 
   def read_heater_health(self):

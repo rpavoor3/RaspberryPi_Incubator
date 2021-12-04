@@ -1,9 +1,20 @@
-from gpiozero import Button
 
-button = Button(21)
 
-while True:
-    if button.is_pressed:
-        print("Button is pressed")
+truth = 0.315
+
+low = 0
+high = 3.3
+
+######################
+
+count = 0
+x = (high - low) / 2
+
+while (count < 16):
+    count += 1
+    if (x < truth):
+        x += ((high - low) / (pow(2,(count+1))))
     else:
-        print("Button is not pressed")
+        x -= ((high - low) / (pow(2,(count+1))))
+
+print(x)

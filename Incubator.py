@@ -45,7 +45,7 @@ class Incubator:
     self.rootWindow.configure(bg='black')
     self.screen_width = self.rootWindow.winfo_screenwidth()
     self.screen_height = self.rootWindow.winfo_screenheight()
-    self.rootWindow.geometry('{self.screen_width}x{self.screen_height}')
+    self.rootWindow.geometry(f'{self.screen_width}x{self.screen_height}')
     self.rootWindow.bind("<Escape>", self.end_fullscreen)
     self.margin = 0.05
 
@@ -143,7 +143,7 @@ class Incubator:
     secs = int(currentTime % 60)
     
     # Display clock graphic and power status (TODO along with UUID)
-    self.bannerGraphics.config( text= f'UUID:{str(UUID)}\tTime Elapsed: {hours}:{str(mins).zfill(2)}:{str(secs).zfill(2)}' ,
+    self.bannerGraphics.config( text= f"UUID:{str(UUID)}\tTime Elapsed: {hours}:{str(mins).zfill(2)}:{str(secs).zfill(2)}",
                            fg='white',
                            bg='dark slate blue'
                        )

@@ -126,9 +126,10 @@ class StatusGraphics:
         )
 
     #Determining the state:
+    (stateText, stateColor) = ('PREHEAT', 'dark yellow') if self.machine_state.is_preheating else ('ERROR', 'red') if self.machine_state.is_errored else ('RUNNING', 'green')
 
-    self.stateL.config(text='PREHEAT' if self.machine_state.is_preheating else 'ERROR' if self.machine_state.is_errored else 'RUNNING',
-                        fg=self.color,
+    self.stateL.config(text=stateText,
+                        fg=stateColor,
                         bg=self.bg
                     )
 
@@ -143,7 +144,7 @@ class StatusGraphics:
     
     if self.machine_state.is_snoozed:
         #symbol = '🔔'
-        symbol = 'ZZZ'
+        symbol = 'SNZ'
         time_remain = int(self.machine_state.snooze_countdown)  
         self.snooze.config(text=f'{symbol}\n{ str(int(time_remain/60))}:{ str(time_remain%60).zfill(2) }',
                         fg='yellow',

@@ -63,10 +63,10 @@ class PatientGraphics:
         self.stats.place(x=0.07*self.width_diff, y=0.05*self.height_diff, height=0.40*self.height_diff, width=0.75*self.width_diff)
 
         # init frame labels
-        self.temp = Label(self.root, font=('fixed', 80))
-        self.setpoint  = Label(self.root, font=('fixed', 20))
-        self.atemp = Label(self.root, font=('fixed', 24))
-        self.probe   = Label(self.root, font=('fixed', 24))
+        self.temp = Label(self.root, font=('fixed', int(0.13*self.height_diff)))
+        self.setpoint  = Label(self.root, font=('fixed', int(0.03*self.height_diff)))
+        self.atemp = Label(self.root, font=('fixed', int(0.045*self.height_diff)))
+        self.probe   = Label(self.root, font=('fixed', int(0.045*self.height_diff)))
 
         # pack and place on screen
         self.temp.pack()
@@ -76,7 +76,7 @@ class PatientGraphics:
                             text='Control Temp:',
                             fg=self.color,
                             bd=0, bg=self.bg,
-                            font=('fixed', 20),
+                            font=('fixed', int(0.03*self.height_diff)),
                             padx=0, pady=0
                             )
         # set point
@@ -84,14 +84,14 @@ class PatientGraphics:
                           text='Desired Temp:', 
                           fg=self.color,
                           bd=0, bg=self.bg,
-                          font=('fixed', 16),
+                          font=('fixed', int(0.026*self.height_diff)),
                           padx=0, pady=0
                         )
         self.atempL = Label( self.root,
                          text='Ambient Temp:', 
                          fg=self.color,
                          bd=0, bg=self.bg,
-                         font=('fixed', 20),
+                         font=('fixed', int(0.03*self.height_diff)),
                          padx=0, pady=0
                        )
     
@@ -99,7 +99,7 @@ class PatientGraphics:
                           text='Monitoring Temp:', 
                           fg=self.color,
                           bd=0, bg=self.bg,
-                          font=('fixed', 20),
+                          font=('fixed', int(0.03*self.height_diff)),
                           padx=0, pady=0
                         )
         

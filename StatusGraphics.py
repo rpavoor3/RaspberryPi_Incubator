@@ -47,34 +47,35 @@ class StatusGraphics:
                                 padx=0, pady=0,bd=0
                               )
     self.status.pack()
+
     self.stateL = Label(self.root,
                             text='Status:',
                             fg=self.color,
                             bd=0, bg=self.bg,
                             anchor = 'center',
-                            font=('fixed', 28, 'bold'),
+                            font=('fixed',  int(0.042*self.height), 'bold'),
                             padx=0, pady=0
                             )
     self.heating =    Label(self.root,
-                          font=('fixed', 20))
+                          font=('fixed',  int(0.04*self.height)))
     self.heatingL = Label(self.root,
                             text='Heating:',
                             fg=self.color,
                             bd=0, bg=self.bg,
-                            font=('fixed', 28, 'bold'),
+                            font=('fixed', int(0.042*self.height), 'bold'),
                             padx=0, pady=0
                             )
     self.alarm =    Label(self.root,
-                          font=('fixed', 20))
+                          font=('fixed',  int(0.04*self.height)))
 
     self.alarmL = Label(self.root,
                             text='Alarm:',
                             fg=self.color,
                             bd=0, bg=self.bg,
-                            font=('fixed', 28, 'bold'),
+                            font=('fixed', int(0.042*self.height), 'bold'),
                             padx=0, pady=20
                             )
-    self.snooze =  Label(self.root, font=('fixed', 25))
+    self.snooze =  Label(self.root, font=('fixed', int(0.04*self.height)))
     
     
 

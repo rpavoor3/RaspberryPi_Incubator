@@ -57,22 +57,22 @@ class StatusGraphics:
                             padx=0, pady=0
                             )
     self.heating =    Label(self.root,
-                          font=('fixed',  int(0.02*self.height)))
+                          font=('fixed',  int(0.03*self.height)))
     self.heatingL = Label(self.root,
                             text='Heating:',
                             fg=self.color,
                             bd=0, bg=self.bg,
-                            font=('fixed', int(0.0222*self.height), 'bold'),
+                            font=('fixed', int(0.032*self.height), 'bold'),
                             padx=0, pady=0
                             )
     self.alarm =    Label(self.root,
-                          font=('fixed',  int(0.02*self.height)))
+                          font=('fixed',  int(0.03*self.height)))
 
     self.alarmL = Label(self.root,
                             text='Alarm:',
                             fg=self.color,
                             bd=0, bg=self.bg,
-                            font=('fixed', int(0.022*self.height), 'bold'),
+                            font=('fixed', int(0.032*self.height), 'bold'),
                             padx=0, pady=20
                             )
     self.snooze =  Label(self.root, font=('fixed', int(0.04*self.height)))
@@ -90,7 +90,7 @@ class StatusGraphics:
     self.alarm.pack()
     self.alarm.place(x=0.05*self.width_diff, y=0.48*self.height_diff)
     self.alarmL.pack()
-    self.alarmL.place(x=0.35*self.width_diff, y =0.45*self.height_diff)
+    self.alarmL.place(x=0.33*self.width_diff, y =0.45*self.height_diff)
     self.snooze.pack()
     self.snooze.place(x=0.06*self.width_diff, y=0.53*self.height_diff)
 

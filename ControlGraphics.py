@@ -134,7 +134,8 @@ class PatientGraphics:
                          fg=self.color,
                          bg=self.bg
             )
-        self.atemp.config( text='{0:.01f} °C'.format(float(sum(self.machine_state.ambientSensorReadings)/len(self.machine_state.ambientSensorReadings))),
+        atemp_val = float(sum(self.machine_state.ambientSensorReadings)/len(self.machine_state.ambientSensorReadings)) if len(self.machine_state.ambientSensorReadings) else 0
+        self.atemp.config( text='{0:.01f} °C'.format(atemp_val),
                       fg=self.color,
                       bg=self.bg
                     )

@@ -149,7 +149,7 @@ class PatientGraphics:
                     fg=self.color,
                     bg=self.bg
                   )
-        self.sensor_count.config( text='Sensor Count: {}'.format(float(len(self.machine_state.ambientSensorReadings.values()))),
+        self.sensor_count.config( text='Sensor Count: {}'.format(len(self.machine_state.ambientSensorReadings)),
                     fg=self.color,
                     bg=self.bg
                   )

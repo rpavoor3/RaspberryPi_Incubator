@@ -111,14 +111,14 @@ class PatientGraphics:
         self.spLabel.place(x=0.32*self.width_diff, y=0.37*self.height_diff)
 
         self.atemp.pack()
-        self.atemp.place(x=0.50*self.width_diff, y=0.55 *self.height_diff)
+        self.atemp.place(x=0.51*self.width_diff, y=0.55 *self.height_diff)
         self.probe.pack()
-        self.probe.place(x=0.50*self.width_diff, y=0.70 *self.height_diff)
+        self.probe.place(x=0.51*self.width_diff, y=0.73 *self.height_diff)
 
         self.atempL.pack()
         self.atempL.place(x=0.1*self.width_diff,y=0.55 *self.height_diff)
         self.probeL.pack()
-        self.probeL.place(x=0.1*self.width_diff,y=0.70 *self.height_diff)
+        self.probeL.place(x=0.1*self.width_diff,y=0.73 *self.height_diff)
         
 
 

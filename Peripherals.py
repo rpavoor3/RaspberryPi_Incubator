@@ -86,8 +86,10 @@ class PeripheralBus:
                   raise TimeoutError
             equals_pos = lines[1].find('t=')
         except IndexError:
+          print("Index Error")
           continue
         except TimeoutError:
+          print("Timeout Error")
           continue
         if equals_pos != -1:
             temp_string = lines[1][equals_pos+2:]
@@ -96,7 +98,8 @@ class PeripheralBus:
             result_dict[serial_id] = temp_c
 
     if len(result_dict.values()) == 0:
-       return {'0' : -1}
+      print("Nothing found")
+      return {'0' : -1}
 
     return result_dict 
 

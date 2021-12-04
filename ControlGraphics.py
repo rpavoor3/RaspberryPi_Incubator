@@ -67,7 +67,7 @@ class PatientGraphics:
         self.setpoint  = Label(self.root, font=('fixed', int(0.03*self.height_diff)))
         self.atemp = Label(self.root, font=('fixed', int(0.045*self.height_diff)))
         self.probe   = Label(self.root, font=('fixed', int(0.045*self.height_diff)))
-        self.sensor_count = Label(self.root, font=('fixed', int(0.1*self.height_diff)))
+        self.sensor_count = Label(self.root, font=('fixed', int(0.09*self.height_diff)))
 
         # pack and place on screen
         self.temp.pack()

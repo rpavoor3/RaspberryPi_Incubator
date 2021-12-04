@@ -142,7 +142,8 @@ class StatusGraphics:
         )
     
     if self.machine_state.is_snoozed:
-        symbol = '🔔'
+        #symbol = '🔔'
+        symbol = 'ZZZ'
         time_remain = int(self.machine_state.snooze_countdown)  
         self.snooze.config(text=f'{symbol}\n{ str(int(time_remain/60))}:{ str(time_remain%60).zfill(2) }',
                         fg='yellow',

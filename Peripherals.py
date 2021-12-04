@@ -66,6 +66,7 @@ class PeripheralBus:
     return lines
 
   def read_digital_sensors(self):
+    start = time.time()
     file_suffix = '/w1_slave'
     base_dir = '/sys/bus/w1/devices/'
     device_folders = glob.glob(base_dir + '28*')
@@ -100,6 +101,7 @@ class PeripheralBus:
 
     if len(result_filtered.values()) == 0:
       self.machineState.alarmCodes["Digital Sensor Disconnect"] = True
+    print("Dig Sensors" + str(time.time() - start))
   
     return result_filtered 
 
@@ -128,7 +130,7 @@ class PeripheralBus:
     set_point_temp = 0 
 
     # TODO: ADC Start and End Voltages need to translate to value between 0 and 1
-    for v in range(int(ADC_START_VOLTAGE), int(ADC_START_VOLTAGE), int(ADC_STEP)):
+    for v in range(int(ADC_START_VOLTAGE), int(ADC_END_VOLTAGE), int(ADC_STEP)):
         
         i = float(v) / ADC_MAG_ADJ
 
@@ -156,7 +158,7 @@ class PeripheralBus:
       print("Unable to read skin sensor")
     if not (setpoint_found):
       print("Unable to read ambient temperature")
-    print(str(time.time()- start))
+    print(time.time()- start)
         
     return {"Temperature" : temp_reading, "Setpoint" : set_point_temp}
 

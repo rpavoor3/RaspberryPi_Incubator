@@ -115,6 +115,7 @@ class PeripheralBus:
     return health_dict
 
   def read_ADC_sensors(self):
+    start = time.time()
     #if PC_DEV:
     #  return {"Temperature" : 36, "Setpoint" : 37}
 
@@ -155,6 +156,7 @@ class PeripheralBus:
       print("Unable to read skin sensor")
     if not (setpoint_found):
       print("Unable to read ambient temperature")
+    print(str(time.time()- start))
         
     return {"Temperature" : temp_reading, "Setpoint" : set_point_temp}
 

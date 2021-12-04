@@ -66,9 +66,6 @@ class PeripheralBus:
     return lines
 
   def read_digital_sensors(self):
-    if PC_DEV:
-      return {"A" : 36, "B" : 36, "C" : 36, "D" : 36}
-
     file_suffix = '/w1_slave'
     base_dir = '/sys/bus/w1/devices/'
     device_folders = glob.glob(base_dir + '28*')
@@ -163,7 +160,7 @@ class PeripheralBus:
     # Digital Temperature Sensors (Ambient + Probe)
     digital_temp_reading = self.read_digital_sensors()
     self.machineState.ambientSensorReadings = digital_temp_reading.values()
-    self.machineState.probeReading = digital_temp_reading['A']
+    self.machineState.probeReading = digital_temp_reading.values()[0]
 
     # Heater Statuses
     self.machineState.heaterHealth = self.read_heater_health()

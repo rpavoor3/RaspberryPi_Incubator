@@ -45,7 +45,7 @@ class Incubator:
     self.rootWindow.configure(bg='black')
     self.screen_width = self.rootWindow.winfo_screenwidth()
     self.screen_height = self.rootWindow.winfo_screenheight()
-    self.rootWindow.geometry(f'{self.screen_width}x{self.screen_height}+0+0')
+    self.rootWindow.geometry('{self.screen_width}x{self.screen_height}')
     self.rootWindow.bind("<Escape>", self.end_fullscreen)
     self.margin = 0.05
 

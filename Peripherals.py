@@ -72,6 +72,7 @@ class PeripheralBus:
     device_folders = glob.glob(base_dir + '28*')
 
     result_dict = dict()
+    if_counter = 0
 
     for d_f in device_folders:
         device_file = d_f + file_suffix
@@ -83,7 +84,9 @@ class PeripheralBus:
                 time.sleep(0.2)
                 lines = self.read_digital_temp_raw(device_file)
                 attempt_counter += 1
-                if attempt_counter > 10:
+                if attempt_counter > 3:
+                  if_counter += 1
+                  print("in 3 second counter")
                   raise TimeoutError
             equals_pos = lines[1].find('t=')
         except IndexError:
@@ -102,6 +105,7 @@ class PeripheralBus:
     if len(result_filtered.values()) == 0:
       self.machineState.alarmCodes["Digital Sensor Disconnect"] = True
     print("Dig Sensors: " + str(time.time() - start))
+    print("if counter: " + str(if_counter))
   
     return result_filtered 
 

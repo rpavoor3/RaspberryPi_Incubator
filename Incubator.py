@@ -70,7 +70,7 @@ class Incubator:
   def init_banner(self):
     self.startTime = round(time.time())
     self.bannerGraphics= Label(self.rootWindow, bg= 'dark blue',font=('fixed', 14), anchor = 'e')
-    self.bannerGraphics.place(x=self.margin * self.screen_width, y=0, width = self.screen_width - 2*self.margin * self.screen_width, height=2)  # Clock's Relative Position on Monitor
+    self.bannerGraphics.place(x=self.margin * self.screen_width, y=0, width = self.screen_width - 2*self.margin * self.screen_width)  # Clock's Relative Position on Monitor
 
   def init_compartments(self):
     # For each stats object, intialize their graphics and attach their hardware components

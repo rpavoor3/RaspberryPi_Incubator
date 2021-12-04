@@ -101,7 +101,7 @@ class PeripheralBus:
 
     if len(result_filtered.values()) == 0:
       self.machineState.alarmCodes["Digital Sensor Disconnect"] = True
-    print("Dig Sensors" + str(time.time() - start))
+    print("Dig Sensors: " + str(time.time() - start))
   
     return result_filtered 
 

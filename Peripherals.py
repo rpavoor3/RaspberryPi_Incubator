@@ -96,13 +96,12 @@ class PeripheralBus:
             result_dict[serial_id] = temp_c
 
     result_filtered = {key:value for (key, value) in result_dict.items() if value != 0 }
+    self.machineState.alarmCodes["Digital Sensor Disconnect"] = False
 
-    if len(result_dict.values()) == 0:
+    if len(result_filtered.values()) == 0:
       print("Nothing found")
       self.machineState.alarmCodes["Digital Sensor Disconnect"] = True
-      return {'0' : 0}
-      
-    self.machineState.alarmCodes["Digital Sensor Disconnect"] = False
+  
     return result_filtered 
 
   def read_heater_health(self):
@@ -177,7 +176,7 @@ class PeripheralBus:
     # Digital Temperature Sensors (Ambient + Probe)
     digital_temp_reading = self.read_digital_sensors()
     self.machineState.ambientSensorReadings = digital_temp_reading.values()
-    self.machineState.probeReading = list(digital_temp_reading.values())[0]
+    self.machineState.probeReading = list(digital_temp_reading.values())[0] if len(digital_temp_reading.values()) else 0
 
     # Heater Statuses
     self.machineState.heaterHealth = self.read_heater_health()

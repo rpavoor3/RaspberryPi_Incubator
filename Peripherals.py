@@ -95,13 +95,15 @@ class PeripheralBus:
             temp_f = temp_c * 9.0 / 5.0 + 32.0
             result_dict[serial_id] = temp_c
 
+    result_filtered = {key:value for (key, value) in result_dict.items() if value != 0 }
+
     if len(result_dict.values()) == 0:
       print("Nothing found")
       self.machineState.alarmCodes["Digital Sensor Disconnect"] = True
       return {'0' : 0}
       
-    self.machineState.alarmCodes["Digital Sensor Disconnect"] = True
-    return result_dict 
+    self.machineState.alarmCodes["Digital Sensor Disconnect"] = False
+    return result_filtered 
 
   def read_heater_health(self):
     if PC_DEV:

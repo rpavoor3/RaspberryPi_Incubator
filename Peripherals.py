@@ -76,15 +76,27 @@ class PeripheralBus:
         device_file = d_f + file_suffix
         serial_id = d_f.split('/')[-1]
         lines = self.read_digital_temp_raw(device_file)
-        while lines[0].strip()[-3:] != 'YES':
-            time.sleep(0.2)
-            lines = self.read_digital_temp_raw(device_file)
-        equals_pos = lines[1].find('t=')
+        attempt_counter = 0
+        try:
+            while lines[0].strip()[-3:] != 'YES':
+                time.sleep(0.2)
+                lines = self.read_digital_temp_raw(device_file)
+                attempt_counter += 1
+                if attempt_counter > 10:
+                  raise TimeoutError
+            equals_pos = lines[1].find('t=')
+        except IndexError:
+          continue
+        except TimeoutError:
+          continue
         if equals_pos != -1:
             temp_string = lines[1][equals_pos+2:]
             temp_c = float(temp_string) / 1000.0
             temp_f = temp_c * 9.0 / 5.0 + 32.0
             result_dict[serial_id] = temp_c
+
+    if len(result_dict.values()) == 0:
+       return {'0' : -1}
 
     return result_dict 
 

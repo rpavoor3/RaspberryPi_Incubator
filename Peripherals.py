@@ -115,8 +115,8 @@ class PeripheralBus:
     return health_dict
 
   def read_ADC_sensors(self):
-    if PC_DEV:
-      return {"Temperature" : 36, "Setpoint" : 37}
+    #if PC_DEV:
+    #  return {"Temperature" : 36, "Setpoint" : 37}
 
     temp_found = False
     setpoint_found = False
@@ -151,6 +151,7 @@ class PeripheralBus:
             break
 
     if not(temp_found):
+      self.machineState.alarmCodes["Control Sensor Malfunction"] = True
       print("Unable to read skin sensor")
     if not (setpoint_found):
       print("Unable to read ambient temperature")

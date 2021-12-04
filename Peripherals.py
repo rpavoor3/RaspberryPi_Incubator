@@ -219,7 +219,7 @@ class AlarmDevice:
     if (self.machineState.is_snoozed and time.time() - self.startTime > SNOOZE_LENGTH):
       self.machineState.is_snoozed = False
     else:
-      self.machineState.snooze_countdown = round(time.time() - self.startTime)
+      self.machineState.snooze_countdown = round(SNOOZE_LENGTH - time.time() - self.startTime)
 
     # sound alarm
     if (self.machineState.soundAlarm and

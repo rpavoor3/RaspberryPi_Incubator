@@ -92,7 +92,7 @@ class StatusGraphics:
     self.alarmL.pack()
     self.alarmL.place(x=0.33*self.width_diff, y =0.45*self.height_diff)
     self.snooze.pack()
-    self.snooze.place(x=0.06*self.width_diff, y=0.53*self.height_diff)
+    self.snooze.place(x=0.06*self.width_diff, y=0.55*self.height_diff)
 
 
     

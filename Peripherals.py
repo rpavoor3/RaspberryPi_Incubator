@@ -160,7 +160,7 @@ class PeripheralBus:
     # Digital Temperature Sensors (Ambient + Probe)
     digital_temp_reading = self.read_digital_sensors()
     self.machineState.ambientSensorReadings = digital_temp_reading.values()
-    self.machineState.probeReading = digital_temp_reading.values()[0]
+    self.machineState.probeReading = list(digital_temp_reading.values())[0]
 
     # Heater Statuses
     self.machineState.heaterHealth = self.read_heater_health()

@@ -72,7 +72,7 @@ class StatusGraphics:
                             text='Alarm:',
                             fg=self.color,
                             bd=0, bg=self.bg,
-                            font=('fixed', int(0.03*self.height), 'bold'),
+                            font=('fixed', int(0.025*self.height), 'bold'),
                             padx=0, pady=20
                             )
     self.snooze =  Label(self.root, font=('fixed', int(0.04*self.height)))

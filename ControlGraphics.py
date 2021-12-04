@@ -120,7 +120,7 @@ class PatientGraphics:
         self.atempL.pack()
         self.atempL.place(x=0.1*self.width_diff,y=0.55 *self.height_diff)
         self.sensor_count.pack()
-        self.sensor_count.place(x=0.16*self.width_diff,  y=0.60*self.height_diff)
+        self.sensor_count.place(x=0.17*self.width_diff,  y=0.62*self.height_diff)
         self.probeL.pack()
         self.probeL.place(x=0.1*self.width_diff,y=0.73 *self.height_diff)
         

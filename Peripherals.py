@@ -99,7 +99,6 @@ class PeripheralBus:
     self.machineState.alarmCodes["Digital Sensor Disconnect"] = False
 
     if len(result_filtered.values()) == 0:
-      print("Nothing found")
       self.machineState.alarmCodes["Digital Sensor Disconnect"] = True
   
     return result_filtered 
@@ -213,6 +212,7 @@ class AlarmDevice:
       self.machineState.is_snooze_requested = False
       self.machineState.is_snoozed = True
       self.startTime = time.time()
+      print("I SAW THE SNOOZE")
 
     # see if snooze over
     # TODO: Change to update state file

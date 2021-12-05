@@ -120,6 +120,56 @@ class PeripheralBus:
     health_dict[4] = self.heaterIDevice4.value
     return health_dict
 
+  def read_ADC_sensors_binary(self):
+    low = 0
+    high = 1
+    lower_limit = 0
+    upper_limit = 1
+
+    # Set Point
+    setpoint_tmp = 0
+    count = 0
+    x = (high - low) / 2
+    while (count < 20):
+      count += 1
+      self.adcPwmODevice.value = x
+      time.sleep(0.03) # Wait to settle
+      setpoint_comparator = self.setPointIDevice.value
+      if (setpoint_comparator == 1):
+        x -= ((high - low) / (pow(2,(count+1))))
+      else:
+        x += ((high - low) / (pow(2,(count+1))))
+      
+    if x > upper_limit or x < lower_limit:
+      # Set Point not found
+      print("Unable to read setpoint")
+    else:
+      setpoint_tmp = x
+
+    # Controller Temp
+    control_sensor_tmp = 0
+    count = 0
+    x = (high - low) / 2
+    while (count < 20):
+      count += 1
+      self.adcPwmODevice.value = x
+      time.sleep(0.03) # Wait to settle
+      tmp_comparator = self.ctrlTempIDevice.value
+      if (tmp_comparator == 1):
+        x -= ((high - low) / (pow(2,(count+1))))
+      else:
+        x += ((high - low) / (pow(2,(count+1))))
+      
+    if x > upper_limit or x < lower_limit:
+      # Controller Temp not found
+      print("Unable to read controller temp")
+      self.machineState.alarmCodes["Control Sensor Malfunction"] = True
+    else:
+      self.machineState.alarmCodes["Control Sensor Malfunction"] = False
+      control_sensor_tmp = x
+
+    return {"Temperature" : control_sensor_tmp, "Setpoint" : setpoint_tmp}
+
   def read_ADC_sensors(self):
     start = time.time()
     #if PC_DEV:
@@ -190,7 +240,7 @@ class PeripheralBus:
     self.machineState.heaterHealth = self.read_heater_health()
 
     # ADC Readings
-    adc_dict = self.read_ADC_sensors()
+    adc_dict = self.read_ADC_sensors_binary()
     self.machineState.setPointReading = adc_dict["Setpoint"]
     self.machineState.analogTempReading = adc_dict["Temperature"]
 

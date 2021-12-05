@@ -60,9 +60,12 @@ class PeripheralBus:
     self.machineState.is_snooze_requested = True
     
   def read_digital_temp_raw(self, device_file):
-    f = open(device_file, 'r')
-    lines = f.readlines()
-    f.close()
+    try:
+      f = open(device_file, 'r')
+      lines = f.readlines()
+      f.close()
+    except FileNotFoundError:
+      lines = []
     return lines
 
   def read_digital_sensors(self):

@@ -1,5 +1,4 @@
 from tkinter import *
-from PIL import Image, ImageTk
 from fillervals import TEMP,SPOINT, AMB_TEMP, PROBE_TEMP
 
 class PatientGraphics:

@@ -1,4 +1,5 @@
 from tkinter import *
+from PIL import Image, ImageTk
 class StatusGraphics:
   root        = None
   alarm_state = True
@@ -12,6 +13,7 @@ class StatusGraphics:
   height      = None
   bg          = None
   margin      = None
+  img         = None
 
   def __init__(self, masterScreen, screen_width, screen_height, margin, machine_state, color='purple', bg='black'):
     self.color = color
@@ -20,6 +22,8 @@ class StatusGraphics:
     self.height = screen_height
     self.machine_state = machine_state
     self.margin = margin
+    resize = Image.open("bell.png").resize((int(0.07*screen_height),int(0.07* screen_height)), Image.ANTIALIAS)
+    self.img= ImageTk.PhotoImage(resize)
 
     self.root = LabelFrame( masterScreen,                        # init master frame
                             text=' Status',
@@ -75,7 +79,8 @@ class StatusGraphics:
                             font=('fixed', int(0.025*self.height), 'bold'),
                             padx=0, pady=20
                             )
-    self.snooze =  Label(self.root, font=('fixed', int(0.04*self.height)))
+    self.snooze= Label(self.root, image = self.img )
+    self.snooze_label =  Label(self.root, font=('fixed', int(0.02*self.height)))
     
     
 
@@ -92,7 +97,10 @@ class StatusGraphics:
     self.alarmL.pack()
     self.alarmL.place(x=0.30*self.width_diff, y =0.45*self.height_diff)
     self.snooze.pack()
-    self.snooze.place(x=0.06*self.width_diff, y=0.56*self.height_diff)
+    self.snooze.place(x=0.08*self.width_diff, y=0.56*self.height_diff)
+    self.snooze_label.pack()
+    self.snooze_label.place(x=0.08*self.width_diff, y=0.67*self.height_diff)
+
 
 
     
@@ -143,10 +151,12 @@ class StatusGraphics:
         )
     
     if self.machine_state.is_snoozed:
-        #symbol = '🔔'
-        symbol = 'SNZ'
+
         time_remain = int(self.machine_state.snooze_countdown)  
-        self.snooze.config(text=f'{symbol}\n{ str(int(time_remain/60))}:{ str(time_remain%60).zfill(2) }',
+        self.snooze_label.config(text=f'{ str(int(time_remain/60))}:{ str(time_remain%60).zfill(2) }', 
+                    fg=color,
+                    bg=self.bg)
+        self.snooze.config(image = self.img, 
                         fg='yellow',
                         bg=self.bg
                     )     

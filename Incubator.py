@@ -182,6 +182,7 @@ class Incubator:
     # TODO: Get heartbeat from config
     self.bannerGraphics.after(50, self.update)
     print("Total Execution:", time.time() - s)
+    print("\n-------------------------------\n")
 
 if __name__=='__main__':
   incubator = Incubator()

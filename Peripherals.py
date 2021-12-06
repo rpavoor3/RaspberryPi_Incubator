@@ -134,7 +134,7 @@ class PeripheralBus:
     # Set Point
     setpoint_tmp = 0
     count = 0
-    x = (high - low) / 2
+    x = (high + low) / 2
     while (count < search_cycles):
       count += 1
       self.adcPwmODevice.value = x
@@ -145,7 +145,7 @@ class PeripheralBus:
       else:
         x += ((high - low) / (pow(2,(count+1))))
       
-    if x > upper_limit or x < lower_limit:
+    if x >= upper_limit or x <= lower_limit:
       # Set Point not found
       print("Unable to read setpoint")
     else:
@@ -154,7 +154,7 @@ class PeripheralBus:
     # Controller Temp
     control_sensor_tmp = 0
     count = 0
-    x = (high - low) / 2
+    x = (high + low) / 2
     while (count < search_cycles):
       count += 1
       self.adcPwmODevice.value = x
@@ -165,7 +165,7 @@ class PeripheralBus:
       else:
         x += ((high - low) / (pow(2,(count+1))))
       
-    if x > upper_limit or x < lower_limit:
+    if x >= upper_limit or x <= lower_limit:
       # Controller Temp not found
       self.machineState.alarmCodes["Control Sensor Malfunction"] = True
     else:

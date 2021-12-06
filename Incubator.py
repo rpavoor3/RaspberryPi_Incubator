@@ -142,6 +142,7 @@ class Incubator:
   TODO: Rename clock graphic to banner. Add UUID/mac address/save a config to banner to reflect unique incubator.
   '''
   def update(self):
+    s = time.time()
     # Get current time
     currentTime = round(time.time()- self.startTime)
     hours = int(currentTime / 3600)
@@ -153,25 +154,34 @@ class Incubator:
                            fg='white',
                            bg='dark slate blue'
                        )
-
+    t = time.time()
     # Read sensors and update state
     self.peripheralBus.update()
+    print("Sensor Reading:", time.time() - t)
+    t = time.time()
 
     # Do control system post proccessing here
     self.process()
+    print("Processing:", time.time() - t)
+    t = time.time()
 
     # Update outputs
     self.peripheralBus.writeOutput()
+    print("Write output:", time.time() - t)
+    t = time.time()
 
     # Update graphics
     self.patientGraphics.update()
     self.statusGraphics.update()
+    print("Graphics Update:", time.time() - t)
+
  
     
     # TODO: Replace clock graphic here with root and test
     # Bind update function to TK object, call every 50 ms
     # TODO: Get heartbeat from config
     self.bannerGraphics.after(50, self.update)
+    print("Total Execution:", time.time() - s)
 
 if __name__=='__main__':
   incubator = Incubator()

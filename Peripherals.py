@@ -89,7 +89,7 @@ class PeripheralBus:
                 attempt_counter += 1
                 if attempt_counter > 3:
                   if_counter += 1
-                  print("in 3 second counter")
+                  #print("in 3 second counter")
                   raise TimeoutError
             equals_pos = lines[1].find('t=')
         except IndexError:
@@ -107,8 +107,8 @@ class PeripheralBus:
 
     if len(result_filtered.values()) == 0:
       self.machineState.alarmCodes["Digital Sensor Disconnect"] = True
-    print("Dig Sensors: " + str(time.time() - start))
-    print("if counter: " + str(if_counter))
+    #print("Dig Sensors: " + str(time.time() - start))
+    #print("if counter: " + str(if_counter))
   
     return result_filtered 
 
@@ -165,7 +165,6 @@ class PeripheralBus:
       
     if x > upper_limit or x < lower_limit:
       # Controller Temp not found
-      print("Unable to read controller temp")
       self.machineState.alarmCodes["Control Sensor Malfunction"] = True
     else:
       self.machineState.alarmCodes["Control Sensor Malfunction"] = False
@@ -215,8 +214,7 @@ class PeripheralBus:
       print("Unable to read skin sensor")
     if not (setpoint_found):
       print("Unable to read ambient temperature")
-    print(time.time()- start)
-        
+
     return {"Temperature" : temp_reading, "Setpoint" : set_point_temp}
 
   def writeOutput(self):
@@ -235,17 +233,24 @@ class PeripheralBus:
   def update(self):
     ## Grab readings from peripherals
     # Digital Temperature Sensors (Ambient + Probe)
+    s = time.time()
     digital_temp_reading = self.read_digital_sensors()
     self.machineState.ambientSensorReadings = digital_temp_reading.values()
     self.machineState.probeReading = list(digital_temp_reading.values())[0] if len(digital_temp_reading.values()) else 0
+    print("Digital Reading:", time.time() - s)
+    s = time.time()
 
     # Heater Statuses
     self.machineState.heaterHealth = self.read_heater_health()
+    print("Heater Health Reading:", time.time() - s)
+    s = time.time()
 
     # ADC Readings
     adc_dict = self.read_ADC_sensors_binary()
     self.machineState.setPointReading = adc_dict["Setpoint"]
     self.machineState.analogTempReading = adc_dict["Temperature"]
+    print("ADC Reading:", time.time() - s)
+    s = time.time()
 
     # Temperature Fuse + Heater States
     self.machineState.physicalControlLine = self.heaterCtrlReqIDevice.value
@@ -274,7 +279,6 @@ class AlarmDevice:
       self.machineState.is_snooze_requested = False
       self.machineState.is_snoozed = True
       self.startTime = time.time()
-      print("I SAW THE SNOOZE")
 
     # see if snooze over
     # TODO: Change to update state file

@@ -96,8 +96,6 @@ class StatusGraphics:
     self.alarm.place(x=0.05*self.width_diff, y=0.48*self.height_diff)
     self.alarmL.pack()
     self.alarmL.place(x=0.30*self.width_diff, y =0.45*self.height_diff)
-    self.snooze.pack()
-    self.snooze.place(x=0.08*self.width_diff, y=0.56*self.height_diff)
     self.snooze_label.pack()
     self.snooze_label.place(x=0.08*self.width_diff, y=0.67*self.height_diff)
 
@@ -153,6 +151,8 @@ class StatusGraphics:
     if self.machine_state.is_snoozed:
 
         time_remain = int(self.machine_state.snooze_countdown)  
+        self.snooze.pack()
+        self.snooze.place(x=0.08*self.width_diff, y=0.56*self.height_diff)
         self.snooze_label.config(text=f'{ str(int(time_remain/60))}:{ str(time_remain%60).zfill(2) }', 
                     fg=color,
                     bg=self.bg)
@@ -161,9 +161,14 @@ class StatusGraphics:
                         bg=self.bg
                     )     
     else:
-        self.snooze.config(text='',
+        self.snooze.pack_forget()
+        self.snooze.config(image = None,
                         fg='yellow',
                         bg=self.bg
+                    )
+        self.snooze_label.config(text='', 
+                    fg=color,
+                    bg=self.bg
                     )
 
 

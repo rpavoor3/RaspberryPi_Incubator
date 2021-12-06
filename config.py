@@ -35,11 +35,16 @@ PIN_ADC_PWM = 13 #33
 """
 Skin Temperature Settings in Sensor.py
 """
+DIGITAL_VOLTAGE = 3.3
+
 # PWM Settings
-ADC_MAG_ADJ = 10000
-ADC_START_VOLTAGE = 0.0900 * ADC_MAG_ADJ # starting range for skin temperature
-ADC_END_VOLTAGE =   0.1150  * ADC_MAG_ADJ # Ending range for skin temperature
-ADC_STEP = 0.001 * ADC_MAG_ADJ  # Number of steps
+ADC_VOLTAGE_LOWER = 0.3000   # starting range for skin temperature
+ADC_VOLTAGE_UPPER =   0.3800   # Ending range for skin temperature
+ADC_SEARCH_CYCLES = 5
+
+ADC_START_VOLTAGE = 0.28
+ADC_END_VOLTAGE = 0.40
+
 # Warning Settings
 SKIN_TEMP_THRES_MAX = 39    # Minimum Skin Temperature Threshold Value
 SKIN_TEMP_THRES_MIN = 20    # Maximum Skin Temperature Threshold Value

@@ -124,16 +124,18 @@ class PeripheralBus:
     return health_dict
 
   def read_ADC_sensors_binary(self):
-    low = 0
-    high = 1
-    lower_limit = 0
-    upper_limit = 1
+    low = ADC_START_VOLTAGE/DIGITAL_VOLTAGE
+    high = ADC_END_VOLTAGE/DIGITAL_VOLTAGE
+    lower_limit = ADC_VOLTAGE_LOWER
+    upper_limit = ADC_VOLTAGE_UPPER
+
+    search_cycles = ADC_SEARCH_CYCLES
 
     # Set Point
     setpoint_tmp = 0
     count = 0
     x = (high - low) / 2
-    while (count < 20):
+    while (count < search_cycles):
       count += 1
       self.adcPwmODevice.value = x
       time.sleep(0.03) # Wait to settle
@@ -153,7 +155,7 @@ class PeripheralBus:
     control_sensor_tmp = 0
     count = 0
     x = (high - low) / 2
-    while (count < 20):
+    while (count < search_cycles):
       count += 1
       self.adcPwmODevice.value = x
       time.sleep(0.03) # Wait to settle
@@ -172,50 +174,52 @@ class PeripheralBus:
 
     return {"Temperature" : control_sensor_tmp, "Setpoint" : setpoint_tmp}
 
-  def read_ADC_sensors(self):
-    start = time.time()
-    #if PC_DEV:
-    #  return {"Temperature" : 36, "Setpoint" : 37}
+  '''
+    def read_ADC_sensors(self):
+      start = time.time()
+      #if PC_DEV:
+      #  return {"Temperature" : 36, "Setpoint" : 37}
 
-    temp_found = False
-    setpoint_found = False
-    temp_comparator = 0
-    setpoint_comparator = 0
+      temp_found = False
+      setpoint_found = False
+      temp_comparator = 0
+      setpoint_comparator = 0
 
-    temp_reading = 0  
-    set_point_temp = 0 
+      temp_reading = 0  
+      set_point_temp = 0 
 
-    # TODO: ADC Start and End Voltages need to translate to value between 0 and 1
-    for v in range(int(ADC_START_VOLTAGE), int(ADC_END_VOLTAGE), int(ADC_STEP)):
-        
-        i = float(v) / ADC_MAG_ADJ
+      # TODO: ADC Start and End Voltages need to translate to value between 0 and 1
+      for v in range(int(ADC_START_VOLTAGE), int(ADC_END_VOLTAGE), int(ADC_STEP)):
+          
+          i = float(v) / ADC_MAG_ADJ
 
-        self.adcPwmODevice.value = i
-        time.sleep(0.03) # Wait to settle
+          self.adcPwmODevice.value = i
+          time.sleep(0.03) # Wait to settle
 
-        temp_comparator = self.ctrlTempIDevice.value
-        setpoint_comparator = self.setPointIDevice.value
-        
-        # Read for analog temp sensor
-        if(temp_comparator == 1 and temp_found == False):
-            temp_reading = ((3.3 * float(i) / 1000000) - 0.5) * 100
-            temp_found = True
+          temp_comparator = self.ctrlTempIDevice.value
+          setpoint_comparator = self.setPointIDevice.value
+          
+          # Read for analog temp sensor
+          if(temp_comparator == 1 and temp_found == False):
+              temp_reading = ((3.3 * float(i) / 1000000) - 0.5) * 100
+              temp_found = True
 
-        # Read for set point
-        if(setpoint_comparator == 1 and setpoint_found == False):
-            set_point_temp = ((3.3 * float(i) / 1000000) - 0.5) * 100
-            setpoint_found = True
-            
-        if(setpoint_found and temp_found):
-            break
+          # Read for set point
+          if(setpoint_comparator == 1 and setpoint_found == False):
+              set_point_temp = ((3.3 * float(i) / 1000000) - 0.5) * 100
+              setpoint_found = True
+              
+          if(setpoint_found and temp_found):
+              break
 
-    if not(temp_found):
-      self.machineState.alarmCodes["Control Sensor Malfunction"] = True
-      print("Unable to read skin sensor")
-    if not (setpoint_found):
-      print("Unable to read ambient temperature")
+      if not(temp_found):
+        self.machineState.alarmCodes["Control Sensor Malfunction"] = True
+        print("Unable to read skin sensor")
+      if not (setpoint_found):
+        print("Unable to read ambient temperature")
 
-    return {"Temperature" : temp_reading, "Setpoint" : set_point_temp}
+      return {"Temperature" : temp_reading, "Setpoint" : set_point_temp}
+  '''
 
   def writeOutput(self):
     self.alarmDevice.update()

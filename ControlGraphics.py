@@ -59,7 +59,7 @@ class PatientGraphics:
                                 )
 
         self.stats.pack()  # pack and place on screen
-        self.stats.place(x=0.07*self.width_diff, y=0.05*self.height_diff, height=0.40*self.height_diff, width=0.75*self.width_diff)
+        self.stats.place(x=0.07*self.width_diff, y=0.05*self.height_diff, height=0.40*self.height_diff, width=0.81*self.width_diff)
 
         # init frame labels
         self.temp = Label(self.root, font=('fixed', int(0.13*self.height_diff)))

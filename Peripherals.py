@@ -96,7 +96,7 @@ class PeripheralBus:
     result_filtered = {key:value for (key, value) in result_dict.items() if value != 0 }
     self.machineState.alarmCodes["Digital Sensor Disconnect"] = False
 
-    if len(result_filtered.values()) == 0 and not PC_DEV:
+    if len(result_filtered.values()) == 0:
       self.machineState.alarmCodes["Digital Sensor Disconnect"] = True
   
     return result_filtered 

@@ -120,17 +120,18 @@ class Incubator:
     else:
       self.machineState.alarmCodes["Heater Malfunction"] = any(self.machineState.heaterStates)
 
+
+    # Check if temperature shutdown (thermostat failsafe activated)
+    self.machineState.alarmCodes["Temperature Shutdown"] = (self.machineState.physicalControlLine and not self.machineState.physicalHeaterCommand)
+
     # Check for major system errors
     if (self.machineState.alarmCodes["Control Sensor Malfunction"]):
       self.machineState.is_errored = True
     else:
       self.machineState.is_errored = False
 
-    # Check if temperature shutdown (thermostat failsafe activated)
-    self.machineState.alarmCodes["Temperature Shutdown"] = (self.machineState.physicalControlLine and not self.machineState.physicalHeaterCommand)
-
     # Check if alarm needs to sound
-    self.machineState.soundAlarm = self.machineState.alarmCodes["Too Cold"] or self.machineState.alarmCodes["Too Hot"] 
+    self.machineState.soundAlarm = self.machineState.alarmCodes["Too Cold"] or self.machineState.alarmCodes["Too Hot"] or self.machineState.alarmCodes["Temperature Shutdown"] 
     
     # Check for preheat state transition
     if self.machineState.is_preheating and self.machineState.analogTempReading >= self.machineState.setPointReading:

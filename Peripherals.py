@@ -24,8 +24,10 @@ if PC_DEV:
 class PeripheralBus:
 
   def __init__(self, stateFile):
-
-    factory = PiGPIOFactory()
+    if PC_DEV:
+      factory = None
+    else:
+      factory = PiGPIOFactory()
 
     self.machineState = stateFile
 
@@ -69,6 +71,8 @@ class PeripheralBus:
     return lines
 
   def read_digital_sensors(self):
+    if PC_DEV:
+      return {'key':37}
     start = time.time()
     file_suffix = '/w1_slave'
     base_dir = '/sys/bus/w1/devices/'
@@ -89,7 +93,7 @@ class PeripheralBus:
                 attempt_counter += 1
                 if attempt_counter > 3:
                   if_counter += 1
-                  #print("in 3 second counter")
+                  print("in 3 second counter")
                   raise TimeoutError
             equals_pos = lines[1].find('t=')
         except IndexError:
@@ -105,10 +109,10 @@ class PeripheralBus:
     result_filtered = {key:value for (key, value) in result_dict.items() if value != 0 }
     self.machineState.alarmCodes["Digital Sensor Disconnect"] = False
 
-    if len(result_filtered.values()) == 0:
+    if len(result_filtered.values()) == 0 and not PC_DEV:
       self.machineState.alarmCodes["Digital Sensor Disconnect"] = True
-    #print("Dig Sensors: " + str(time.time() - start))
-    #print("if counter: " + str(if_counter))
+    print("Dig Sensors: " + str(time.time() - start))
+    print("if counter: " + str(if_counter))
   
     return result_filtered 
 
@@ -124,18 +128,18 @@ class PeripheralBus:
     return health_dict
 
   def read_ADC_sensors_binary(self):
-    low = ADC_START_VOLTAGE/DIGITAL_VOLTAGE
-    high = ADC_END_VOLTAGE/DIGITAL_VOLTAGE
-    lower_limit = ADC_VOLTAGE_LOWER
-    upper_limit = ADC_VOLTAGE_UPPER
-
-    search_cycles = ADC_SEARCH_CYCLES
+    if PC_DEV:
+      return {"Temperature" : 37, "Setpoint" : 37}
+    low = 0
+    high = 1
+    lower_limit = 0
+    upper_limit = 1
 
     # Set Point
     setpoint_tmp = 0
     count = 0
-    x = (high + low) / 2
-    while (count < search_cycles):
+    x = (high - low) / 2
+    while (count < 20):
       count += 1
       self.adcPwmODevice.value = x
       time.sleep(0.03) # Wait to settle
@@ -145,7 +149,7 @@ class PeripheralBus:
       else:
         x += ((high - low) / (pow(2,(count+1))))
       
-    if x >= upper_limit or x <= lower_limit:
+    if x > upper_limit or x < lower_limit:
       # Set Point not found
       print("Unable to read setpoint")
     else:
@@ -154,8 +158,8 @@ class PeripheralBus:
     # Controller Temp
     control_sensor_tmp = 0
     count = 0
-    x = (high + low) / 2
-    while (count < search_cycles):
+    x = (high - low) / 2
+    while (count < 20):
       count += 1
       self.adcPwmODevice.value = x
       time.sleep(0.03) # Wait to settle
@@ -165,8 +169,9 @@ class PeripheralBus:
       else:
         x += ((high - low) / (pow(2,(count+1))))
       
-    if x >= upper_limit or x <= lower_limit:
+    if x > upper_limit or x < lower_limit:
       # Controller Temp not found
+      print("Unable to read controller temp")
       self.machineState.alarmCodes["Control Sensor Malfunction"] = True
     else:
       self.machineState.alarmCodes["Control Sensor Malfunction"] = False
@@ -174,52 +179,51 @@ class PeripheralBus:
 
     return {"Temperature" : control_sensor_tmp, "Setpoint" : setpoint_tmp}
 
-  '''
-    def read_ADC_sensors(self):
-      start = time.time()
-      #if PC_DEV:
-      #  return {"Temperature" : 36, "Setpoint" : 37}
+  def read_ADC_sensors(self):
+    start = time.time()
+    if PC_DEV:
+      return {"Temperature" : 36, "Setpoint" : 37}
 
-      temp_found = False
-      setpoint_found = False
-      temp_comparator = 0
-      setpoint_comparator = 0
+    temp_found = False
+    setpoint_found = False
+    temp_comparator = 0
+    setpoint_comparator = 0
 
-      temp_reading = 0  
-      set_point_temp = 0 
+    temp_reading = 0  
+    set_point_temp = 0 
 
-      # TODO: ADC Start and End Voltages need to translate to value between 0 and 1
-      for v in range(int(ADC_START_VOLTAGE), int(ADC_END_VOLTAGE), int(ADC_STEP)):
-          
-          i = float(v) / ADC_MAG_ADJ
+    # TODO: ADC Start and End Voltages need to translate to value between 0 and 1
+    for v in range(int(ADC_START_VOLTAGE), int(ADC_END_VOLTAGE), int(ADC_STEP)):
+        
+        i = float(v) / ADC_MAG_ADJ
 
-          self.adcPwmODevice.value = i
-          time.sleep(0.03) # Wait to settle
+        self.adcPwmODevice.value = i
+        time.sleep(0.03) # Wait to settle
 
-          temp_comparator = self.ctrlTempIDevice.value
-          setpoint_comparator = self.setPointIDevice.value
-          
-          # Read for analog temp sensor
-          if(temp_comparator == 1 and temp_found == False):
-              temp_reading = ((3.3 * float(i) / 1000000) - 0.5) * 100
-              temp_found = True
+        temp_comparator = self.ctrlTempIDevice.value
+        setpoint_comparator = self.setPointIDevice.value
+        
+        # Read for analog temp sensor
+        if(temp_comparator == 1 and temp_found == False):
+            temp_reading = ((3.3 * float(i) / 1000000) - 0.5) * 100
+            temp_found = True
 
-          # Read for set point
-          if(setpoint_comparator == 1 and setpoint_found == False):
-              set_point_temp = ((3.3 * float(i) / 1000000) - 0.5) * 100
-              setpoint_found = True
-              
-          if(setpoint_found and temp_found):
-              break
+        # Read for set point
+        if(setpoint_comparator == 1 and setpoint_found == False):
+            set_point_temp = ((3.3 * float(i) / 1000000) - 0.5) * 100
+            setpoint_found = True
+            
+        if(setpoint_found and temp_found):
+            break
 
-      if not(temp_found):
-        self.machineState.alarmCodes["Control Sensor Malfunction"] = True
-        print("Unable to read skin sensor")
-      if not (setpoint_found):
-        print("Unable to read ambient temperature")
-
-      return {"Temperature" : temp_reading, "Setpoint" : set_point_temp}
-  '''
+    if not(temp_found):
+      self.machineState.alarmCodes["Control Sensor Malfunction"] = True
+      print("Unable to read skin sensor")
+    if not (setpoint_found):
+      print("Unable to read ambient temperature")
+    print(time.time()- start)
+        
+    return {"Temperature" : temp_reading, "Setpoint" : set_point_temp}
 
   def writeOutput(self):
     self.alarmDevice.update()
@@ -237,24 +241,17 @@ class PeripheralBus:
   def update(self):
     ## Grab readings from peripherals
     # Digital Temperature Sensors (Ambient + Probe)
-    s = time.time()
     digital_temp_reading = self.read_digital_sensors()
     self.machineState.ambientSensorReadings = digital_temp_reading.values()
     self.machineState.probeReading = list(digital_temp_reading.values())[0] if len(digital_temp_reading.values()) else 0
-    print("Digital Reading:", time.time() - s)
-    s = time.time()
 
     # Heater Statuses
     self.machineState.heaterHealth = self.read_heater_health()
-    print("Heater Health Reading:", time.time() - s)
-    s = time.time()
 
     # ADC Readings
     adc_dict = self.read_ADC_sensors_binary()
     self.machineState.setPointReading = adc_dict["Setpoint"]
     self.machineState.analogTempReading = adc_dict["Temperature"]
-    print("ADC Reading:", time.time() - s)
-    s = time.time()
 
     # Temperature Fuse + Heater States
     self.machineState.physicalControlLine = self.heaterCtrlReqIDevice.value
@@ -283,6 +280,7 @@ class AlarmDevice:
       self.machineState.is_snooze_requested = False
       self.machineState.is_snoozed = True
       self.startTime = time.time()
+      print("I SAW THE SNOOZE")
 
     # see if snooze over
     # TODO: Change to update state file

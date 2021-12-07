@@ -57,6 +57,9 @@ class Incubator:
     # Initialize state bus
     self.machineState = MachineState()
 
+    self.rootWindow.bind("<Up>", self.incSP)
+    self.rootWindow.bind("<Down>", self.decSP)
+
     # Initialize peripheral bus 
     self.peripheralBus = PeripheralBus(self.machineState)
 
@@ -88,28 +91,35 @@ class Incubator:
     self.rootWindow.attributes("-fullscreen", False)
     return
 
+  def incSP(self, event=None):
+    if self.machineState != None:
+      self.machineState.setPointReading += 0.5
+  
+  def decSP(self, event=None):
+    if self.machineState != None:
+      self.machineState.setPointReading -= 0.5
+      
   def process(self):
-
     # Heating System Control
     if (self.machineState.heaterOn and
-        self.machineState.analogTempReading > self.machineState.setPointReading + CONTROL_THRESHOLD):
+        self.machineState.probeReading > self.machineState.setPointReading + CONTROL_THRESHOLD):
         # Turn Heater Off
         self.machineState.heaterOn = False
         self.heaterDevice.on()
 
     elif (not self.machineState.heaterOn and
-          self.machineState.analogTempReading < self.machineState.setPointReading - CONTROL_THRESHOLD):
+          self.machineState.probeReading < self.machineState.setPointReading - CONTROL_THRESHOLD):
           # Turn Heater on
           self.machineState.heaterOn = True
           self.heaterDevice.off()
 
     # Check for temperature out of alarm range
-    if (self.machineState.analogTempReading > self.machineState.setPointReading + ALARM_THRESHOLD):
+    if (self.machineState.probeReading > self.machineState.setPointReading + ALARM_THRESHOLD):
       self.machineState.alarmCodes["Too Hot"] = True
     else:
       self.machineState.alarmCodes["Too Hot"] = False
 
-    if (self.machineState.analogTempReading < self.machineState.setPointReading - ALARM_THRESHOLD):
+    if (self.machineState.probeReading < self.machineState.setPointReading - ALARM_THRESHOLD):
       self.machineState.alarmCodes["Too Cold"] = True
     else:
       self.machineState.alarmCodes["Too Cold"] = False
@@ -157,23 +167,23 @@ class Incubator:
     t = time.time()
     # Read sensors and update state
     self.peripheralBus.update()
-    print("Sensor Reading:", time.time() - t)
+    #print("Sensor Reading:", time.time() - t)
     t = time.time()
 
     # Do control system post proccessing here
     self.process()
-    print("Processing:", time.time() - t)
+    #print("Processing:", time.time() - t)
     t = time.time()
 
     # Update outputs
     self.peripheralBus.writeOutput()
-    print("Write output:", time.time() - t)
+    #print("Write output:", time.time() - t)
     t = time.time()
 
     # Update graphics
     self.patientGraphics.update()
     self.statusGraphics.update()
-    print("Graphics Update:", time.time() - t)
+    #print("Graphics Update:", time.time() - t)
 
  
     
@@ -181,8 +191,8 @@ class Incubator:
     # Bind update function to TK object, call every 50 ms
     # TODO: Get heartbeat from config
     self.bannerGraphics.after(50, self.update)
-    print("Total Execution:", time.time() - s)
-    print("\n-------------------------------\n")
+    #print("Total Execution:", time.time() - s)
+    #print("\n-------------------------------\n")
 
 if __name__=='__main__':
   incubator = Incubator()

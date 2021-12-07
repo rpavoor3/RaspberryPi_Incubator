@@ -13,18 +13,25 @@ import gpiozero
 from gpiozero import DigitalInputDevice
 from gpiozero import Device
 from gpiozero.pins.pigpio import PiGPIOFactory
+from gpiozero.pins.mock import MockFactory, MockPWMPin
 from config import *
 import glob
 import time
 
 class PeripheralBus:
 
-  def __init__(self, stateFile):
-    factory = PiGPIOFactory()
+  Device.pin_factory = MockFactory(pin_class=MockPWMPin)
 
+
+  def __init__(self, stateFile):
+    #factory = PiGPIOFactory()
+
+    factory = MockFactory(pin_class=MockPWMPin)
     self.machineState = stateFile
 
     self.alarmDevice = AlarmDevice(stateFile)
+
+    self.machineState.setPointReading = 20
 
     self.heaterCtrlReqIDevice = DigitalInputDevice(PIN_THERM_IN)
     self.heaterCommandIDevice = DigitalInputDevice(PIN_THERM_OUT)
@@ -113,6 +120,9 @@ class PeripheralBus:
     return health_dict
 
   def read_ADC_sensors_binary(self):
+    if PC_DEV:
+      return {"Temperature" : 0, "Setpoint" : 0}
+
     low = ADC_START_VOLTAGE
     high = ADC_END_VOLTAGE
     lower_limit = ADC_VOLTAGE_LOWER
@@ -134,7 +144,8 @@ class PeripheralBus:
       
     if x > upper_limit or x < lower_limit:
       # Set Point not found
-      print("Unable to read setpoint")
+      x=x
+      #print("Unable to read setpoint")
     else:
       setpoint_tmp = (x * 3.3 * 1000 - 500 ) / 10
 
@@ -154,7 +165,7 @@ class PeripheralBus:
       
     if x > upper_limit or x < lower_limit:
       # Controller Temp not found
-      print("Unable to read controller temp")
+      #print("Unable to read controller temp")
       self.machineState.alarmCodes["Control Sensor Malfunction"] = True
     else:
       self.machineState.alarmCodes["Control Sensor Malfunction"] = False
@@ -182,19 +193,19 @@ class PeripheralBus:
     digital_temp_reading = self.read_digital_sensors()
     self.machineState.ambientSensorReadings = digital_temp_reading.values()
     self.machineState.probeReading = list(digital_temp_reading.values())[0] if len(digital_temp_reading.values()) else 0
-    print("Digital read time:", time.time() - t)
+    #print("Digital read time:", time.time() - t)
     t = time.time()
 
     # Heater Statuses
     self.machineState.heaterHealth = self.read_heater_health()
-    print("Heater read time:", time.time() - t)
+    #print("Heater read time:", time.time() - t)
     t = time.time()
 
     # ADC Readings
     adc_dict = self.read_ADC_sensors_binary()
-    self.machineState.setPointReading = adc_dict["Setpoint"]
+    #self.machineState.setPointReading = adc_dict["Setpoint"]
     self.machineState.analogTempReading = adc_dict["Temperature"]
-    print("ADC read time:", time.time() - t)
+    #print("ADC read time:", time.time() - t)
 
     # Temperature Fuse + Heater States
     self.machineState.physicalControlLine = self.heaterCtrlReqIDevice.value
@@ -215,7 +226,7 @@ class AlarmDevice:
     if (self.machineState.soundAlarm):
        curr = time.time()
        if (curr - self.twoToneTime > 1):
-         self.twoToneFlip = not self.twoToneFilp
+         self.twoToneFlip = not self.twoToneFlip
          self.twoToneTime = curr
 
 
@@ -237,9 +248,9 @@ class AlarmDevice:
        not self.machineState.is_preheating):
 
        if (self.twoToneFlip):
-        self.alarmODevice.frequency(2000)
+        self.alarmODevice.frequency = 2000
        else:
-        self.alarmODevice.frequency(4000)
+        self.alarmODevice.frequency = 4000
 
        self.alarmODevice.on()
     else:

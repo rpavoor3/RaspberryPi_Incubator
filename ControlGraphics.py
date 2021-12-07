@@ -129,7 +129,7 @@ class PatientGraphics:
         #temp = self.machine_state.skin_temp_reading
         #spoint = self.machine_state.set_point_reading
 
-        self.temp.config(text='{0:.01f} °C'.format(float (self.machine_state.analogTempReading)),
+        self.temp.config(text='{0:.01f} °C'.format(float (self.machine_state.probeReading)),
                          fg='cyan',
                          bg=self.bg
                          )

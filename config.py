@@ -31,6 +31,7 @@ PIN_SET_POINT_CMPR = 19 #35
 PIN_CTRL_SNSR_CMPR = 6 #31
 PIN_ALARM_PWM = 10 #19 ; ; 18 #12
 PIN_ADC_PWM = 13 #33
+PIN_HEAT_CTRL = 26 #37
 
 """
 Skin Temperature Settings in Sensor.py
@@ -41,6 +42,7 @@ DIGITAL_VOLTAGE = 3.3
 ADC_VOLTAGE_LOWER = 0.3000   # starting range for skin temperature
 ADC_VOLTAGE_UPPER =   0.3800   # Ending range for skin temperature
 ADC_SEARCH_CYCLES = 5
+
 
 ADC_START_VOLTAGE = 0.28
 ADC_END_VOLTAGE = 0.40

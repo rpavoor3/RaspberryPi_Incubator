@@ -136,7 +136,7 @@ class PeripheralBus:
       # Set Point not found
       print("Unable to read setpoint")
     else:
-      setpoint_tmp = x
+      setpoint_tmp = (x * 3.3 * 1000 - 500 ) / 10
 
     # Controller Temp
     control_sensor_tmp = 0
@@ -158,7 +158,7 @@ class PeripheralBus:
       self.machineState.alarmCodes["Control Sensor Malfunction"] = True
     else:
       self.machineState.alarmCodes["Control Sensor Malfunction"] = False
-      control_sensor_tmp = x
+      control_sensor_tmp = (x * 3.3 * 1000 - 500 ) / 10
 
     return {"Temperature" : control_sensor_tmp, "Setpoint" : setpoint_tmp}
 

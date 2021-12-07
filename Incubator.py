@@ -95,13 +95,13 @@ class Incubator:
         self.machineState.analogTempReading > self.machineState.setPointReading + CONTROL_THRESHOLD):
         # Turn Heater Off
         self.machineState.heaterOn = False
-        self.heaterDevice.off()
+        self.heaterDevice.on()
 
     elif (not self.machineState.heaterOn and
           self.machineState.analogTempReading < self.machineState.setPointReading - CONTROL_THRESHOLD):
           # Turn Heater on
           self.machineState.heaterOn = True
-          self.heaterDevice.on()
+          self.heaterDevice.off()
 
     # Check for temperature out of alarm range
     if (self.machineState.analogTempReading > self.machineState.setPointReading + ALARM_THRESHOLD):

@@ -2,7 +2,7 @@ from gpiozero import DigitalOutputDevice
 from gpiozero.pins.pigpio import PiGPIOFactory
 import time
 
-x = DigitalOutputDevice(26)
+x = DigitalOutputDevice(21)
 
 while(1):
     x.off()

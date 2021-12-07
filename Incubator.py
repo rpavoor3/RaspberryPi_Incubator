@@ -66,7 +66,7 @@ class Incubator:
 
     factory = PiGPIOFactory()
     # Initialize heating system control device
-    self.heaterDevice = DigitalOutputDevice(21, pin_factory=factory)
+    self.heaterDevice = DigitalOutputDevice(21, pin_factory=factory, initial_value=True)
 
     # Inititalize remaining graphics
     self.init_compartments()
@@ -103,6 +103,7 @@ class Incubator:
       
   def process(self):
     # Heating System Control
+    #TODO: look at transition state, the system will fail ON for some reason when you initialize
     if (self.machineState.heaterOn and
         self.machineState.probeReading > self.machineState.setPointReading + CONTROL_THRESHOLD):
         # Turn Heater Off

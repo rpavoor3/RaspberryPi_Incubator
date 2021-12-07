@@ -13,20 +13,16 @@ import gpiozero
 from gpiozero import DigitalInputDevice
 from gpiozero import Device
 from gpiozero.pins.pigpio import PiGPIOFactory
-from gpiozero.pins.mock import MockFactory, MockPWMPin
 from config import *
 import glob
 import time
 
 class PeripheralBus:
 
-  Device.pin_factory = MockFactory(pin_class=MockPWMPin)
 
 
   def __init__(self, stateFile):
-    #factory = PiGPIOFactory()
-
-    factory = MockFactory(pin_class=MockPWMPin)
+    factory = PiGPIOFactory()
     self.machineState = stateFile
 
     self.alarmDevice = AlarmDevice(stateFile)
@@ -222,6 +218,9 @@ class AlarmDevice:
     self.twoToneFlip = False
 
   def update(self):
+
+    if PC_DEV: 
+      return
 
     if (self.machineState.soundAlarm):
        curr = time.time()

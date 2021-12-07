@@ -11,6 +11,7 @@ from config import *
 from fillervals import UUID
 from uuid import getnode as get_mac
 from gpiozero import DigitalOutputDevice
+from gpiozero.pins.pigpio import PiGPIOFactory
 
 # TODO: ADD HEATING ELEMENT CODE AND OBJECT
 '''
@@ -63,8 +64,9 @@ class Incubator:
     # Initialize peripheral bus 
     self.peripheralBus = PeripheralBus(self.machineState)
 
+    factory = PiGPIOFactory()
     # Initialize heating system control device
-    self.heaterDevice = DigitalOutputDevice(21)
+    self.heaterDevice = DigitalOutputDevice(21, pin_factory=factory)
 
     # Inititalize remaining graphics
     self.init_compartments()

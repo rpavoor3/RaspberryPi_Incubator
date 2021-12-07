@@ -5,6 +5,6 @@ import time
 x = DigitalOutputDevice(26)
 
 while(1):
-    x.on()
+    x.off()
     time.sleep(1)
     print("Running...")

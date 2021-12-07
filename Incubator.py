@@ -64,7 +64,7 @@ class Incubator:
     self.peripheralBus = PeripheralBus(self.machineState)
 
     # Initialize heating system control device
-    self.heaterDevice = DigitalOutputDevice(PIN_HEAT_CTRL)
+    self.heaterDevice = DigitalOutputDevice(21)
 
     # Inititalize remaining graphics
     self.init_compartments()

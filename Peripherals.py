@@ -180,7 +180,7 @@ class PeripheralBus:
 
 
   def findProbe(self):
-    
+
     # get list of current devices
     file_suffix = '/w1_slave'
     base_dir = '/sys/bus/w1/devices/'
@@ -192,15 +192,14 @@ class PeripheralBus:
 
     # turn off power to probe
     self.probePowerDevice.off()
-    time.sleep(0.5)
+    time.sleep(0.1)
 
     # get list of devices now
     device_folders_after = glob.glob(base_dir + '28*')
-    
     diff = list(set(device_folders_before) - set(device_folders_after))
 
-    if (diff > 1):
-      print("PROBE ERROR")
+    if (diff != 1):
+      print("PROBE FINDING ERROR")
       return -1
 
     # return the difference
@@ -214,7 +213,7 @@ class PeripheralBus:
     prev_num_digital_sensors = len(self.machineState.ambientSensorReadings)
     digital_temp_reading = self.read_digital_sensors()
 
-    if (prev_num_digital_sensors != self.machineState.ambientSensorReadings or not self.probeAddress):
+    if (prev_num_digital_sensors != self.machineState.ambientSensorReadings):
       # determine the probe's address
       self.probeAddress = self.findProbe()
 

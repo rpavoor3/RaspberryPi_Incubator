@@ -12,7 +12,6 @@ from fillervals import UUID
 from uuid import getnode as get_mac
 from gpiozero import DigitalOutputDevice
 
-# TODO: ADD HEATING ELEMENT CODE AND OBJECT
 '''
 Monitor Class
 Description: Primary driver of incubator software. Initializes each component, updates timer, and calls routines. 
@@ -61,7 +60,7 @@ class Incubator:
     self.peripheralBus = PeripheralBus(self.machineState)
 
     # Initialize heating system control device
-    self.heaterDevice = DigitalOutputDevice(PIN_HEAT_CTRL)
+    self.heaterDevice = DigitalOutputDevice(PIN_HEAT_CTRL, initial_value=True)
 
     # Inititalize remaining graphics
     self.init_compartments()
@@ -95,13 +94,13 @@ class Incubator:
         self.machineState.analogTempReading > self.machineState.setPointReading + CONTROL_THRESHOLD):
         # Turn Heater Off
         self.machineState.heaterOn = False
-        self.heaterDevice.on()
+        self.heaterDevice.on() # pull high to turn off heater
 
     elif (not self.machineState.heaterOn and
           self.machineState.analogTempReading < self.machineState.setPointReading - CONTROL_THRESHOLD):
           # Turn Heater on
           self.machineState.heaterOn = True
-          self.heaterDevice.off()
+          self.heaterDevice.off() # pull low to turn on heater
 
     # Check for temperature out of alarm range
     if (self.machineState.analogTempReading > self.machineState.setPointReading + ALARM_THRESHOLD):

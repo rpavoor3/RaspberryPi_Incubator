@@ -26,6 +26,9 @@ class PeripheralBus:
 
     self.alarmDevice = AlarmDevice(stateFile)
 
+    self.probeAddress = -1
+    self.probePowerDevice = DigitalOutputDevice(PIN_PROBE_POWER, initial_value=True)
+
     self.heaterCtrlReqIDevice = DigitalInputDevice(PIN_THERM_IN)
     self.heaterCommandIDevice = DigitalInputDevice(PIN_THERM_OUT)
     
@@ -175,13 +178,57 @@ class PeripheralBus:
     else:
       self.preheatLedODevice.off()
 
+
+  def findProbe(self):
+    
+    # get list of current devices
+    file_suffix = '/w1_slave'
+    base_dir = '/sys/bus/w1/devices/'
+    
+    device_folders_before = glob.glob(base_dir + '28*')
+
+    if len(device_folders_before) == 0:
+      return -1
+
+    # turn off power to probe
+    self.probePowerDevice.off()
+    time.sleep(0.5)
+
+    # get list of devices now
+    device_folders_after = glob.glob(base_dir + '28*')
+    
+    diff = list(set(device_folders_before) - set(device_folders_after))
+
+    if (diff > 1):
+      print("PROBE ERROR")
+      return -1
+
+    # return the difference
+    return diff[0].split('/')[-1]
+
   def update(self):
     t = time.time()
     ## Grab readings from peripherals
     # Digital Temperature Sensors (Ambient + Probe)
+    # Logic to determine if probe needs to be updated 
+    prev_num_digital_sensors = len(self.machineState.ambientSensorReadings)
     digital_temp_reading = self.read_digital_sensors()
+
+    if (prev_num_digital_sensors != self.machineState.ambientSensorReadings or not self.probeAddress):
+      # determine the probe's address
+      self.probeAddress = self.findProbe()
+
+    # Grab probe reading from dict
+    self.machineState.probeReading = digital_temp_reading.get(self.probeAddress, -1)
+
+    # Grab all digital readings (includes probe for now...)
     self.machineState.ambientSensorReadings = digital_temp_reading.values()
-    self.machineState.probeReading = list(digital_temp_reading.values())[0] if len(digital_temp_reading.values()) else 0
+
+    # Remove the probe reading from the digital sensor set
+    if self.machineState.probeReading in self.machineState.ambientSensorReadings: 
+      self.machineState.ambientSensorReadings.remove(self.machineState.ambientSensorReadings)
+   
+
     print("Digital read time:", time.time() - t)
     t = time.time()
 

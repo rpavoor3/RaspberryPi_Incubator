@@ -31,7 +31,7 @@ PIN_SET_POINT_CMPR = 19 #35
 PIN_CTRL_SNSR_CMPR = 6 #31
 PIN_ALARM_PWM = 10 #19 ; ; 18 #12
 PIN_ADC_PWM = 13 #33
-PIN_HEAT_CTRL = 26 #37
+PIN_HEAT_CTRL = 21 #37
 
 """
 Skin Temperature Settings in Sensor.py
@@ -53,8 +53,8 @@ SKIN_TEMP_THRES_MIN = 20    # Maximum Skin Temperature Threshold Value
 #TODO: these values need to be double checked
 AMB_TEMP_THRES_MIN = 30     # Minimum Ambient(Incubator) Temperture Threshold Value
 AMB_TEMP_THRES_MAX = 40     # Maximum Ambient(Incubator) Temperture Threshold Value
-CONTROL_THRESHOLD = 2
-ALARM_THRESHOLD = 4
+CONTROL_THRESHOLD = 0.5
+ALARM_THRESHOLD = 2
 
 
 """

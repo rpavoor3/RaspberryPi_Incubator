@@ -14,7 +14,7 @@ from gpiozero import DigitalOutputDevice
 
 '''
 Monitor Class
-Description: Primary driver of incubator software. Initializes each component, updates timer, and calls routines. 
+Description: Primary driver of incubator software. Initalizes classes, handles graphics, determines machine state. 
 '''
 class Incubator:
   
@@ -88,14 +88,12 @@ class Incubator:
     return
 
   def process(self):
-
     # Heating System Control
     if (self.machineState.heaterOn and
         self.machineState.analogTempReading > self.machineState.setPointReading + CONTROL_THRESHOLD):
         # Turn Heater Off
         self.machineState.heaterOn = False
         self.heaterDevice.on() # pull high to turn off heater
-
     elif (not self.machineState.heaterOn and
           self.machineState.analogTempReading < self.machineState.setPointReading - CONTROL_THRESHOLD):
           # Turn Heater on
@@ -174,11 +172,6 @@ class Incubator:
     self.statusGraphics.update()
     print("Graphics Update:", time.time() - t)
 
- 
-    
-    # TODO: Replace clock graphic here with root and test
-    # Bind update function to TK object, call every 50 ms
-    # TODO: Get heartbeat from config
     self.bannerGraphics.after(50, self.update)
     print("Total Execution:", time.time() - s)
     print("\n-------------------------------\n")

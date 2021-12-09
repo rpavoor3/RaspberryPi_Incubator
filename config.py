@@ -32,6 +32,7 @@ PIN_CTRL_SNSR_CMPR = 6 #31
 PIN_ALARM_PWM = 10 #19 ; ; 18 #12
 PIN_ADC_PWM = 13 #33
 PIN_HEAT_CTRL = 21 #37
+PIN_PROBE_POWER = 1
 
 """
 Skin Temperature Settings in Sensor.py

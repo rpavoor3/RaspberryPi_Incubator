@@ -55,7 +55,8 @@ class PeripheralBus:
 
   def snoozeHandler(self):
     self.machineState.is_snooze_requested = True
-    
+
+  # Read raw file and return lines as list  
   def read_digital_temp_raw(self, device_file):
     try:
       f = open(device_file, 'r')
@@ -65,6 +66,11 @@ class PeripheralBus:
       lines = []
     return lines
 
+  '''
+  Reads digital sensors.
+  Digital sensors in the Rpi are devices and thus must be read from a file
+  Returns: Dictionary of sensor serial numbers to temperature value
+  '''
   def read_digital_sensors(self):
     start = time.time()
     file_suffix = '/w1_slave'
@@ -73,17 +79,18 @@ class PeripheralBus:
 
     result_dict = dict()
 
+    # Grab temperature from each device file 
     for d_f in device_folders:
         device_file = d_f + file_suffix
         serial_id = d_f.split('/')[-1]
         lines = self.read_digital_temp_raw(device_file)
         attempt_counter = 0
         try:
-            while lines[0].strip()[-3:] != 'YES':
-                time.sleep(0.2)
+            while lines[0].strip()[-3:] != 'YES': # assert that CRC code is correct
+                time.sleep(0.2) # wait before trying again
                 lines = self.read_digital_temp_raw(device_file)
                 attempt_counter += 1
-                if attempt_counter > 3:
+                if attempt_counter > 3: # move on after 3 tries
                   raise TimeoutError
             equals_pos = lines[1].find('t=')
         except IndexError:
@@ -93,21 +100,20 @@ class PeripheralBus:
         if equals_pos != -1:
             temp_string = lines[1][equals_pos+2:]
             temp_c = float(temp_string) / 1000.0
-            temp_f = temp_c * 9.0 / 5.0 + 32.0
+            # temp_f = temp_c * 9.0 / 5.0 + 32.0
             result_dict[serial_id] = temp_c
 
+    # remove any errored values (shows up as zero... hopefully baby is not freezing)
     result_filtered = {key:value for (key, value) in result_dict.items() if value != 0 }
     self.machineState.alarmCodes["Digital Sensor Disconnect"] = False
 
+    # check error for no sensors 
     if len(result_filtered.values()) == 0:
       self.machineState.alarmCodes["Digital Sensor Disconnect"] = True
   
     return result_filtered 
 
   def read_heater_health(self):
-    if PC_DEV:
-      return [1,1,1,1]
-
     health_dict = dict()
     health_dict[1] = self.heaterIDevice1.value
     health_dict[2] = self.heaterIDevice2.value
@@ -115,13 +121,19 @@ class PeripheralBus:
     health_dict[4] = self.heaterIDevice4.value
     return health_dict
 
+  '''
+  Read the ADC devices: The setpoint potentiometer and the TMP36
+  Uses PWM ouptut to create a range of voltages that is compared to the sensor via an OpAmp
+  This algorithm uses binary search to find the voltage in {ADC_SEARCH_CYLCES} cycles
+  Returns: Dictionary for the temperature and set point readings
+  '''
   def read_ADC_sensors_binary(self):
     low = ADC_START_VOLTAGE
     high = ADC_END_VOLTAGE
     lower_limit = ADC_VOLTAGE_LOWER
     upper_limit = ADC_VOLTAGE_UPPER
 
-    # Set Point
+    # Find Set Point
     setpoint_tmp = 0
     count = 0
     x = (high + low) / 2
@@ -141,7 +153,7 @@ class PeripheralBus:
     else:
       setpoint_tmp = (x * 3.3 * 1000 - 500 ) / 10
 
-    # Controller Temp
+    # Find Controller Temp
     control_sensor_tmp = 0
     count = 0
     x = (high + low) / 2
@@ -261,7 +273,7 @@ class AlarmDevice:
     if (self.machineState.soundAlarm):
        curr = time.time()
        if (curr - self.twoToneTime > 1):
-         self.twoToneFlip = not self.twoToneFilp
+         self.twoToneFlip = not self.twoToneFlip
          self.twoToneTime = curr
 
 

@@ -62,7 +62,7 @@ ctrlTempIDevice = DigitalInputDevice(PIN_CTRL_SNSR_CMPR)
 
 while(1):
     time.sleep(1)
-    #print("FINAL:", read_ADC_sensors_binary())
-    comparator_test()
+    print("FINAL:", read_ADC_sensors_binary())
+    #comparator_test()
 
 

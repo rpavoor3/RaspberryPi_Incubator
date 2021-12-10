@@ -29,10 +29,10 @@ def read_ADC_sensors_binary():
       time.sleep(0.4) # Wait to settle
       setpoint_comparator = ctrlTempIDevice.value
       if (setpoint_comparator == 1):
-        print("TOO HIGH")
+        print("TOO HIGH\n")
         x -= ((high - low) / (pow(2,(count+1))))
       else:
-        print("TOO LOW")
+        print("TOO LOW\n")
         x += ((high - low) / (pow(2,(count+1))))
       
     if x > upper_limit or x < lower_limit:
@@ -57,7 +57,7 @@ setPointIDevice = DigitalInputDevice(PIN_SET_POINT_CMPR)
 ctrlTempIDevice = DigitalInputDevice(PIN_CTRL_SNSR_CMPR)
 
 while(1):
-    time.sleep(1)
-    read_ADC_sensors_binary()
+    time.sleep(3)
+    print("FINAL:", read_ADC_sensors_binary())
 
 

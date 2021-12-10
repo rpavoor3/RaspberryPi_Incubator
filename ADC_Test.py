@@ -45,6 +45,10 @@ def read_ADC_sensors_binary():
 
     return {"Setpoint" : setpoint_tmp}
 
+def comparator_test():
+    adcPwmODevice.value = 0.12
+    print(ctrlTempIDevice.value)
+
 low = ADC_START_VOLTAGE
 high = ADC_END_VOLTAGE
 lower_limit = ADC_VOLTAGE_LOWER
@@ -57,7 +61,8 @@ setPointIDevice = DigitalInputDevice(PIN_SET_POINT_CMPR)
 ctrlTempIDevice = DigitalInputDevice(PIN_CTRL_SNSR_CMPR)
 
 while(1):
-    time.sleep(3)
-    print("FINAL:", read_ADC_sensors_binary())
+    time.sleep(1)
+    #print("FINAL:", read_ADC_sensors_binary())
+    comparator_test()
 
 

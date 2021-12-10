@@ -68,7 +68,7 @@ alarmODevice.value = 0
 def snoozeHandler(self):
     print("PRESSED!")
 
-snoozeButton = gpiozero.Button(PIN_SNOOZE_BTN) 
+snoozeButton = gpiozero.Button(PIN_PREHEAT_BTN) 
 snoozeButton.when_pressed = snoozeHandler
 
 while(1):

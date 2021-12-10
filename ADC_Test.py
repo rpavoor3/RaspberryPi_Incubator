@@ -24,7 +24,7 @@ def read_ADC_sensors_binary():
     x = (high + low) / 2
     while (count < ADC_SEARCH_CYCLES):
       count += 1
-      adcPwmODevice.value = x
+      adcPwmODevice.value = x / DIGITAL_VOLTAGE
       print(x)
       time.sleep(0.4) # Wait to settle
       setpoint_comparator = ctrlTempIDevice.value

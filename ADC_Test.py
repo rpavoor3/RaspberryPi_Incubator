@@ -71,12 +71,10 @@ def snoozeHandler(self):
 snoozeButton = gpiozero.Button(PIN_PREHEAT_BTN) 
 snoozeButton.when_pressed = snoozeHandler
 
-preheatLedODevice = DigitalOutputDevice(PIN_ALARM_LED)
+preheatLedODevice = DigitalOutputDevice(PIN_HEAT_CTRL)
 
 
 while(1):
-    preheatLedODevice.on()
-    time.sleep(1)
     preheatLedODevice.off()
     time.sleep(1)
     #print("FINAL:", read_ADC_sensors_binary())

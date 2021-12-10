@@ -47,7 +47,7 @@ def read_ADC_sensors_binary():
 
 def comparator_test():
     adcPwmODevice.value = 0.12
-    print(setPointIDevice.value)
+    print(ctrlTempIDevice.value)
 
 low = ADC_START_VOLTAGE
 high = ADC_END_VOLTAGE

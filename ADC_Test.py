@@ -12,6 +12,8 @@ from config import *
 import glob
 import time
 
+
+
 def read_ADC_sensors_binary():
     low = ADC_START_VOLTAGE
     high = ADC_END_VOLTAGE
@@ -59,10 +61,13 @@ factory = PiGPIOFactory()
 adcPwmODevice = PWMOutputDevice(PIN_ADC_PWM, pin_factory=factory, frequency=5000)
 setPointIDevice = DigitalInputDevice(PIN_SET_POINT_CMPR)
 ctrlTempIDevice = DigitalInputDevice(PIN_CTRL_SNSR_CMPR)
-
+alarmODevice = PWMOutputDevice(PIN_ALARM_PWM, frequency=2000)
 while(1):
     time.sleep(1)
     #print("FINAL:", read_ADC_sensors_binary())
-    comparator_test()
+    #comparator_test()
+    alarmODevice.on()
+
+    
 
 

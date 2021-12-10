@@ -56,7 +56,7 @@ upper_limit = ADC_VOLTAGE_UPPER
 
 factory = PiGPIOFactory()
 
-adcPwmODevice = PWMOutputDevice(PIN_ADC_PWM, pin_factory=factory)
+adcPwmODevice = PWMOutputDevice(PIN_ADC_PWM, pin_factory=factory, frequency=10000)
 setPointIDevice = DigitalInputDevice(PIN_SET_POINT_CMPR)
 ctrlTempIDevice = DigitalInputDevice(PIN_CTRL_SNSR_CMPR)
 

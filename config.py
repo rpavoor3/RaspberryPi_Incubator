@@ -42,7 +42,7 @@ DIGITAL_VOLTAGE = 3.3
 # PWM Settings
 ADC_VOLTAGE_LOWER = 0.20   # starting range for skin temperature
 ADC_VOLTAGE_UPPER = 0.45   # Ending range for skin temperature
-ADC_SEARCH_CYCLES = 6
+ADC_SEARCH_CYCLES = 7
 
 
 ADC_START_VOLTAGE = 0.20

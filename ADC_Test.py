@@ -63,7 +63,7 @@ adcPwmODevice = PWMOutputDevice(PIN_ADC_PWM, pin_factory=factory, frequency=5000
 setPointIDevice = DigitalInputDevice(PIN_SET_POINT_CMPR)
 ctrlTempIDevice = DigitalInputDevice(PIN_CTRL_SNSR_CMPR)
 alarmODevice = PWMOutputDevice(PIN_ALARM_PWM, frequency=10000)
-alarmODevice.value = 0.8
+alarmODevice.value = 0
 
 def snoozeHandler(self):
     print("PRESSED!")

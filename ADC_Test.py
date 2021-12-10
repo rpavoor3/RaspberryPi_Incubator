@@ -11,23 +11,6 @@ from gpiozero.pins.pigpio import PiGPIOFactory
 from config import *
 import glob
 import time
-    
-low = ADC_START_VOLTAGE
-high = ADC_END_VOLTAGE
-lower_limit = ADC_VOLTAGE_LOWER
-upper_limit = ADC_VOLTAGE_UPPER
-
-factory = PiGPIOFactory()
-
-adcPwmODevice = PWMOutputDevice(PIN_ADC_PWM, pin_factory=factory)
-setPointIDevice = DigitalInputDevice(PIN_SET_POINT_CMPR)
-ctrlTempIDevice = DigitalInputDevice(PIN_CTRL_SNSR_CMPR)
-
-while(1):
-    adcPwmODevice.value = 0.5
-    time.sleep(1)
-    print("Running")
-
 
 def read_ADC_sensors_binary():
     low = ADC_START_VOLTAGE
@@ -61,4 +44,20 @@ def read_ADC_sensors_binary():
 
 
     return {"Setpoint" : setpoint_tmp}
+
+low = ADC_START_VOLTAGE
+high = ADC_END_VOLTAGE
+lower_limit = ADC_VOLTAGE_LOWER
+upper_limit = ADC_VOLTAGE_UPPER
+
+factory = PiGPIOFactory()
+
+adcPwmODevice = PWMOutputDevice(PIN_ADC_PWM, pin_factory=factory)
+setPointIDevice = DigitalInputDevice(PIN_SET_POINT_CMPR)
+ctrlTempIDevice = DigitalInputDevice(PIN_CTRL_SNSR_CMPR)
+
+while(1):
+    time.sleep(1)
+    read_ADC_sensors_binary()
+
 

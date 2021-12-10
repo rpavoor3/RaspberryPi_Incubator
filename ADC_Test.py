@@ -1,3 +1,4 @@
+from tkinter import *
 from config import *
 import random
 from gpiozero.output_devices import DigitalOutputDevice, PWMOutputDevice

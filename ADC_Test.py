@@ -28,7 +28,7 @@ def read_ADC_sensors_binary():
       print(x)
       time.sleep(0.4) # Wait to settle
       setpoint_comparator = ctrlTempIDevice.value
-      if (setpoint_comparator == 1):
+      if (setpoint_comparator == 0):
         print("TOO HIGH\n")
         x -= ((high - low) / (pow(2,(count+1))))
       else:

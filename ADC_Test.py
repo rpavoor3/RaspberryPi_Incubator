@@ -20,4 +20,8 @@ upper_limit = ADC_VOLTAGE_UPPER
 factory = PiGPIOFactory()
 
 adcPwmODevice = PWMOutputDevice(PIN_ADC_PWM, pin_factory=factory)
-adcPwmODevice.value = 0.5
+while(1):
+    adcPwmODevice.value = 0.5
+    time.sleep(1)
+    print("Running")
+

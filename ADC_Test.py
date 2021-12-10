@@ -1,5 +1,6 @@
 from tkinter import *
 from config import *
+from signal import pause
 import random
 from gpiozero.output_devices import DigitalOutputDevice, PWMOutputDevice
 import pytz
@@ -71,7 +72,7 @@ snoozeButton = gpiozero.Button(PIN_SNOOZE_BTN)
 snoozeButton.when_pressed = snoozeHandler
 
 while(1):
-    gpiozero.pause()
+    pause()
     #print("FINAL:", read_ADC_sensors_binary())
     #comparator_test()
     #alarmODevice.on()

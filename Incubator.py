@@ -154,27 +154,27 @@ class Incubator:
     t = time.time()
     # Read sensors and update state
     self.peripheralBus.update()
-    print("Sensor Reading:", time.time() - t)
+    #print("Sensor Reading:", time.time() - t)
     t = time.time()
 
     # Do control system post proccessing here
     self.process()
-    print("Processing:", time.time() - t)
+    #print("Processing:", time.time() - t)
     t = time.time()
 
     # Update outputs
     self.peripheralBus.writeOutput()
-    print("Write output:", time.time() - t)
+    #print("Write output:", time.time() - t)
     t = time.time()
 
     # Update graphics
     self.patientGraphics.update()
     self.statusGraphics.update()
-    print("Graphics Update:", time.time() - t)
+    #print("Graphics Update:", time.time() - t)
 
     self.bannerGraphics.after(50, self.update)
-    print("Total Execution:", time.time() - s)
-    print("\n-------------------------------\n")
+    #print("Total Execution:", time.time() - s)
+    #print("\n-------------------------------\n")
 
 if __name__=='__main__':
   incubator = Incubator()

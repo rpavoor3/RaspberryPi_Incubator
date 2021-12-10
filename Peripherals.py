@@ -149,7 +149,8 @@ class PeripheralBus:
       
     if x > upper_limit or x < lower_limit:
       # Set Point not found
-      print("Unable to read setpoint")
+      x=x
+      #print("Unable to read setpoint")
     else:
       setpoint_tmp = (x * 3.3 * 1000 - 500 ) / 10
 
@@ -169,7 +170,7 @@ class PeripheralBus:
       
     if x > upper_limit or x < lower_limit:
       # Controller Temp not found
-      print("Unable to read controller temp")
+      #print("Unable to read controller temp")
       self.machineState.alarmCodes["Control Sensor Malfunction"] = True
     else:
       self.machineState.alarmCodes["Control Sensor Malfunction"] = False
@@ -211,7 +212,7 @@ class PeripheralBus:
     diff = list(set(device_folders_before) - set(device_folders_after))
 
     if (diff != 1):
-      print("PROBE FINDING ERROR")
+      #print("PROBE FINDING ERROR")
       return -1
 
     # return the difference
@@ -240,19 +241,19 @@ class PeripheralBus:
       self.machineState.ambientSensorReadings.remove(self.machineState.ambientSensorReadings)
    
 
-    print("Digital read time:", time.time() - t)
+    #print("Digital read time:", time.time() - t)
     t = time.time()
 
     # Heater Statuses
     self.machineState.heaterHealth = self.read_heater_health()
-    print("Heater read time:", time.time() - t)
+    #print("Heater read time:", time.time() - t)
     t = time.time()
 
     # ADC Readings
     adc_dict = self.read_ADC_sensors_binary()
     self.machineState.setPointReading = adc_dict["Setpoint"]
     self.machineState.analogTempReading = adc_dict["Temperature"]
-    print("ADC read time:", time.time() - t)
+    #print("ADC read time:", time.time() - t)
 
     # Temperature Fuse + Heater States
     self.machineState.physicalControlLine = self.heaterCtrlReqIDevice.value

@@ -62,7 +62,7 @@ adcPwmODevice = PWMOutputDevice(PIN_ADC_PWM, pin_factory=factory, frequency=5000
 setPointIDevice = DigitalInputDevice(PIN_SET_POINT_CMPR)
 ctrlTempIDevice = DigitalInputDevice(PIN_CTRL_SNSR_CMPR)
 alarmODevice = PWMOutputDevice(PIN_ALARM_PWM, frequency=10000)
-alarmODevice.value = 0.5
+alarmODevice.value = 0.8
 while(1):
     time.sleep(1)
     #print("FINAL:", read_ADC_sensors_binary())

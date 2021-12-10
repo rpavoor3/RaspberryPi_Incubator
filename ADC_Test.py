@@ -67,7 +67,7 @@ while(1):
     time.sleep(1)
     #print("FINAL:", read_ADC_sensors_binary())
     #comparator_test()
-    alarmODevice.on()
+    #alarmODevice.on()
 
     
 

@@ -73,9 +73,36 @@ snoozeButton.when_pressed = snoozeHandler
 
 preheatLedODevice = DigitalOutputDevice(PIN_HEAT_CTRL)
 
+probePowerDevice = DigitalOutputDevice(PIN_HEAT_CTRL)
+
+def findProbe():
+    # get list of current devices
+    file_suffix = '/w1_slave'
+    base_dir = '/sys/bus/w1/devices/'
+    
+    device_folders_before = glob.glob(base_dir + '28*')
+
+    if len(device_folders_before) == 0:
+      return -1
+
+    # turn off power to probe
+    probePowerDevice.off()
+    time.sleep(0.3)
+
+    # get list of devices now
+    device_folders_after = glob.glob(base_dir + '28*')
+    diff = list(set(device_folders_before) - set(device_folders_after))
+
+    if (diff != 1):
+      print("PROBE FINDING ERROR")
+      return -1
+
+    probePowerDevice.on()
+    # return the difference
+    return diff[0].split('/')[-1]
 
 while(1):
-    preheatLedODevice.off()
+    print(findProbe())
     time.sleep(1)
     #print("FINAL:", read_ADC_sensors_binary())
     #comparator_test()

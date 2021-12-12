@@ -205,7 +205,7 @@ class PeripheralBus:
 
     # turn off power to probe
     self.probePowerDevice.off()
-    time.sleep(0.1)
+    time.sleep(0.3)
 
     # get list of devices now
     device_folders_after = glob.glob(base_dir + '28*')

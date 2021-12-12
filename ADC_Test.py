@@ -73,7 +73,7 @@ snoozeButton.when_pressed = snoozeHandler
 
 preheatLedODevice = DigitalOutputDevice(PIN_HEAT_CTRL)
 
-probePowerDevice = DigitalOutputDevice(PIN_HEAT_CTRL)
+probePowerDevice = DigitalOutputDevice(PIN_HEAT_CTRL, inital_value=True)
 
 def findProbe():
     # get list of current devices
@@ -102,7 +102,7 @@ def findProbe():
     return diff[0].split('/')[-1]
 
 while(1):
-    print(findProbe())
+    #print(findProbe())
     time.sleep(1)
     #print("FINAL:", read_ADC_sensors_binary())
     #comparator_test()

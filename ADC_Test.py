@@ -102,7 +102,7 @@ def findProbe():
     return diff[0].split('/')[-1]
 
 while(1):
-    #print(findProbe())
+    print(findProbe())
     time.sleep(1)
     #print("FINAL:", read_ADC_sensors_binary())
     #comparator_test()

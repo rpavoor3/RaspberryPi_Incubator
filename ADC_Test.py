@@ -73,7 +73,7 @@ snoozeButton.when_pressed = snoozeHandler
 
 preheatLedODevice = DigitalOutputDevice(PIN_HEAT_CTRL)
 
-probePowerDevice = DigitalOutputDevice(PIN_HEAT_CTRL, initial_value=True)
+probePowerDevice = DigitalOutputDevice(PIN_PROBE_POWER, initial_value=True)
 
 def findProbe():
     # get list of current devices

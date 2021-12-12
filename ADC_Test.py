@@ -82,15 +82,18 @@ def findProbe():
     
     device_folders_before = glob.glob(base_dir + '28*')
 
+    print(device_folders_before)
+
     if len(device_folders_before) == 0:
       return -1
 
     # turn off power to probe
     probePowerDevice.off()
-    time.sleep(0.3)
+    time.sleep(1)
 
     # get list of devices now
     device_folders_after = glob.glob(base_dir + '28*')
+    print(device_folders_after)
     diff = list(set(device_folders_before) - set(device_folders_after))
 
     if (diff != 1):
@@ -103,7 +106,7 @@ def findProbe():
 
 while(1):
     print(findProbe())
-    time.sleep(1)
+    time.sleep(2)
     #print("FINAL:", read_ADC_sensors_binary())
     #comparator_test()
     #alarmODevice.on()

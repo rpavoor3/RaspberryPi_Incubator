@@ -1,8 +1,8 @@
 # RasPi VitalsMonitor
 Please go to the link below and follow the instructions to flash a SD card with the latest version of the Raspberry Pi OS with Desktop. 
 Its best to use an SD card with storage > 8GB
-
 https://projects.raspberrypi.org/en/projects/raspberry-pi-setting-up
+
 ## Current packages and pip modules needed on pi
 * apt packages ("sudo apt-get install ..."):
   * python3
@@ -26,6 +26,7 @@ To change the gpio pin for the ambient temperature sensor do the following in te
 3. Change "gpiopin=4" to "gpiopin=20"
 4. Save changes and close file 
 5. Reboot Pi.
+NOTE: These pin numbers will likely change with PCB revision
 ## Start-Up
 To help with auto-running the GUI do the follwing once terminal is open on the pi:
 1. Type "sudo nano /etc/rc.local" to edit the local file.

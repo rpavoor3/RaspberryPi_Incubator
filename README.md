@@ -15,6 +15,9 @@ https://projects.raspberrypi.org/en/projects/raspberry-pi-setting-up
   * PIL
   * pytz
 
+## Test execution
+- With python3, try running _Incubator.py_ (the main entry point for the program)
+
 # Configuring Pi
 - In the raspberry pi configurations, 
 on the interfaces tab, "serial port" and "1-wire" should both be enabled. 
@@ -39,7 +42,7 @@ Exec=/usr/bin/python3 /home/pi/RaspPi_VitalsMonitor/Incubator.py
 (Change the path to Incubator.py as needed)
 5. Save changes and close file
 6. Reboot your Pi and the Incubator GUI display will pop up.
-7. The software will 
+7. The software will be stuck without the needed peripherals.
 
 # Future Works
 * Implement more sensors to incubator

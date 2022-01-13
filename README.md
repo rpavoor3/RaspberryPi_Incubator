@@ -44,6 +44,9 @@ Exec=/usr/bin/python3 /home/pi/RaspPi_VitalsMonitor/Incubator.py
 6. Reboot your Pi and the Incubator GUI display will pop up.
 7. The software will be stuck without the needed peripherals.
 
+# TODO
+* Some form of set up validation script (specifically for one wire)
+
 # Future Works
 * Implement more sensors to incubator
 * Create method to collect data from multiple incubators

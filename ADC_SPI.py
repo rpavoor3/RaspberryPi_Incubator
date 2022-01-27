@@ -4,7 +4,7 @@ from time import sleep
 adc = MCP3002(channel=0)
 
 while(1):
-    data = adc.value
+    data = 100 * (adc.value * 5) - 50
     print(data)
-    sleep(0.5)
+    sleep(0.25)
 

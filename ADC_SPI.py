@@ -7,5 +7,5 @@ while(1):
     # data = 100 * (adc.value * 5) - 50
     data = adc.value * 5
     print(data)
-    sleep(0.25)
+    sleep(1)
 

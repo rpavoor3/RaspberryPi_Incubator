@@ -11,7 +11,7 @@
 import argparse
 from ast import parse
 from enum import Enum
-import colorama
+from colorama import Fore, Style
 
 from config import *
 import time
@@ -22,55 +22,59 @@ from gpiozero.output_devices import DigitalOutputDevice, PWMOutputDevice
 from gpiozero.pins.mock import MockFactory
 from gpiozero import DigitalInputDevice
 from gpiozero import Device
-from gpiozero.pins.pigpio import PiGPIOFactory
+# from gpiozero.pins.pigpio import PiGPIOFactory
 
 # Hold results
 test_results = dict()
 
 # Possible responses: y (yes), n (no), s (skip), d (done), numerical value
-def handleResponse(query, test, options, ADC=0):
-    while (1):
-
-        if (options == "i"):
-            r = input(query + " (numerical value): ")
-            if r == 's':
-                return
-            test_results[test] = r
-            return
-
+def handleResponse(query, test, options, ADC=0, expected=None):
+    r = None
+    if (options == "i"):
+        r = input(query + " (numerical value): ")
+    else:
         r = input(query + " ({}): ".format(options))
-        if (r == "s"):
-            return
         if (r not in options.split("/")):
             print("Invalid option. Must use ({})".format(options))
+
+    if r == 's':
+        return
+
+    if (options == "y/n"):
+        test_results[test] = (r, r == "y")
+    elif (options == "d"):
+        if (ADC):
+            adc_value = 3.12 # read_ADC(ADC)
+            test_results[test] = (adc_value,  expected[0] <= adc_value <= expected[1])
         else:
-            if (options == "d"):
-                if (ADC):
-                    test_results[test] = 3.12 #read actual adc value here
-                else:
-                    test_results[test] = device.value()
-            else:
-                test_results[test] = r
-            return
+            device_value = device.value()
+            test_results[test] = (device_value, device_value == expected)
+            print(test_results)
+    elif (options == "i"):
+        test_results[test] = (r, expected[0] <= float(r) <= expected[1])
+        print(test_results)
 
 class Test(Enum):
     ALARM_LED = 0
     PREHEAT_LED = 1
     HEATER_COMMAND = 2
-    ALARM_SOUND
-    BEGIN_READ
-    THERM_IN
-    THERM_OUT
-    ADC_BEGIN
-    ADC_POT
-    ADC_PORT0
-    ADC_PORT1
-    ADC_BATTERY
-    HEATER_CHECK_1
-    HEATER_CHECK_2
-    HEATER_CHECK_3
-    HEATER_CHECK_4
-    END = 3
+    ALARM_SOUND = 3
+    BEGIN_READ = 4
+    THERM_IN = 5
+    THERM_OUT = 6
+    MODE_SWITCH = 7
+    PREHEAT_BTN = 8
+    SNOOZE_BTN = 9
+    HEATER_CHECK_1 = 10
+    HEATER_CHECK_2 = 11
+    HEATER_CHECK_3 = 12
+    HEATER_CHECK_4 = 13
+    ADC_BEGIN = 14
+    ADC_POT = 15
+    ADC_PORT0 = 16 
+    ADC_PORT1 = 17
+    ADC_BATTERY = 19
+    END = 20
 
 # Set factory for PC DEV
 factory = MockFactory()
@@ -114,11 +118,15 @@ def snz_handler():
     snz_pressed = True
 
 
+
 def process_output():
-    print("Processing output...")
-    '''
-    TEST_ID: TEST_VALUE -- PASS/FAIL
-    '''
+    print("{:<18} {:<8} {:<10}".format("TEST", "RESULT", "PASS/FAIL"))
+    for k, v in test_results.items():
+        print(Style.RESET_ALL, end = '') 
+        color = Fore.GREEN if v[1] else Fore.RED
+        print ("{:<18} {:<8}".format(k, v[0]) + color + " {:<10}".format("PASS" if v[1] else "FAIL"))
+        print(Style.RESET_ALL, end = '') 
+
 
 # Begin testing
 while (1):
@@ -157,11 +165,11 @@ while (1):
                 continue
             print("Turning heater on...")
             device.on()
-            handleResponse("What is the voltage across the power resistors?", "HEATER_LINE.ON", "i")
+            handleResponse("What is the voltage across the heating resistors?", "HEATER_LINE.ON", "i", expected=(10,13))
             time.sleep(0.1)
             print("Turning heater off...")
             device.off()
-            handleResponse("What is the voltage across the power resistors?", "HEATER_LINE.OFF", "i")
+            handleResponse("What is the voltage across the heating resistors?", "HEATER_LINE.OFF", "i", expected=(0,2))
             state = Test(state.value + 1)
 
         elif (state == Test.ALARM_SOUND):
@@ -179,21 +187,21 @@ while (1):
 
         elif (state == Test.THERM_IN):
             device = DigitalInputDevice(PIN_THERM_IN)
-            handleResponse("Write 0V to the Temperature Failsafe In (THERM_IN) line: ", "THERM_IN.LOW", "d")
-            handleResponse("Write 3.3V to the Temperature Failsafe In (THERM_IN) line: ", "THERM_IN.HIGH", "d")
+            handleResponse("Write 0V to the Temperature Failsafe In (THERM_IN) line: ", "THERM_IN.LOW", "d", expected=0)
+            handleResponse("Write 3.3V to the Temperature Failsafe In (THERM_IN) line: ", "THERM_IN.HIGH", "d", expected=1)
             state = Test(state.value + 1)
 
         elif (state == Test.THERM_OUT):
             device = DigitalInputDevice(PIN_THERM_OUT)
-            handleResponse("Write 0V to the Temperature Failsafe Out (THERM_OUT) line: ", "THERM_OUT.LOW", "d")
-            handleResponse("Write 3.3V to the Temperature Failsafe In (THERM_OUT) line: ", "THERM_OUT.HIGH", "d")
+            handleResponse("Write 0V to the Temperature Failsafe Out (THERM_OUT) line: ", "THERM_OUT.LOW", "d", expected=0)
+            handleResponse("Write 3.3V to the Temperature Failsafe In (THERM_OUT) line: ", "THERM_OUT.HIGH", "d", expected=1)
             state = Test(state.value + 1)
 
         elif (state == Test.MODE_SWITCH):
             device = DigitalInputDevice(PIN_MODE_SWITCH)
-            handleResponse("Flip the system to baby mode: ", "MODE_SWITCH.BABY", "d")
+            handleResponse("Flip the system to baby mode: ", "MODE_SWITCH.BABY", "d", expected=0)
             device = DigitalInputDevice(PIN_MODE_SWITCH)
-            handleResponse("Flip the system to air mode: ", "MODE_SWITCH.AIR", "d")
+            handleResponse("Flip the system to air mode: ", "MODE_SWITCH.AIR", "d", expected=1)
             state = Test(state.value + 1)
 
         elif (state == Test.PREHEAT_BTN):
@@ -207,6 +215,8 @@ while (1):
             while ((time.time() - btime < 10) and not ph_pressed):
                 time.sleep(0.1)
             print("PRESS DETECTED") if ph_pressed else print("PRESS NOT DETECTED")
+            test_results["PREHEAT_BTN.ACTIVATE"] = (ph_pressed, ph_pressed)
+            state = Test(state.value + 1)
 
         elif (state == Test.SNOOZE_BTN):
             snz_btn = gpiozero.Button(PIN_SNOOZE_BTN)
@@ -219,30 +229,31 @@ while (1):
             while ((time.time() - btime < 10) and not snz_pressed):
                 time.sleep(0.1)
             print("PRESS DETECTED") if snz_pressed else print("PRESS NOT DETECTED")
+            test_results["PREHEAT_BTN.ACTIVATE"] = (snz_pressed, snz_pressed)
             state = Test(state.value + 1)
             
         elif (state == Test.HEATER_CHECK_1):
             device = DigitalInputDevice(PIN_HEATER_CHECK_1)
-            handleResponse("Write 3.3V to the Heater Check 1 line: ", "HEATER_CHECK1.HIGH", "d")
-            handleResponse("Write 0V to the Heater Check 1 line: ", "HEATER_CHECK1.LOW", "d")
+            handleResponse("Write 3.3V to the Heater Check 1 line: ", "HEATER_CHECK1.HIGH", "d", expected=1 )
+            handleResponse("Write 0V to the Heater Check 1 line: ", "HEATER_CHECK1.LOW", "d", expected=0)
             state = Test(state.value + 1)   
 
         elif (state == Test.HEATER_CHECK_2):
             device = DigitalInputDevice(PIN_HEATER_CHECK_2)
-            handleResponse("Write 3.3V to the Heater Check 2 line: ", "HEATER_CHECK2.HIGH", "d")
-            handleResponse("Write 0V to the Heater Check 2 line: ", "HEATER_CHECK2.LOW", "d")
+            handleResponse("Write 3.3V to the Heater Check 2 line: ", "HEATER_CHECK2.HIGH", "d", expected=1)
+            handleResponse("Write 0V to the Heater Check 2 line: ", "HEATER_CHECK2.LOW", "d", expected=0)
             state = Test(state.value + 1)
 
         elif (state == Test.HEATER_CHECK_3):
             device = DigitalInputDevice(PIN_HEATER_CHECK_3)
-            handleResponse("Write 3.3V to the Heater Check 3 line: ", "HEATER_CHECK3.HIGH", "d")
-            handleResponse("Write 0V to the Heater Check 3 line: ", "HEATER_CHECK3.LOW", "d")
+            handleResponse("Write 3.3V to the Heater Check 3 line: ", "HEATER_CHECK3.HIGH", "d", expected=1)
+            handleResponse("Write 0V to the Heater Check 3 line: ", "HEATER_CHECK3.LOW", "d", expected=1)
             state = Test(state.value + 1)   
 
         elif (state == Test.HEATER_CHECK_4):
             device = DigitalInputDevice(PIN_HEATER_CHECK_4)
-            handleResponse("Write 3.3V to the Heater Check 4 line: ", "HEATER_CHECK4.HIGH", "d")
-            handleResponse("Write 0V to the Heater Check 5 line: ", "HEATER_CHECK4.LOW", "d")
+            handleResponse("Write 3.3V to the Heater Check 4 line: ", "HEATER_CHECK4.HIGH", "d", expected=1)
+            handleResponse("Write 0V to the Heater Check 5 line: ", "HEATER_CHECK4.LOW", "d", expected=0)
             state = Test(state.value + 1)   
 
         elif (state == Test.ADC_BEGIN):
@@ -250,16 +261,16 @@ while (1):
             state = Test(state.value + 1)
 
         elif (state == Test.ADC_POT):
-            handleResponse("Spin the temperature control knob to the lowest bound.", "ADC_POT.LOW", "d", 1)
-            handleResponse("Spin the temperature control knob to the highest bound.", "ADC_POT.HIGH", "d", 1)
+            handleResponse("Spin the temperature control knob to the lowest bound.", "ADC_POT.LOW", "d", 1, expected=(0.38, 0.41))
+            handleResponse("Spin the temperature control knob to the highest bound.", "ADC_POT.HIGH", "d", 1, expected=(0.28, 0.31))
             state = Test(state.value + 1)
             
         elif (state == Test.ADC_PORT0):
-            handleResponse("Drive the temperature sensor port (0) to 0V.", "ADC_PORT0.0", "d", 2)
-            handleResponse("Drive the temperature sensor port (0) to 3V.", "ADC_PORT0.3", "d", 2)
-            handleResponse("Drive the temperature sensor port (0) to 0.3V.", "ADC_PORT0.03", "d", 2)
-            handleResponse("Drive the temperature sensor port (0) to 0.4V.", "ADC_PORT0.04", "d", 2)
-            handleResponse("Drive the temperature sensor port (0) to 0.31V.", "ADC_PORT0.031", "d", 2)
+            handleResponse("Drive the temperature sensor port (0) to 0V.", "ADC_PORT0.0", "d", 2, expected=(0.0, 0.03) )
+            handleResponse("Drive the temperature sensor port (0) to 3V.", "ADC_PORT0.3", "d", 2, expected=(2.9, 3.1))
+            handleResponse("Drive the temperature sensor port (0) to 0.3V.", "ADC_PORT0.03", "d", 2, expected=(0.29, 0.31))
+            handleResponse("Drive the temperature sensor port (0) to 0.4V.", "ADC_PORT0.04", "d", 2, expected=(0.39, 0.41))
+            handleResponse("Drive the temperature sensor port (0) to 0.31V.", "ADC_PORT0.031", "d", 2, expected=(0.29, 0.31))
             state = Test(state.value + 1)
         
         elif (state == Test.ADC_PORT1):
@@ -281,11 +292,11 @@ while (1):
 
         else:
             print("Test Complete")
-            # processOutput()
+            process_output()
             break
     except KeyboardInterrupt:
-        print("Force exit")
-        # procesOutput()
+        print(" Force quit...")
+        process_output()
         sys.exit()
 
 print(test_results)

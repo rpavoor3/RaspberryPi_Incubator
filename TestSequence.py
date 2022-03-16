@@ -9,7 +9,9 @@
 # Date: 3/3/2022
 
 import argparse
+from ast import parse
 from enum import Enum
+import colorama
 
 from config import *
 import time
@@ -55,7 +57,19 @@ class Test(Enum):
     ALARM_LED = 0
     PREHEAT_LED = 1
     HEATER_COMMAND = 2
-
+    ALARM_SOUND
+    BEGIN_READ
+    THERM_IN
+    THERM_OUT
+    ADC_BEGIN
+    ADC_POT
+    ADC_PORT0
+    ADC_PORT1
+    ADC_BATTERY
+    HEATER_CHECK_1
+    HEATER_CHECK_2
+    HEATER_CHECK_3
+    HEATER_CHECK_4
     END = 3
 
 # Set factory for PC DEV
@@ -64,26 +78,58 @@ Device.pin_factory = factory
 
 # Set up argparsing for state jumping
 parser = argparse.ArgumentParser()
-parser.add_argument('--test', type=str, required=False) # jump to certain test 
+parser.add_argument('--test', type=str, required=False) # execute a single test 
 parser.add_argument('--begin', type=str, required=False) # start at a certain certain test 
 parser.add_argument('--end', type=str, required=False) # end at a certain test 
 
+args = parser.parse_args()
 
-# Ideation for Steps:
-'''
+end_bound = None
+begin_bound = None
+test_single = None
 
-1. Set up device properties, import libraries, create tags
-2. create framework for statemachine and input reading (press y/n if correct or incorrect)
-3. Capture results and report as we go 
-
-'''
+if (args.end):
+    end_bound = Test[args.end]
+if (args.begin):
+    begin_bound = Test[args.begin]
+if (args.test):
+    test_single = Test[args.test]
+    
 
 device = None
-state = Test.ALARM_LED
+state = Test(0)
+
+
+if test_single:
+    state = test_single
+elif begin_bound:
+    state = begin_bound
+
+# Push button states and handlers
+ph_pressed = False
+snz_pressed = False
+def ph_handler():
+    ph_pressed = True
+def snz_handler():
+    snz_pressed = True
+
+
+def process_output():
+    print("Processing output...")
+    '''
+    TEST_ID: TEST_VALUE -- PASS/FAIL
+    '''
 
 # Begin testing
-
 while (1):
+
+    # handle state bounds here
+    if test_single and state != Test(test_single):
+        break
+
+    if end_bound and state.value > end_bound.value:
+        break
+
     try:
         if (state == Test.ALARM_LED):
             device = DigitalOutputDevice(PIN_ALARM_LED)
@@ -132,20 +178,72 @@ while (1):
             state = Test(state.value + 1)
 
         elif (state == Test.THERM_IN):
-            device = DigitalOutputDevice(PIN_THERM_IN)
+            device = DigitalInputDevice(PIN_THERM_IN)
             handleResponse("Write 0V to the Temperature Failsafe In (THERM_IN) line: ", "THERM_IN.LOW", "d")
-            device = DigitalOutputDevice(PIN_THERM_IN)
             handleResponse("Write 3.3V to the Temperature Failsafe In (THERM_IN) line: ", "THERM_IN.HIGH", "d")
             state = Test(state.value + 1)
 
         elif (state == Test.THERM_OUT):
-            device = DigitalOutputDevice(PIN_THERM_OUT)
+            device = DigitalInputDevice(PIN_THERM_OUT)
             handleResponse("Write 0V to the Temperature Failsafe Out (THERM_OUT) line: ", "THERM_OUT.LOW", "d")
-            device = DigitalOutputDevice(PIN_THERM_OUT)
             handleResponse("Write 3.3V to the Temperature Failsafe In (THERM_OUT) line: ", "THERM_OUT.HIGH", "d")
             state = Test(state.value + 1)
 
-        # TODO: Complete inserting remainder of reading tests... Ruth, wanna help? :)
+        elif (state == Test.MODE_SWITCH):
+            device = DigitalInputDevice(PIN_MODE_SWITCH)
+            handleResponse("Flip the system to baby mode: ", "MODE_SWITCH.BABY", "d")
+            device = DigitalInputDevice(PIN_MODE_SWITCH)
+            handleResponse("Flip the system to air mode: ", "MODE_SWITCH.AIR", "d")
+            state = Test(state.value + 1)
+
+        elif (state == Test.PREHEAT_BTN):
+            ph_btn = gpiozero.Button(PIN_PREHEAT_BTN)
+            ph_btn.when_pressed = ph_handler
+            t = input("Press the preheat button within 10 seconds. Input 's' to skip or any other key to begin: ")
+            if (t == 's'):
+                state = Test(state.value + 1)
+                continue
+            btime = time.time()
+            while ((time.time() - btime < 10) and not ph_pressed):
+                time.sleep(0.1)
+            print("PRESS DETECTED") if ph_pressed else print("PRESS NOT DETECTED")
+
+        elif (state == Test.SNOOZE_BTN):
+            snz_btn = gpiozero.Button(PIN_SNOOZE_BTN)
+            snz_btn.when_pressed = snz_handler
+            t = input("Press the snooze button within 10 seconds. Input 's' to skip or any other key to begin: ")
+            if (t == 's'):
+                state = Test(state.value + 1)
+                continue
+            btime = time.time()
+            while ((time.time() - btime < 10) and not snz_pressed):
+                time.sleep(0.1)
+            print("PRESS DETECTED") if snz_pressed else print("PRESS NOT DETECTED")
+            state = Test(state.value + 1)
+            
+        elif (state == Test.HEATER_CHECK_1):
+            device = DigitalInputDevice(PIN_HEATER_CHECK_1)
+            handleResponse("Write 3.3V to the Heater Check 1 line: ", "HEATER_CHECK1.HIGH", "d")
+            handleResponse("Write 0V to the Heater Check 1 line: ", "HEATER_CHECK1.LOW", "d")
+            state = Test(state.value + 1)   
+
+        elif (state == Test.HEATER_CHECK_2):
+            device = DigitalInputDevice(PIN_HEATER_CHECK_2)
+            handleResponse("Write 3.3V to the Heater Check 2 line: ", "HEATER_CHECK2.HIGH", "d")
+            handleResponse("Write 0V to the Heater Check 2 line: ", "HEATER_CHECK2.LOW", "d")
+            state = Test(state.value + 1)
+
+        elif (state == Test.HEATER_CHECK_3):
+            device = DigitalInputDevice(PIN_HEATER_CHECK_3)
+            handleResponse("Write 3.3V to the Heater Check 3 line: ", "HEATER_CHECK3.HIGH", "d")
+            handleResponse("Write 0V to the Heater Check 3 line: ", "HEATER_CHECK3.LOW", "d")
+            state = Test(state.value + 1)   
+
+        elif (state == Test.HEATER_CHECK_4):
+            device = DigitalInputDevice(PIN_HEATER_CHECK_4)
+            handleResponse("Write 3.3V to the Heater Check 4 line: ", "HEATER_CHECK4.HIGH", "d")
+            handleResponse("Write 0V to the Heater Check 5 line: ", "HEATER_CHECK4.LOW", "d")
+            state = Test(state.value + 1)   
 
         elif (state == Test.ADC_BEGIN):
             print("\nNow prepare to test the ADCs. Prepare a powersupply to write to the temperatures sensor ports or lines.")

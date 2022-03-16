@@ -49,10 +49,8 @@ def handleResponse(query, test, options, ADC=0, expected=None):
         else:
             device_value = device.value()
             test_results[test] = (device_value, device_value == expected)
-            print(test_results)
     elif (options == "i"):
         test_results[test] = (r, expected[0] <= float(r) <= expected[1])
-        print(test_results)
 
 class Test(Enum):
     ALARM_LED = 0

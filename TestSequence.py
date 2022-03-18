@@ -8,6 +8,8 @@
 # Author: Hussain Miyaziwala
 # Date: 3/3/2022
 
+# TODO: Fix thresholds for ADC, print fails as they happen, button termination feedback
+
 import argparse
 from ast import parse
 from enum import Enum
@@ -263,12 +265,12 @@ while (1):
             handleResponse("Spin the temperature control knob to the highest bound.", "ADC_POT.HIGH", "d", 1, expected=(0.28, 0.31))
             state = Test(state.value + 1)
             
-        elif (state == Test.ADC_PORT0):
-            handleResponse("Drive the temperature sensor port (0) to 0V.", "ADC_PORT0.0", "d", 2, expected=(0.0, 0.03) )
-            handleResponse("Drive the temperature sensor port (0) to 3V.", "ADC_PORT0.3", "d", 2, expected=(2.9, 3.1))
-            handleResponse("Drive the temperature sensor port (0) to 0.3V.", "ADC_PORT0.03", "d", 2, expected=(0.29, 0.31))
-            handleResponse("Drive the temperature sensor port (0) to 0.4V.", "ADC_PORT0.04", "d", 2, expected=(0.39, 0.41))
-            handleResponse("Drive the temperature sensor port (0) to 0.31V.", "ADC_PORT0.031", "d", 2, expected=(0.29, 0.31))
+        elif (state == Test.ADC_PORT0): # three digits +/- 0.00
+            handleResponse("Drive the temperature sensor port (0) to 0V.", "ADC_PORT0.0", "d", 2, expected=(0.000, 0.005))
+            handleResponse("Drive the temperature sensor port (0) to 3V.", "ADC_PORT0.3", "d", 2, expected=(2.995, 3.005))
+            handleResponse("Drive the temperature sensor port (0) to 0.300V.", "ADC_PORT0.03", "d", 2, expected=(0.295, 0.305))
+            handleResponse("Drive the temperature sensor port (0) to 0.400V.", "ADC_PORT0.04", "d", 2, expected=(0.395, 0.405))
+            handleResponse("Drive the temperature sensor port (0) to 0.310V.", "ADC_PORT0.031", "d", 2, expected=(0.295, 0.305))
             state = Test(state.value + 1)
         
         elif (state == Test.ADC_PORT1):

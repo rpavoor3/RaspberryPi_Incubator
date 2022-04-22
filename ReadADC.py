@@ -59,7 +59,7 @@ def main():
         pi.set_mode(21, pigpio.OUTPUT)
         pi.write(21, 1) # is this right? @dr smith
         
-        time.sleep(0.1)
+        time.sleep(0.05)
         
         # Prepare to disconnect P21
         gbl['t12'] = 0

@@ -7,6 +7,7 @@ import itertools, sys
 
 import gpiozero
 from gpiozero.output_devices import DigitalOutputDevice, PWMOutputDevice
+from gpiozero.pins.mock import MockFactory
 from gpiozero import DigitalInputDevice
 from gpiozero import Device
 from gpiozero.pins.pigpio import PiGPIOFactory
@@ -33,8 +34,6 @@ parser.add_argument('--target', type=str, required=True) # alarm_led, switch, AD
 parser.add_argument('--command', type=str, required=False) # LOW, HIGH, etc
 
 args = parser.parse_args()
-
-factory = PiGPIOFactory()
 
 # Device acquisition
 device = None

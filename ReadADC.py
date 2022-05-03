@@ -1,7 +1,7 @@
+from config import *
 import pigpio
 import time
 import random
-import matplotlib.pyplot as plt
 from statistics import pstdev
 from statistics import mean
 import math
@@ -10,6 +10,12 @@ t0 = 0
 t12 = 0
 t13 = 0
 t26 = 0
+
+'''
+adc_ref_1 = pin24, 1.2v
+adc_ref_2 = pin26, 0.6v
+read = 3rd pin
+'''
 
 def cbf_12(event, level, tick):
     # print("Tick from 12", tick)
@@ -35,29 +41,29 @@ def main():
 
     pi = pigpio.pi() 
 
-    pi.set_mode(12, pigpio.INPUT)
-    pi.set_mode(13, pigpio.INPUT)
-    pi.set_mode(26, pigpio.INPUT)
+    pi.set_mode(PIN_REF_LO, pigpio.INPUT)
+    pi.set_mode(PIN_REF_HI, pigpio.INPUT)
+    pi.set_mode(PIN_BABY_TEMP, pigpio.INPUT)
 
-    pi.set_mode(20, pigpio.INPUT) # Later use this to ground RC
-    pi.set_mode(21, pigpio.OUTPUT) # This is the output thru 2.2k
+    # pi.set_mode(20, pigpio.INPUT) # Later use this to ground RC
+    pi.set_mode(PIN_ADC_SOURCE, pigpio.OUTPUT) # This is the output thru 2.2k
 
     tref=[]
     tsig1=[]
     tsig2=[]
     loopsum=0
 
-    cb12 = pi.callback(12, pigpio.FALLING_EDGE, cbf_12)
-    cb13 = pi.callback(13, pigpio.FALLING_EDGE, cbf_13)
-    cb26 = pi.callback(26, pigpio.FALLING_EDGE, cbf_26)
+    cb12 = pi.callback(PIN_REF_LO, pigpio.FALLING_EDGE, cbf_12)
+    cb13 = pi.callback(PIN_REF_HI, pigpio.FALLING_EDGE, cbf_13)
+    cb26 = pi.callback(PIN_BABY_TEMP, pigpio.FALLING_EDGE, cbf_26)
     
     gbl = globals()
 
     for i in range(samples):
         # Charge up RC Capacitor
         #print("P21 = 3.3V")
-        pi.set_mode(21, pigpio.OUTPUT)
-        pi.write(21, 1) # is this right? @dr smith
+        pi.set_mode(PIN_ADC_SOURCE, pigpio.OUTPUT)
+        pi.write(PIN_ADC_SOURCE, 1) # is this right? @dr smith
         
         time.sleep(0.05)
         
@@ -68,7 +74,7 @@ def main():
         #print("P21 = Input = Hi-Z")
         
         # Disconnect P21
-        pi.set_mode(21, pigpio.INPUT)
+        pi.set_mode(PIN_ADC_SOURCE, pigpio.INPUT) # ADC SOURCE PIN
         gbl['t0']  = pi.get_current_tick() # Get timestamp
         # While
         #  Any GPIO still is HI
@@ -105,13 +111,6 @@ def main():
     Vsig2 = Vrefhi*math.exp(-1 * mean(tsig2)/RC)
 
     print("Calculated: Vsig2=", Vsig2, "Volts,    RC=", RC, "Seconds   from Vrefhi and Vreflo")
-
-    plt.plot(range(samples), tref,  label="tref")
-    plt.plot(range(samples), tsig1, label="tsig1")
-    plt.plot(range(samples), tsig2, label="tsig2")
-    plt.legend()
-    plt.show()
-
     print("Done")
 
 if __name__ == "__main__":

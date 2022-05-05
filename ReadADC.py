@@ -129,6 +129,10 @@ def main():
     print("Calculated: Vsig2=", Vsig2, "Volts,    RC=", RC, "Seconds   from Vrefhi and Vreflo")
     print("Done")
 
+    Vsig2_alt = Vrefhi*((Vreflo/Vrefhi)**(mean(tsig2_filtered)/mean(tsig1_filtered)))
+    print("Calculated: Vsig2=", Vsig2_alt, "Volts,    RC=", RC, "Seconds   from Vrefhi and Vreflo")
+    print("Done")
+
     # plt.plot(range(samples), tref,  label="tref")
     plt.plot(range(samples), tsig1, label="tsig1")
     plt.plot(range(samples), tsig2, label="tsig2")

@@ -45,6 +45,8 @@ if args.type == "WRITE":
         device = DigitalOutputDevice(PIN_HEAT_CTRL)
     elif args.target == "PREHEAT_LED":
         device = DigitalOutputDevice(PIN_PREHEAT_LED)
+    elif args.target == "FAULT_LED":
+        device = DigitalOutputDevice(PIN_FAULT_LED)
     else:
         eprint("Invalid target for WRITE")
 

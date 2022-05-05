@@ -31,8 +31,8 @@ def cbf_read_baby(event, level, tick):
 
 def main():
     # Constants
-    Vrefhi = 12360/10000  # Volts
-    Vreflo =  6191/10000  # Volts
+    Vrefhi = 12338/10000  # Volts
+    Vreflo =  6168/10000  # Volts
     Vcc    = 33088/10000  # Volts
     samples = 100        # Samples for statistical estimate
 

@@ -79,7 +79,7 @@ def main():
 
         print("Sample=", i, " t_lo=", t_lo, " t_hi=", t_hi, " t_read=", t_read)
         tref.append(gbl['t_hi']  * 1e6)
-        tsig1.append((gbl['t_hi'] - gbl['t_lo'] ) * 1e6)
+        tsig1.append((gbl['t_lo'] - gbl['t_hi'] ) * 1e6)
         tsig2.append((gbl['t_read'] - gbl['t_hi'] ) * 1e6)
         loopsum += loops
       

@@ -70,7 +70,7 @@ if args.type == "READ":
     elif args.target == "BATTERY_RELAY":
         device = DigitalInputDevice(PIN_BATTERY_RELAY)
     elif args.target == "PREHEAT_BTN":
-        device = DigitalInputDevice(PIN_PREHEAT_BTN)
+        device = DigitalInputDevice(PIN_PREHEAT_BTN, pull_up=True)
     elif args.target == "SNOOZE_BTN":
         device = DigitalInputDevice(PIN_SNOOZE_BTN)
     elif args.target == "HEATER_TEST_1":

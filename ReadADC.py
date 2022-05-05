@@ -78,9 +78,9 @@ def main():
             loops +=1            # Count loops     
 
         print("Sample=", i, " t_lo=", t_lo, " t_hi=", t_hi, " t_read=", t_read)
-        tref.append(gbl['t_lo']  * 1e6)
+        tref.append(gbl['t_hi']  * 1e6)
         tsig1.append((gbl['t_hi'] - gbl['t_lo'] ) * 1e6)
-        tsig2.append((gbl['t_read'] - gbl['t_lo'] ) * 1e6)
+        tsig2.append((gbl['t_read'] - gbl['t_hi'] ) * 1e6)
         loopsum += loops
       
     # Remove outliers from tsig1 and tsig2
@@ -129,7 +129,7 @@ def main():
     print("Calculated: Vsig2=", Vsig2, "Volts,    RC=", RC, "Seconds   from Vrefhi and Vreflo")
     print("Done")
 
-    plt.plot(range(samples), tref,  label="tref")
+    # plt.plot(range(samples), tref,  label="tref")
     plt.plot(range(samples), tsig1, label="tsig1")
     plt.plot(range(samples), tsig2, label="tsig2")
     plt.legend()

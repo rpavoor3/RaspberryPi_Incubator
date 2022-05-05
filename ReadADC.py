@@ -34,7 +34,7 @@ def main():
     Vrefhi = 12360/10000  # Volts
     Vreflo =  6191/10000  # Volts
     Vcc    = 33088/10000  # Volts
-    samples = 200        # Samples for statistical estimate
+    samples = 100        # Samples for statistical estimate
 
     pi = pigpio.pi() 
 
@@ -61,7 +61,7 @@ def main():
         pi.set_mode(PIN_ADC_SOURCE, pigpio.OUTPUT)
         pi.write(PIN_ADC_SOURCE, 1)
         
-        time.sleep(0.05)
+        time.sleep(0.2)
         
         # Prepare to disconnect P21
         gbl['t_lo'] = 0
@@ -73,7 +73,7 @@ def main():
         gbl['t0']  = pi.get_current_tick() # Get timestamp
 
         loops = 0
-        while( ((gbl['t_lo']==0) or (gbl['t_hi']==0) or (gbl['t_read']==0)) and ((pi.get_current_tick()-t0) < 2 * 1e6)):
+        while( ((gbl['t_lo']==0) or (gbl['t_hi']==0) or (gbl['t_read']==0)) and ((pi.get_current_tick()-t0) < 1 * 1e6)):
             time.sleep(0.01)
             loops +=1            # Count loops     
 

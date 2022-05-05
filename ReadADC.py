@@ -82,7 +82,33 @@ def main():
         tsig1.append((gbl['t_hi'] - gbl['t_lo'] ) * 1e6)
         tsig2.append((gbl['t_read'] - gbl['t_lo'] ) * 1e6)
         loopsum += loops
-        
+      
+    # Remove outliers from tsig1 and tsig2
+    tsig1_mean = mean(tsig1)
+    tsig1_std = pstdev(tsig1)
+    tsig1_upper = tsig1_mean + 2*tsig1_std
+    tsig1_lower = tsig1_mean - 2*tsig1_std
+
+    # Remove from tsig1
+    tsig1_filtered = []
+    for i in range(len(tsig1)):
+        cur_val = tsig1[i]
+        if (cur_val < tsig1_upper) and (cur_val > tsig1_lower):
+            tsig1_filtered.append(cur_val)
+
+
+    tsig2_mean = mean(tsig2)
+    tsig2_std = pstdev(tsig2)
+    tsig2_upper = tsig2_mean + 2*tsig2_std
+    tsig2_lower = tsig2_mean - 2*tsig2_std
+    # Remove from tsig2
+    tsig2_filtered = []
+    for i in range(len(tsig2)):
+        cur_val = tsig2[i]
+        if (cur_val < tsig2_upper) and (cur_val > tsig2_lower):
+            tsig2_filtered.append(cur_val)
+    
+
 
     print("loops: mean=", loopsum/samples)
     print(" tref: mean=", mean(tref),  " stdev=", pstdev(tref) )
@@ -92,6 +118,13 @@ def main():
     # Estimate RC and Vsig2
     RC = -1 * mean(tsig1)/math.log(Vreflo/Vrefhi)
     Vsig2 = Vrefhi*math.exp(-1 * mean(tsig2)/RC)
+
+    print("Calculated: Vsig2=", Vsig2, "Volts,    RC=", RC, "Seconds   from Vrefhi and Vreflo")
+    print("Done")
+
+    # Estimate RC and Vsig2
+    RC = -1 * mean(tsig1_filtered)/math.log(Vreflo/Vrefhi)
+    Vsig2 = Vrefhi*math.exp(-1 * mean(tsig2_filtered)/RC)
 
     print("Calculated: Vsig2=", Vsig2, "Volts,    RC=", RC, "Seconds   from Vrefhi and Vreflo")
     print("Done")

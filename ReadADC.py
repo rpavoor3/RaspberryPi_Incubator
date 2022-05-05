@@ -93,14 +93,16 @@ def main():
     RC = -1 * mean(tsig1)/math.log(Vreflo/Vrefhi)
     Vsig2 = Vrefhi*math.exp(-1 * mean(tsig2)/RC)
 
+    print("Calculated: Vsig2=", Vsig2, "Volts,    RC=", RC, "Seconds   from Vrefhi and Vreflo")
+    print("Done")
+
     plt.plot(range(samples), tref,  label="tref")
     plt.plot(range(samples), tsig1, label="tsig1")
     plt.plot(range(samples), tsig2, label="tsig2")
     plt.legend()
     plt.show()
 
-    print("Calculated: Vsig2=", Vsig2, "Volts,    RC=", RC, "Seconds   from Vrefhi and Vreflo")
-    print("Done")
+
 
 if __name__ == "__main__":
     main()

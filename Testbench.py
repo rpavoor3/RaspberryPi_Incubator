@@ -1,13 +1,12 @@
 import argparse
 import time
-from tracemalloc import start
 from config import *
 import itertools, sys
 
 
 import gpiozero
 from gpiozero.output_devices import DigitalOutputDevice, PWMOutputDevice
-from gpiozero.pins.mock import MockFactory
+# from gpiozero.pins.mock import MockFactory
 from gpiozero import DigitalInputDevice
 from gpiozero import Device
 from gpiozero.pins.pigpio import PiGPIOFactory

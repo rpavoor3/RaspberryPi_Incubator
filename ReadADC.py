@@ -12,7 +12,7 @@ t_lo = 0
 t_hi = 0
 t_read = 0
 
-READ_PIN_ADC = PIN_BABY_TEMP
+READ_PIN_ADC = PIN_AIR_TEMP
 
 def cbf_lo(event, level, tick):
     print("Tick from lo", tick)

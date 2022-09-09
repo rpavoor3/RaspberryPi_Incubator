@@ -1,3 +1,4 @@
+from config import *
 import pigpio
 import time
 import random
@@ -38,20 +39,19 @@ def cbf_26(event, level, tick):
     if (globals()['t26']  == 0):
         globals()['t26']  = tick - globals()['t0'] 
 
-def init(pi, p1, p2, p3, p4, o1):
+def init(pi):
 
-    pi.set_mode(p1, pigpio.INPUT)
-    pi.set_mode(p2, pigpio.INPUT)
-    pi.set_mode(p3, pigpio.INPUT)
+    pi.set_mode(PIN_REF_LO, pigpio.INPUT)
+    pi.set_mode(PIN_REF_HI, pigpio.INPUT)
+    pi.set_mode(PIN_BABY_TEMP, pigpio.INPUT)
 
-    pi.set_mode(p4, pigpio.INPUT) # Later use this to ground RC
-    pi.set_mode(o1, pigpio.OUTPUT) # This is the output thru 2.2k
+    pi.set_mode(PIN_ADC_SOURCE, pigpio.OUTPUT) # This is the output thru 2.2k
     
-    cblo = pi.callback(p1, pigpio.FALLING_EDGE, cbf_lo)
-    cbhi = pi.callback(p2, pigpio.FALLING_EDGE, cbf_hi)
-    cb26 = pi.callback(p3, pigpio.FALLING_EDGE, cbf_26)
+    cblo = pi.callback(PIN_REF_LO, pigpio.FALLING_EDGE, cbf_lo)
+    cbhi = pi.callback(PIN_REF_HI, pigpio.FALLING_EDGE, cbf_hi)
+    cb26 = pi.callback(PIN_BABY_TEMP, pigpio.FALLING_EDGE, cbf_26)
 
-def execute(pi, p1, p2, p3, p4, o1):
+def execute():
 
     # pi = pigpio.pi() 
 

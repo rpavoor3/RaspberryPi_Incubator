@@ -38,6 +38,7 @@ PIN_AIR_TEMP = 25 #22
 PIN_REF_HI = 8 #24
 PIN_REF_LO = 7 #26
 PIN_FAULT_LED = 20 #38
+PIN_BATTERY_RELAY = -1
 
 # Taken to ground
 # gpio: 14, 15, 28, 10, 9, 11, 

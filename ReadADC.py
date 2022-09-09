@@ -15,17 +15,17 @@ t_read = 0
 READ_PIN_ADC = PIN_BABY_TEMP
 
 def cbf_lo(event, level, tick):
-    print("Tick from 12", tick)
+    #print("Tick from lo", tick)
     if (globals()['t_lo'] == 0):
         globals()['t_lo']  = tick - globals()['t0'] 
 
 def cbf_hi(event, level, tick):
-    # print("Tick from 13", tick)
+    # print("Tick from hi", tick)
     if (globals()['t_hi']  == 0):
         globals()['t_hi']  = tick - globals()['t0'] 
         
 def cbf_read_baby(event, level, tick):
-    # print("Tick from 26", tick)
+    # print("Tick from baby", tick)
     if (globals()['t_read']  == 0):
         globals()['t_read']  = tick - globals()['t0'] 
 

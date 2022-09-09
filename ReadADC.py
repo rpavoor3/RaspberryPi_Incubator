@@ -12,7 +12,7 @@ t_lo = 0
 t_hi = 0
 t_read = 0
 
-READ_PIN_ADC = PIN_AIR_TEMP
+READ_PIN_ADC = PIN_BABY_TEMP
 
 def cbf_lo(event, level, tick):
     print("Tick from lo", tick)
@@ -54,7 +54,7 @@ def main():
     cbhi = pi.callback(PIN_REF_HI, pigpio.FALLING_EDGE, cbf_hi)
     cbread = pi.callback(READ_PIN_ADC, pigpio.FALLING_EDGE, cbf_read_baby)
     
-    gbl = globals()
+    #globals() = globals()
 
     for i in range(samples):
         # Charge up RC Capacitor
@@ -64,23 +64,23 @@ def main():
         time.sleep(0.1)
         
         # Prepare to disconnect P21
-        gbl['t_lo'] = 0
-        gbl['t_hi'] = 0
-        gbl['t_read'] = 0
+        globals()['t_lo'] = 0
+        globals()['t_hi'] = 0
+        globals()['t_read'] = 0
         
         # Disconnect P21
         pi.set_mode(PIN_ADC_SOURCE, pigpio.INPUT) # ADC SOURCE PIN
-        gbl['t0']  = pi.get_current_tick() # Get timestamp
+        globals()['t0']  = pi.get_current_tick() # Get timestamp
 
         loops = 0
-        while( ((gbl['t_lo']==0) or (gbl['t_hi']==0) or (gbl['t_read']==0)) and ((pi.get_current_tick()-t0) < 1 * 1e6)):
+        while( ((globals()['t_lo']==0) or (globals()['t_hi']==0) or (globals()['t_read']==0)) and ((pi.get_current_tick()-t0) < 1 * 1e6)):
             time.sleep(0.01)
             loops +=1            # Count loops     
 
         print("Sample=", i, " t_lo=", t_lo, " t_hi=", t_hi, " t_read=", t_read)
-        tref.append(gbl['t_hi']  * 1e6)
-        tsig1.append((gbl['t_lo'] - gbl['t_hi'] ) * 1e6)
-        tsig2.append((gbl['t_read'] - gbl['t_hi'] ) * 1e6)
+        tref.append(globals()['t_hi']  * 1e6)
+        tsig1.append((globals()['t_lo'] - globals()['t_hi'] ) * 1e6)
+        tsig2.append((globals()['t_read'] - globals()['t_hi'] ) * 1e6)
         loopsum += loops
       
     # Remove outliers from tsig1 and tsig2
